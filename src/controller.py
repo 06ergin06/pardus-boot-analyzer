@@ -26,10 +26,19 @@ STATUS_TR = {
     "deactivating": "Devre Disi",
 }
 
-TIP_TR = {
-    "kritik": "Kapatilmamali",
-    "oneri": "Kapatilabilir",
-    "gerekli": "Gerekli",
+FILTER_MAP = {
+    0: "all",
+    1: "active",
+    2: "inactive",
+    3: "disabled",
+    4: "masked",
+}
+
+TIP_MAP = {
+    0: "all",
+    1: "kritik",
+    2: "oneri",
+    3: "gerekli",
 }
 
 
@@ -102,6 +111,8 @@ class Controller:
         self.service_count_label = builder.get_object("service_count_label")
         self.search_entry = builder.get_object("search_entry")
         self.status_label = builder.get_object("status_label")
+        self.filter_combo = builder.get_object("filter_combo")
+        self.tip_combo = builder.get_object("tip_combo")
         self.detail_name = builder.get_object("detail_name")
         self.detail_desc = builder.get_object("detail_desc")
         self.detail_suggestion = builder.get_object("detail_suggestion")
@@ -136,33 +147,14 @@ class Controller:
         self.builder.get_object("btn_show_log").connect("clicked", self._on_show_log)
         self.search_entry.connect("changed", self._on_search_changed)
         self.selection.connect("changed", self._on_selection_changed)
-
-        for btn_name, state in [
-            ("filter_all", "all"),
-            ("filter_active", "active"),
-            ("filter_inactive", "inactive"),
-            ("filter_disabled", "disabled"),
-            ("filter_masked", "masked"),
-        ]:
-            self.builder.get_object(btn_name).connect(
-                "toggled", self._on_status_filter_toggled, state
-            )
-
-        for btn_name, tip in [
-            ("cat_all", "all"),
-            ("cat_kritik", "kritik"),
-            ("cat_oneri", "oneri"),
-            ("cat_gerekli", "gerekli"),
-        ]:
-            self.builder.get_object(btn_name).connect(
-                "toggled", self._on_tip_filter_toggled, tip
-            )
+        self.filter_combo.connect("changed", self._on_filter_changed)
+        self.tip_combo.connect("changed", self._on_tip_changed)
 
     def load_all(self, *args):
         self.liststore.clear()
         self._all_data_map = {}
         self.detail_name.set_text("Servis secilmedi")
-        self.detail_desc.set_text("Detaylar icin bir servis secin.")
+        self.detail_desc.set_text("Bir servis secin.")
         self.detail_suggestion.set_text("")
         self.service_count_label.set_text("0 servis")
         self.set_status("Yukleniyor...")
@@ -183,7 +175,7 @@ class Controller:
             self.service_count_label.set_text("Hata")
             return False
 
-        self.boot_time_label.set_text(f"Toplam Acilis Suresi: {total_time}")
+        self.boot_time_label.set_text(f"Acilis: {total_time}")
 
         self._all_data = []
         for svc in services:
@@ -216,28 +208,23 @@ class Controller:
         return False
 
     def _update_count_label(self):
-        count = len(self.liststore)
-        total = len(self._all_data)
-        if count == total:
-            self.service_count_label.set_text(f"{count} servis")
-        else:
-            self.service_count_label.set_text(f"{count}/{total} servis")
+        n = len(self.liststore)
+        t = len(self._all_data)
+        self.service_count_label.set_text(f"{n} servis" if n == t else f"{n}/{t} servis")
 
     def _apply_filters(self):
         self.liststore.clear()
-        query = self._search_text.lower()
-
+        q = self._search_text.lower()
         for d in self._all_data:
-            if query and query not in d["name"].lower():
+            if q and q not in d["name"].lower():
                 continue
-            if not self._matches_status_filter(d["active"], d["sub"]):
+            if not self._matches_status(d["active"], d["sub"]):
                 continue
-            if not self._matches_tip_filter(d["tip"]):
+            if self._tip_filter != "all" and d["tip"] != self._tip_filter:
                 continue
-            markup = make_status_markup(d["active"])
             self.liststore.append([
                 d["name"],
-                markup,
+                make_status_markup(d["active"]),
                 d["sub"],
                 d["time_str"],
                 d["desc"],
@@ -245,41 +232,28 @@ class Controller:
                 d["oneri"],
                 "",
             ])
-
         self._update_count_label()
 
-    def _matches_status_filter(self, active_state, sub_state):
+    def _matches_status(self, active, sub):
         f = self._status_filter
         if f == "all":
             return True
         if f == "active":
-            return active_state == "active"
+            return active == "active"
         if f == "inactive":
-            return active_state == "inactive"
+            return active == "inactive"
         if f == "disabled":
-            return sub_state == "disabled" or active_state == "disabled"
+            return sub == "disabled" or active == "disabled"
         if f == "masked":
-            return sub_state == "masked"
+            return sub == "masked"
         return True
 
-    def _matches_tip_filter(self, tip):
-        if self._tip_filter == "all":
-            return True
-        return tip == self._tip_filter
-
-    def _get_color(self, status):
-        return STATUS_COLORS.get(status, "#000000")
-
-    def _on_status_filter_toggled(self, button, state):
-        if not button.get_active():
-            return
-        self._status_filter = state
+    def _on_filter_changed(self, *args):
+        self._status_filter = FILTER_MAP.get(self.filter_combo.get_active(), "all")
         self._apply_filters()
 
-    def _on_tip_filter_toggled(self, button, tip):
-        if not button.get_active():
-            return
-        self._tip_filter = tip
+    def _on_tip_changed(self, *args):
+        self._tip_filter = TIP_MAP.get(self.tip_combo.get_active(), "all")
         self._apply_filters()
 
     def _on_search_changed(self, *args):
@@ -289,37 +263,30 @@ class Controller:
         self._debounce_id = GLib.timeout_add(250, self._apply_filters)
 
     def _get_selected_row(self):
-        model, treeiter = self.selection.get_selected()
-        if treeiter is not None:
-            return model[treeiter]
-        return None
+        m, i = self.selection.get_selected()
+        return m[i] if i is not None else None
 
     def _get_selected_name(self):
-        row = self._get_selected_row()
-        if row is not None:
-            return row[0]
-        return None
+        r = self._get_selected_row()
+        return r[0] if r is not None else None
 
     def _on_selection_changed(self, *args):
-        row = self._get_selected_row()
-        if row is None:
+        r = self._get_selected_row()
+        if r is None:
             self.detail_name.set_text("Servis secilmedi")
-            self.detail_desc.set_text("Detaylar icin bir servis secin.")
+            self.detail_desc.set_text("Bir servis secin.")
             self.detail_suggestion.set_text("")
             return
 
-        name = row[0]
-        d = self._all_data_map.get(name)
+        d = self._all_data_map.get(r[0])
         active = d["active"] if d else ""
-        color = self._get_color(active)
-
+        color = STATUS_COLORS.get(active, "#000000")
         self.detail_name.set_markup(
-            f"<b>{name}</b>  \u2014  <span foreground='{color}'>{active}</span>"
+            f"<b>{r[0]}</b>  \u2014  <span foreground='{color}'>{active}</span>"
         )
-        self.detail_desc.set_text(row[4])
-
-        tip = row[5]
-        oneri = row[6]
+        self.detail_desc.set_text(r[4])
+        tip = r[5]
+        oneri = r[6]
         if oneri:
             if tip == "kritik":
                 self.detail_suggestion.set_markup(
@@ -338,94 +305,79 @@ class Controller:
         else:
             self.detail_suggestion.set_text("")
 
-    def _run_systemctl(self, action, name, on_success):
-        self.set_status(f"{action} islemi baslatildi... Yetki girisi gerekebilir.")
-
-        def _task():
+    def _run_systemctl(self, action, name, cb):
+        self.set_status(f"{action} baslatildi...")
+        def task():
             try:
-                if action == "enable":
-                    ok, msg = self.manager.enable_service(name)
-                elif action == "disable":
-                    ok, msg = self.manager.disable_service(name)
-                elif action == "mask":
-                    ok, msg = self.manager.mask_service(name)
-                elif action == "unmask":
-                    ok, msg = self.manager.unmask_service(name)
-                else:
-                    ok, msg = False, f"Bilinmeyen islem: {action}"
-
-                GLib.idle_add(self._on_command_done, ok, msg, on_success)
+                m = {"enable": self.manager.enable_service,
+                     "disable": self.manager.disable_service,
+                     "mask": self.manager.mask_service,
+                     "unmask": self.manager.unmask_service}
+                fn = m.get(action)
+                ok, msg = fn(name) if fn else (False, f"Bilinmeyen: {action}")
+                GLib.idle_add(self._on_cmd_done, ok, msg, cb)
             except Exception as e:
-                GLib.idle_add(self._on_command_done, False, str(e), on_success)
+                GLib.idle_add(self._on_cmd_done, False, str(e), cb)
+        threading.Thread(target=task, daemon=True).start()
 
-        threading.Thread(target=_task, daemon=True).start()
-
-    def _on_command_done(self, ok, msg, on_success):
+    def _on_cmd_done(self, ok, msg, cb):
         self.set_status(msg)
-        if ok and on_success:
-            on_success()
+        if ok and cb:
+            cb()
 
     def _on_enable(self, *args):
-        name = self._get_selected_name()
-        if not name:
-            self.set_status("Lutfen bir servis secin.")
-            return
-        self._run_systemctl("enable", name, self.load_all)
+        n = self._get_selected_name()
+        if n:
+            self._run_systemctl("enable", n, self.load_all)
+        else:
+            self.set_status("Bir servis secin.")
 
     def _on_disable(self, *args):
-        name = self._get_selected_name()
-        if not name:
-            self.set_status("Lutfen bir servis secin.")
-            return
-        self._run_systemctl("disable", name, self.load_all)
+        n = self._get_selected_name()
+        if n:
+            self._run_systemctl("disable", n, self.load_all)
+        else:
+            self.set_status("Bir servis secin.")
 
     def _on_mask(self, *args):
-        name = self._get_selected_name()
-        if not name:
-            self.set_status("Lutfen bir servis secin.")
+        n = self._get_selected_name()
+        if not n:
+            self.set_status("Bir servis secin.")
             return
-
-        d = self._all_data_map.get(name)
+        d = self._all_data_map.get(n)
         tip = d["tip"] if d else ""
-
-        warning = ("\n\nBu servis sistem icin KRITIK olarak isaretlenmistir. "
-                   "Kapatmaniz sorunlara yol acabilir!") if tip == "kritik" else ""
-
-        dialog = Gtk.MessageDialog(
-            parent=self.main_window,
-            flags=Gtk.DialogFlags.MODAL,
+        warn = ("\n\nBu servis sistem icin KRITIK olarak isaretlenmistir. "
+                "Kapatmaniz sorunlara yol acabilir!") if tip == "kritik" else ""
+        dlg = Gtk.MessageDialog(
+            parent=self.main_window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.WARNING if tip == "kritik" else Gtk.MessageType.QUESTION,
             buttons=Gtk.ButtonsType.YES_NO,
-            message_format=f"'{name}' servisini maskelemek istediginize emin misiniz?"
+            message_format=f"'{n}' servisini maskelemek istiyor musunuz?"
         )
-        if warning:
-            dialog.format_secondary_text(warning)
-        response = dialog.run()
-        dialog.destroy()
-
-        if response == Gtk.ResponseType.YES:
-            self._run_systemctl("mask", name, self.load_all)
+        if warn:
+            dlg.format_secondary_text(warn)
+        r = dlg.run()
+        dlg.destroy()
+        if r == Gtk.ResponseType.YES:
+            self._run_systemctl("mask", n, self.load_all)
 
     def _on_unmask(self, *args):
-        name = self._get_selected_name()
-        if not name:
-            self.set_status("Lutfen bir servis secin.")
-            return
-        self._run_systemctl("unmask", name, self.load_all)
+        n = self._get_selected_name()
+        if n:
+            self._run_systemctl("unmask", n, self.load_all)
+        else:
+            self.set_status("Bir servis secin.")
 
     def _on_show_log(self, *args):
-        name = self._get_selected_name()
-        if not name:
-            self.set_status("Lutfen bir servis secin.")
+        n = self._get_selected_name()
+        if not n:
+            self.set_status("Bir servis secin.")
             return
-
         self.set_status("Log yukleniyor...")
-
-        def _task():
+        def task():
             try:
-                log = self.manager.get_journal_log(name)
+                log = self.manager.get_journal_log(n)
                 GLib.idle_add(self.set_status, log or "Log bulunamadi.")
             except Exception as e:
                 GLib.idle_add(self.set_status, f"Hata: {e}")
-
-        threading.Thread(target=_task, daemon=True).start()
+        threading.Thread(target=task, daemon=True).start()
