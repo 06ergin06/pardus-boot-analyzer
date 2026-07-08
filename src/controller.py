@@ -362,7 +362,8 @@ class Controller:
         dlg.run()
         success = dlg.success
         pwd = dlg.entered_password
-        dlg.destroy()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
         
         if success and pwd is not None:
             self.manager.password = pwd
