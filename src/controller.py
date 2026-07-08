@@ -175,6 +175,7 @@ class Controller:
     def _do_load(self):
         try:
             services = self.manager.get_services()
+            enabled_map = self.manager.get_unit_file_states()
             blame_data = {}
             for item in self.manager.get_blame_data()[0]:
                 blame_data[item["name"]] = {
@@ -206,6 +207,7 @@ class Controller:
                 "name": name,
                 "active": svc["active"],
                 "sub": svc["sub"],
+                "enabled": enabled_map.get(name, "unknown"),
                 "time_str": blame_info["time_str"],
                 "seconds": blame_info["seconds"],
                 "desc": desc,
@@ -229,7 +231,9 @@ class Controller:
         self.service_count_label.set_text(f"{n} servis" if n == t else f"{n}/{t} servis")
 
     def _apply_filters(self):
+        old_selection = self._get_selected_name()
         self.liststore.clear()
+
         self._updating_toggles = True
         self.btn_toggle_enable.set_active(False)
         self.btn_toggle_run.set_active(False)
@@ -246,7 +250,7 @@ class Controller:
         for d in self._all_data:
             if q and q not in d["name"].lower():
                 continue
-            if not self._matches_status(d["active"], d["sub"], view):
+            if not self._matches_status(d["active"], d["sub"], d.get("enabled", ""), view):
                 continue
             if self._tip_filter != "all" and d["tip"] != self._tip_filter:
                 continue
@@ -260,7 +264,16 @@ class Controller:
                 d["oneri"],
                 "",
             ])
+
         self._update_count_label()
+
+        # Restore selection and update toggle buttons
+        if old_selection:
+            for i in range(len(self.liststore)):
+                if self.liststore[i][0] == old_selection:
+                    self.selection.select_path(Gtk.TreePath(i))
+                    break
+        self._on_selection_changed()
 
     def _do_load_devices(self):
         try:
@@ -276,6 +289,7 @@ class Controller:
                 "name": d["name"],
                 "active": d["active"],
                 "sub": d["sub"],
+                "enabled": "unknown",
                 "time_str": "",
                 "seconds": 0,
                 "desc": desc,
@@ -296,9 +310,9 @@ class Controller:
             ])
         self._update_count_label()
 
-    def _matches_status(self, active, sub, view="services"):
+    def _matches_status(self, active, sub, enabled="", view="services"):
         if view == "disabled":
-            return sub == "disabled" or active == "inactive"
+            return enabled == "disabled" or sub == "disabled"
         f = self._status_filter
         if f == "all":
             return True
@@ -394,20 +408,20 @@ class Controller:
 
         self._set_toggle_sensitive(True)
         sub = d["sub"]
-        active = d["active"]
+        active_state = d["active"]
+        enabled_state = d.get("enabled", "unknown")
 
         self._updating_toggles = True
-        self.btn_toggle_enable.set_active(sub == "enabled")
-        self.btn_toggle_run.set_active(active == "active")
-        self.btn_toggle_mask.set_active(sub == "masked")
+        self.btn_toggle_enable.set_active(enabled_state in ("enabled", "enabled-runtime", "generated"))
+        self.btn_toggle_run.set_active(active_state == "active")
+        self.btn_toggle_mask.set_active(sub == "masked" or enabled_state == "masked")
         self._updating_toggles = False
 
-        if sub in ("static", "indirect"):
+        if enabled_state in ("static", "indirect", "masked", "generated"):
             self.btn_toggle_enable.set_sensitive(False)
-        if sub == "masked":
-            self.btn_toggle_enable.set_sensitive(False)
+        if sub == "masked" or enabled_state == "masked":
             self.btn_toggle_run.set_sensitive(False)
-        if active in ("activating", "deactivating"):
+        if active_state in ("activating", "deactivating"):
             self.btn_toggle_run.set_sensitive(False)
 
     def _get_toggle_action(self, toggle, active_true, active_false):
@@ -480,11 +494,8 @@ class Controller:
         threading.Thread(target=task, daemon=True).start()
 
     def _on_cmd_done(self, ok, msg, cb):
-        if not ok:
-            self.set_status(msg)
-            return
         self.set_status(msg)
-        if cb:
+        if ok and cb:
             cb()
 
     def _on_show_log(self, *args):
