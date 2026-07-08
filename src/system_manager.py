@@ -9,10 +9,14 @@ class SystemManager:
         self.password = None
         self._blame_data_cache = None
         self._total_boot_time_cache = None
+        self._unit_file_states_cache = None
+        self._system_info_cache = None
 
     def clear_cache(self):
         self._blame_data_cache = None
         self._total_boot_time_cache = None
+        self._unit_file_states_cache = None
+        self._system_info_cache = None
 
     # --- Service & Device Management ---
     def get_services(self):
@@ -35,6 +39,8 @@ class SystemManager:
         return services
 
     def get_unit_file_states(self):
+        if self._unit_file_states_cache is not None:
+            return self._unit_file_states_cache
         output = subprocess.check_output(
             ["systemctl", "list-unit-files", "--type=service", "--no-pager", "--no-legend"],
             text=True
@@ -44,6 +50,7 @@ class SystemManager:
             parts = line.split()
             if len(parts) >= 2:
                 states[parts[0]] = parts[1]
+        self._unit_file_states_cache = states
         return states
 
     def get_blame_data(self):
@@ -361,42 +368,42 @@ class SystemManager:
             return False, str(e)
 
     def get_system_info(self):
-        # OS Info
-        os_name = "Linux"
-        if os.path.exists("/etc/os-release"):
-            try:
-                with open("/etc/os-release", "r", encoding="utf-8") as f:
-                    for line in f:
-                        if line.startswith("NAME="):
-                            os_name = line.split("=")[1].strip().strip('"')
-                        elif line.startswith("VERSION_ID="):
-                            v = line.split("=")[1].strip().strip('"')
-                            os_name = f"{os_name} {v}"
-            except Exception:
-                pass
-        
-        # Kernel release
-        import platform
-        kernel = platform.release()
-        
-        # RAM usage
-        ram_str = "Bilinmiyor"
-        if os.path.exists("/proc/meminfo"):
-            try:
-                with open("/proc/meminfo", "r", encoding="utf-8") as f:
-                    mem = {}
-                    for line in f:
-                        parts = line.split()
-                        if len(parts) >= 2:
-                            mem[parts[0].rstrip(":")] = int(parts[1])
-                total = mem.get("MemTotal", 0) / 1024 / 1024  # GB
-                avail = mem.get("MemAvailable", 0) / 1024 / 1024  # GB
-                used = total - avail
-                ram_str = f"{used:.1f} GB / {total:.1f} GB"
-            except Exception:
-                pass
-                
-        # Uptime
+        if self._system_info_cache is None:
+            os_name = "Linux"
+            if os.path.exists("/etc/os-release"):
+                try:
+                    with open("/etc/os-release", "r", encoding="utf-8") as f:
+                        for line in f:
+                            if line.startswith("NAME="):
+                                os_name = line.split("=")[1].strip().strip('"')
+                            elif line.startswith("VERSION_ID="):
+                                v = line.split("=")[1].strip().strip('"')
+                                os_name = f"{os_name} {v}"
+                except Exception:
+                    pass
+            
+            import platform
+            kernel = platform.release()
+            
+            ram_str = "Bilinmiyor"
+            if os.path.exists("/proc/meminfo"):
+                try:
+                    with open("/proc/meminfo", "r", encoding="utf-8") as f:
+                        mem = {}
+                        for line in f:
+                            parts = line.split()
+                            if len(parts) >= 2:
+                                mem[parts[0].rstrip(":")] = int(parts[1])
+                    total = mem.get("MemTotal", 0) / 1024 / 1024
+                    avail = mem.get("MemAvailable", 0) / 1024 / 1024
+                    used = total - avail
+                    ram_str = f"{used:.1f} GB / {total:.1f} GB"
+                except Exception:
+                    pass
+            self._system_info_cache = (os_name, kernel, ram_str)
+        else:
+            os_name, kernel, ram_str = self._system_info_cache
+            
         uptime_str = "Bilinmiyor"
         if os.path.exists("/proc/uptime"):
             try:
