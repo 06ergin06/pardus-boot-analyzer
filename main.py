@@ -92,7 +92,7 @@ class PardusAboutDialog(Gtk.Dialog):
         grid.attach(lbl_cr_title, 0, 0, 1, 1)
         
         lbl_cr_val = Gtk.Label(xalign=0)
-        lbl_cr_val.set_text("Ergin")
+        lbl_cr_val.set_text("İbrahim Hakkı Ergin")
         grid.attach(lbl_cr_val, 1, 0, 1, 1)
         
         # Row 1: Tasarım
@@ -102,7 +102,7 @@ class PardusAboutDialog(Gtk.Dialog):
         grid.attach(lbl_ds_title, 0, 1, 1, 1)
         
         lbl_ds_val = Gtk.Label(xalign=0)
-        lbl_ds_val.set_text("Emin Fedar\nFatih Altun")
+        lbl_ds_val.set_text("İbrahim Hakkı Ergin")
         grid.attach(lbl_ds_val, 1, 1, 1, 1)
         
         # Row 2: Grafikler
@@ -112,7 +112,7 @@ class PardusAboutDialog(Gtk.Dialog):
         grid.attach(lbl_gr_title, 0, 2, 1, 1)
         
         lbl_gr_val = Gtk.Label(xalign=0)
-        lbl_gr_val.set_text("Çağrı Gökçe\nYusuf Düzgün")
+        lbl_gr_val.set_text("İbrahim Hakkı Ergin")
         grid.attach(lbl_gr_val, 1, 2, 1, 1)
         
         stack.add_titled(vbox2, "credits", "Hazırlayanlar")
