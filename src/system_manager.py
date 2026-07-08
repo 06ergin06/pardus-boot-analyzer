@@ -1,8 +1,10 @@
 import subprocess
 import re
-
+import os
+import shutil
 
 class SystemManager:
+    # --- Service & Device Management ---
     def get_services(self):
         output = subprocess.check_output(
             ["systemctl", "list-units", "--type=service", "--all", "--no-pager", "--no-legend"],
@@ -68,24 +70,25 @@ class SystemManager:
         return self._run_auth(["unmask", name])
 
     def _run_auth(self, args):
-        # pkexec first — shows GTK password dialog even without polkit agent
+        # Run using pkexec
         try:
             result = subprocess.run(
                 ["pkexec", "systemctl"] + args,
                 capture_output=True, text=True
             )
             if result.returncode == 0:
-                return True, result.stdout + result.stderr
-            if "refused" not in result.stderr.lower():
-                return False, result.stdout + result.stderr
+                return True, "İşlem başarılı."
+            else:
+                return False, result.stderr or result.stdout
         except FileNotFoundError:
             pass
-        # Fallback: direct systemctl (requires running polkit agent)
+        
+        # Fallback: direct systemctl
         result = subprocess.run(
             ["systemctl"] + args,
             capture_output=True, text=True
         )
-        return result.returncode == 0, result.stdout + result.stderr
+        return result.returncode == 0, result.stderr or result.stdout
 
     def get_service_status(self, name):
         result = subprocess.run(
@@ -94,36 +97,12 @@ class SystemManager:
         )
         return result.stdout.strip()
 
-    def get_journal_log(self, name, lines=50):
+    def get_journal_log(self, name, lines=100):
         result = subprocess.run(
             ["journalctl", "-u", name, "--no-pager", "-n", str(lines)],
             capture_output=True, text=True
         )
         return result.stdout if result.returncode == 0 else result.stderr
-
-    def get_disabled_services(self):
-        output = subprocess.check_output(
-            ["systemctl", "list-unit-files", "--type=service", "--state=disabled", "--no-pager", "--no-legend"],
-            text=True
-        )
-        services = []
-        for line in output.strip().splitlines():
-            parts = line.split()
-            if parts:
-                services.append({"name": parts[0], "state": parts[1] if len(parts) > 1 else "disabled"})
-        return services
-
-    def get_masked_services(self):
-        output = subprocess.check_output(
-            ["systemctl", "list-unit-files", "--type=service", "--state=masked", "--no-pager", "--no-legend"],
-            text=True
-        )
-        services = []
-        for line in output.strip().splitlines():
-            parts = line.split()
-            if parts:
-                services.append({"name": parts[0], "state": parts[1] if len(parts) > 1 else "masked"})
-        return services
 
     def get_device_units(self):
         output = subprocess.check_output(
@@ -143,3 +122,188 @@ class SystemManager:
                     "description": " ".join(parts[4:]) if len(parts) > 4 else ""
                 })
         return units
+
+    # --- Autostart Management (Faz 4) ---
+    def get_autostart_dir(self):
+        path = os.path.expanduser("~/.config/autostart")
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+        return path
+
+    def get_autostart_entries(self):
+        autostart_dir = self.get_autostart_dir()
+        entries = []
+        if not os.path.exists(autostart_dir):
+            return entries
+
+        for filename in os.listdir(autostart_dir):
+            if filename.endswith(".desktop"):
+                filepath = os.path.join(autostart_dir, filename)
+                entries.append(self.parse_desktop_file(filepath))
+        return entries
+
+    def parse_desktop_file(self, filepath):
+        info = {
+            "name": "",
+            "exec": "",
+            "icon": "system-run",
+            "comment": "",
+            "enabled": True,
+            "delay": 0,
+            "filepath": filepath,
+            "filename": os.path.basename(filepath)
+        }
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                in_desktop_entry = False
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    if line == "[Desktop Entry]":
+                        in_desktop_entry = True
+                        continue
+                    if line.startswith("[") and line.endswith("]"):
+                        in_desktop_entry = False
+                        continue
+                    if in_desktop_entry and "=" in line:
+                        key, val = line.split("=", 1)
+                        key = key.strip()
+                        val = val.strip()
+                        if key == "Name":
+                            info["name"] = val
+                        elif key == "Exec":
+                            # Parse delay from Exec if structured like sleep X && command
+                            m = re.match(r"^sleep\s+(\d+)\s*(?:&&|;)\s*(.*)$", val)
+                            if m:
+                                info["delay"] = int(m.group(1))
+                                info["exec"] = m.group(2)
+                            else:
+                                info["exec"] = val
+                        elif key == "Icon":
+                            info["icon"] = val if val else "system-run"
+                        elif key == "Comment":
+                            info["comment"] = val
+                        elif key in ("X-GNOME-Autostart-enabled", "X-KDE-Autostart-enabled"):
+                            info["enabled"] = (val.lower() != "false")
+                        elif key == "Hidden":
+                            if val.lower() == "true":
+                                info["enabled"] = False
+                        elif key == "X-GNOME-Autostart-Delay":
+                            try:
+                                info["delay"] = int(val)
+                            except ValueError:
+                                pass
+        except Exception:
+            pass
+
+        if not info["name"]:
+            info["name"] = os.path.splitext(os.path.basename(filepath))[0]
+        return info
+
+    def add_autostart_entry(self, name, command, comment="", icon="system-run", delay=0):
+        # Generate safe filename
+        safe_name = "".join(c for c in name if c.isalnum() or c in ("-", "_")).lower()
+        if not safe_name:
+            safe_name = "custom-app"
+        
+        filename = f"{safe_name}.desktop"
+        autostart_dir = self.get_autostart_dir()
+        filepath = os.path.join(autostart_dir, filename)
+        
+        # Ensure name uniqueness
+        counter = 1
+        while os.path.exists(filepath):
+            filename = f"{safe_name}-{counter}.desktop"
+            filepath = os.path.join(autostart_dir, filename)
+            counter += 1
+
+        self.save_autostart_entry(filepath, name, command, comment, icon, True, delay)
+        return filepath
+
+    def save_autostart_entry(self, filepath, name, command, comment="", icon="system-run", enabled=True, delay=0):
+        exec_val = command
+        # If there is a delay, write it to X-GNOME-Autostart-Delay
+        # We also support GNOME delay via key. We can do both key and Exec sleep wrapper to ensure compatibility
+        if delay > 0:
+            exec_val = f"sleep {delay} && {command}"
+
+        content = [
+            "[Desktop Entry]",
+            "Type=Application",
+            f"Name={name}",
+            f"Exec={exec_val}",
+            f"Icon={icon}",
+            f"Comment={comment}",
+            f"X-GNOME-Autostart-enabled={'true' if enabled else 'false'}",
+            f"X-GNOME-Autostart-Delay={delay}"
+        ]
+        
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write("\n".join(content) + "\n")
+
+    def remove_autostart_entry(self, filepath):
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            return True
+        return False
+
+    def toggle_autostart_entry(self, filepath, enabled):
+        info = self.parse_desktop_file(filepath)
+        # Restore full exec (which includes sleep if there was a delay)
+        cmd = info["exec"]
+        self.save_autostart_entry(filepath, info["name"], cmd, info["comment"], info["icon"], enabled, info["delay"])
+
+    def update_autostart_delay(self, filepath, delay):
+        info = self.parse_desktop_file(filepath)
+        cmd = info["exec"]
+        self.save_autostart_entry(filepath, info["name"], cmd, info["comment"], info["icon"], info["enabled"], delay)
+
+    def get_installed_applications(self):
+        apps = []
+        sys_apps_dir = "/usr/share/applications"
+        if not os.path.exists(sys_apps_dir):
+            return apps
+        
+        for filename in os.listdir(sys_apps_dir):
+            if filename.endswith(".desktop"):
+                filepath = os.path.join(sys_apps_dir, filename)
+                try:
+                    info = self.parse_desktop_file(filepath)
+                    # Filter out non-application entries or files without executable
+                    if info["name"] and info["exec"] and not info["exec"].startswith("NoDisplay"):
+                        # Don't show system-critical settings managers in standard list unless requested
+                        apps.append(info)
+                except Exception:
+                    pass
+        # Sort alphabetically
+        apps.sort(key=lambda x: x["name"].lower())
+        return apps
+
+    # --- Batch Profile Management (Faz 5) ---
+    def apply_profile_batch(self, enable_list, disable_list):
+        commands = []
+        if enable_list:
+            svc_str = " ".join(enable_list)
+            commands.append(f"systemctl enable {svc_str}")
+            commands.append(f"systemctl start {svc_str}")
+        if disable_list:
+            svc_str = " ".join(disable_list)
+            commands.append(f"systemctl disable {svc_str}")
+            commands.append(f"systemctl stop {svc_str}")
+            
+        if not commands:
+            return True, "Herhangi bir değişiklik yapılması gerekmiyor."
+            
+        shell_cmd = " && ".join(commands)
+        try:
+            result = subprocess.run(
+                ["pkexec", "sh", "-c", shell_cmd],
+                capture_output=True, text=True
+            )
+            if result.returncode == 0:
+                return True, "Profil başarıyla uygulandı."
+            else:
+                return False, result.stderr or result.stdout
+        except Exception as e:
+            return False, str(e)

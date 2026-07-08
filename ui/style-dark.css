@@ -1,189 +1,278 @@
+/* Dark Theme Stylesheet */
 window {
-    background-color: #1e1e2e;
+    background-color: #1a1b26;
 }
 
-box {
+/* Sidebar Styling */
+.sidebar {
+    background-color: #16161e;
+    border-right: 1px solid #24283b;
+    padding: 18px 8px;
+}
+
+.sidebar-title {
+    font-size: 15pt;
+    font-weight: 800;
+    color: #0db9d7; /* Cyan */
+    margin-bottom: 2px;
+}
+
+.sidebar-subtitle {
+    font-size: 9pt;
+    font-weight: bold;
+    color: #565f89;
+    margin-bottom: 24px;
+}
+
+.sidebar-list {
     background-color: transparent;
-}
-
-frame {
     border: none;
 }
 
-frame > border {
-    border: none;
+.sidebar-row {
+    border-radius: 8px;
+    margin-bottom: 4px;
+    padding: 10px 14px;
+    background-color: transparent;
+    transition: all 0.2s ease;
 }
 
-treeview {
-    background-color: #181825;
-    font-size: 11pt;
-    color: #cdd6f4;
+.sidebar-row:hover {
+    background-color: #202b3c;
 }
 
-treeview.view {
-    border-bottom: 1px solid alpha(currentColor, 0.06);
-}
-
-treeview.view:selected {
-    background-color: #45475a;
-    color: #cdd6f4;
-}
-
-treeview.view:selected:focus {
-    background-color: #45475a;
-    color: #cdd6f4;
-}
-
-treeview.view:selected label {
-    color: #cdd6f4;
-}
-
-treeview.view:nth-child(even) {
-    background-color: #1e1e2e;
-}
-
-scrolledwindow {
-    border: 1px solid #313244;
-    border-radius: 6px;
-    background-color: #181825;
-}
-
-scrolledwindow > scrollbar {
-    background-color: #1e1e2e;
-}
-
-entry {
-    min-height: 32px;
-    border: 1px solid #45475a;
-    border-radius: 6px;
-    background-color: #181825;
-    padding: 4px 10px;
-    font-size: 11pt;
-    color: #cdd6f4;
-    caret-color: #89b4fa;
-}
-
-entry:focus {
-    border-color: #89b4fa;
-    box-shadow: 0 0 0 1px #89b4fa;
-}
-
-button {
-    min-height: 30px;
-    padding: 4px 14px;
-    border: 1px solid #45475a;
-    border-radius: 6px;
-    background-color: #313244;
-    color: #cdd6f4;
-    font-size: 10.5pt;
-}
-
-button:hover {
-    background-color: #45475a;
-    border-color: #585b70;
-}
-
-button:active {
-    background-color: #585b70;
-}
-
-togglebutton {
-    padding: 4px 14px;
-    border: 1px solid #45475a;
-    border-radius: 6px;
-    background-color: #313244;
-    color: #cdd6f4;
-    font-size: 10.5pt;
-}
-
-togglebutton:hover {
-    background-color: #45475a;
-}
-
-togglebutton:checked {
-    background-color: #1e1e2e;
-    border-color: #89b4fa;
-    color: #89b4fa;
+.sidebar-row:selected {
+    background-color: #1b3052;
+    color: #7aa2f7;
     font-weight: bold;
 }
 
-togglebutton:checked:hover {
-    background-color: #313244;
+.sidebar-row:selected label {
+    color: #7aa2f7;
 }
 
-label {
-    color: #cdd6f4;
+.sidebar-item-box {
+    spacing: 12px;
 }
 
-label#boot_time_label {
-    font-weight: bold;
-    font-size: 11pt;
-    color: #cdd6f4;
-    padding: 4px;
-}
-
-label#service_count_label {
-    font-size: 10pt;
-    color: #a6adc8;
-    padding: 4px 8px;
-    background-color: #313244;
-    border-radius: 12px;
-}
-
-label#detail_name {
-    font-size: 11pt;
-}
-
-label#detail_desc {
+.sidebar-item-label {
     font-size: 10.5pt;
-    color: #bac2de;
 }
 
-label#detail_suggestion {
+/* Content Area Styling */
+.content-title {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #c0caf5;
+    margin-bottom: 4px;
+}
+
+.content-subtitle {
     font-size: 10pt;
+    color: #565f89;
+    margin-bottom: 16px;
 }
 
-label#status_label {
-    font-size: 9.5pt;
-    color: #a6adc8;
-    padding: 2px 8px;
-    background-color: #1e1e2e;
-    border: 1px solid #313244;
+/* Card Widget Styling */
+.card {
+    background-color: #1f2335;
+    border: 1px solid #24283b;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.card-title {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #c0caf5;
+    margin-bottom: 10px;
+}
+
+/* Boot Summary Dashboard */
+.boot-circle-container {
+    background-color: #1a1b26;
+    border: 2px solid #24283b;
+    border-radius: 50%;
+    min-width: 140px;
+    min-height: 140px;
+    margin: 12px;
+}
+
+.boot-time-value {
+    font-size: 26pt;
+    font-weight: 800;
+    color: #f7768e; /* Red-pink */
+}
+
+.boot-time-label {
+    font-size: 9pt;
+    color: #565f89;
+}
+
+/* Custom Progress Bar for Blame */
+.blame-row {
+    padding: 6px 0;
+}
+
+.blame-progress-bg {
+    background-color: #24283b;
+    border-radius: 4px;
+    min-height: 8px;
+}
+
+.blame-progress-fill {
+    background-color: #e0af68; /* Yellow */
+    border-radius: 4px;
+    min-height: 8px;
+}
+
+.badge-slow {
+    background-color: #3b2c20;
+    color: #e0af68;
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding: 2px 6px;
     border-radius: 4px;
 }
 
-paned {
-    background-color: transparent;
+/* Autostart Card List */
+.autostart-row {
+    background-color: #1f2335;
+    border: 1px solid #24283b;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 12px 16px;
 }
 
-paned > separator {
-    background-color: #313244;
-    min-height: 2px;
+.autostart-row:hover {
+    border-color: #414868;
+    background-color: #24283b;
 }
 
-paned > separator:hover {
-    background-color: #89b4fa;
+/* Profile Section Styling */
+.profile-card {
+    background-color: #1f2335;
+    border: 2px solid #24283b;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
 }
 
-.header-box {
-    background-color: #181825;
-    border-bottom: 1px solid #313244;
-    padding: 8px;
+.profile-card:hover {
+    border-color: #7aa2f7;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
-.filter-box {
-    background-color: transparent;
-    padding: 2px 0;
+.profile-title {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #c0caf5;
 }
 
-.action-box {
-    background-color: #181825;
-    border-top: 1px solid #313244;
-    padding: 6px 8px;
+.profile-desc {
+    font-size: 9.5pt;
+    color: #a9b1d6;
 }
 
+/* Treeview and scrolled window adjustments */
+scrolledwindow {
+    border: 1px solid #24283b;
+    border-radius: 8px;
+    background-color: #1a1b26;
+}
+
+treeview {
+    background-color: #1a1b26;
+    color: #c0caf5;
+}
+
+treeview.view:selected {
+    background-color: #7aa2f7;
+    color: #1a1b26;
+}
+
+/* Button & Entry styling */
+button {
+    min-height: 32px;
+    padding: 4px 16px;
+    border-radius: 6px;
+    background-color: #24283b;
+    border: 1px solid #414868;
+    color: #c0caf5;
+    font-weight: 500;
+}
+
+button:hover {
+    background-color: #3b4261;
+    border-color: #565f89;
+}
+
+button.primary {
+    background-color: #7aa2f7;
+    border-color: #7aa2f7;
+    color: #1a1b26;
+}
+
+button.primary:hover {
+    background-color: #89ddff;
+}
+
+button.danger {
+    background-color: #f7768e;
+    border-color: #f7768e;
+    color: #1a1b26;
+}
+
+button.danger:hover {
+    background-color: #ff9eaf;
+}
+
+button.warning {
+    background-color: #e0af68;
+    border-color: #e0af68;
+    color: #1a1b26;
+}
+
+button.warning:hover {
+    background-color: #ffc97a;
+}
+
+button.success {
+    background-color: #9ece6a;
+    border-color: #9ece6a;
+    color: #1a1b26;
+}
+
+button.success:hover {
+    background-color: #b9f27c;
+}
+
+entry {
+    min-height: 34px;
+    border-radius: 6px;
+    border: 1px solid #414868;
+    padding: 4px 10px;
+    background-color: #1a1b26;
+    color: #c0caf5;
+}
+
+entry:focus {
+    border-color: #7aa2f7;
+}
+
+/* Details area */
 .detail-box {
-    background-color: #181825;
-    border-radius: 0;
-    padding: 8px;
+    background-color: #16161e;
+    border-top: 1px solid #24283b;
+    padding: 16px;
+}
+
+.monospaced-log {
+    font-family: monospace;
+    font-size: 9.5pt;
+    background-color: #15161e;
+    color: #c0caf5;
+    padding: 10px;
+    border-radius: 6px;
 }
