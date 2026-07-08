@@ -2593,6 +2593,7 @@ class ProfileCreatorDialog(Gtk.Dialog):
         # Scrolled window for services list
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scrolled.set_min_content_height(250)
         box.pack_start(scrolled, True, True, 0)
         
         listbox = Gtk.ListBox()
