@@ -276,3 +276,21 @@ entry:focus {
     padding: 10px;
     border-radius: 6px;
 }
+
+/* Auth Dialog Styling */
+.auth-dialog {
+    background-color: #1f2335;
+}
+.auth-head {
+    font-size: 15px;
+    font-weight: bold;
+    color: #c0caf5;
+}
+.auth-sub {
+    font-size: 12px;
+    color: #a9b1d6;
+}
+.error-text {
+    font-size: 11px;
+    color: #f7768e;
+}

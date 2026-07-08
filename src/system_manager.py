@@ -4,6 +4,9 @@ import os
 import shutil
 
 class SystemManager:
+    def __init__(self):
+        self.password = None
+
     # --- Service & Device Management ---
     def get_services(self):
         output = subprocess.check_output(
@@ -69,25 +72,41 @@ class SystemManager:
     def unmask_service(self, name):
         return self._run_auth(["unmask", name])
 
-    def _run_auth(self, args):
-        # Run using pkexec without redirecting output so it can access terminal TTY if needed
+    def verify_sudo_password(self, password):
         try:
             result = subprocess.run(
-                ["pkexec", "systemctl"] + args
+                ["sudo", "-S", "-v"],
+                input=password + "\n",
+                capture_output=True, text=True
+            )
+            return result.returncode == 0
+        except Exception:
+            return False
+
+    def _run_auth(self, args):
+        if not self.password:
+            # Fallback: direct systemctl
+            result = subprocess.run(
+                ["systemctl"] + args,
+                capture_output=True, text=True
+            )
+            return result.returncode == 0, result.stderr or result.stdout
+            
+        try:
+            result = subprocess.run(
+                ["sudo", "-S", "systemctl"] + args,
+                input=self.password + "\n",
+                capture_output=True, text=True
             )
             if result.returncode == 0:
                 return True, "İşlem başarılı."
             else:
-                return False, "Yetkilendirme başarısız oldu veya işlem iptal edildi."
-        except FileNotFoundError:
-            pass
-        
-        # Fallback: direct systemctl
-        result = subprocess.run(
-            ["systemctl"] + args,
-            capture_output=True, text=True
-        )
-        return result.returncode == 0, result.stderr or result.stdout
+                err = result.stderr or result.stdout
+                if "incorrect password" in err.lower() or "şifre" in err.lower():
+                    self.password = None
+                return False, err
+        except Exception as e:
+            return False, str(e)
 
     def get_service_status(self, name):
         result = subprocess.run(
@@ -295,14 +314,22 @@ class SystemManager:
             return True, "Herhangi bir değişiklik yapılması gerekmiyor."
             
         shell_cmd = " && ".join(commands)
+        if not self.password:
+            return False, "Yönetici şifresi girilmedi."
+            
         try:
             result = subprocess.run(
-                ["pkexec", "sh", "-c", shell_cmd]
+                ["sudo", "-S", "sh", "-c", shell_cmd],
+                input=self.password + "\n",
+                capture_output=True, text=True
             )
             if result.returncode == 0:
                 return True, "Profil başarıyla uygulandı."
             else:
-                return False, "Yetkilendirme başarısız oldu veya işlem iptal edildi."
+                err = result.stderr or result.stdout
+                if "incorrect password" in err.lower() or "şifre" in err.lower():
+                    self.password = None
+                return False, err
         except Exception as e:
             return False, str(e)
 

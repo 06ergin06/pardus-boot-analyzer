@@ -240,6 +240,82 @@ class AddAutostartDialog(Gtk.Dialog):
         return None
 
 
+class PasswordDialog(Gtk.Dialog):
+    def __init__(self, parent, manager):
+        super().__init__(title="Yönetici Yetkilendirmesi", parent=parent, flags=Gtk.DialogFlags.MODAL)
+        self.set_default_size(360, 200)
+        self.manager = manager
+        self.success = False
+        self.entered_password = None
+        
+        self.get_style_context().add_class("auth-dialog")
+        
+        self.btn_cancel = self.add_button("Vazgeç", Gtk.ResponseType.CANCEL)
+        self.btn_auth = self.add_button("Yetkilendir", Gtk.ResponseType.OK)
+        self.btn_auth.get_style_context().add_class("primary")
+        
+        content = self.get_content_area()
+        content.set_margin_start(16)
+        content.set_margin_end(16)
+        content.set_margin_top(16)
+        content.set_margin_bottom(16)
+        
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        content.pack_start(vbox, True, True, 0)
+        
+        lbl_head = Gtk.Label(xalign=0)
+        lbl_head.set_text("Yönetici Yetkisi Gerekiyor")
+        lbl_head.get_style_context().add_class("auth-head")
+        vbox.pack_start(lbl_head, False, False, 0)
+        
+        lbl_sub = Gtk.Label(xalign=0)
+        lbl_sub.set_text("Sistem hizmetlerini yönetmek için yönetici (sudo) şifrenizi girin.")
+        lbl_sub.get_style_context().add_class("auth-sub")
+        lbl_sub.set_line_wrap(True)
+        vbox.pack_start(lbl_sub, False, False, 0)
+        
+        h_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        vbox.pack_start(h_row, False, False, 0)
+        
+        self.entry_pwd = Gtk.Entry()
+        self.entry_pwd.set_visibility(False)
+        self.entry_pwd.set_placeholder_text("Yönetici şifresi")
+        self.entry_pwd.set_activates_default(True)
+        h_row.pack_start(self.entry_pwd, True, True, 0)
+        
+        self.chk_show = Gtk.CheckButton(label="Şifreyi Göster")
+        self.chk_show.connect("toggled", self._on_show_toggled)
+        vbox.pack_start(self.chk_show, False, False, 0)
+        
+        self.lbl_error = Gtk.Label(xalign=0)
+        self.lbl_error.get_style_context().add_class("error-text")
+        vbox.pack_start(self.lbl_error, False, False, 0)
+        
+        self.set_default_response(Gtk.ResponseType.OK)
+        self.connect("response", self._on_response)
+        
+        self.show_all()
+
+    def _on_show_toggled(self, widget):
+        self.entry_pwd.set_visibility(widget.get_active())
+
+    def _on_response(self, dialog, response_id):
+        if response_id == Gtk.ResponseType.OK:
+            pwd = self.entry_pwd.get_text()
+            self.lbl_error.set_text("")
+            
+            self.set_sensitive(False)
+            valid = self.manager.verify_sudo_password(pwd)
+            self.set_sensitive(True)
+            
+            if valid:
+                self.success = True
+                self.entered_password = pwd
+            else:
+                self.lbl_error.set_markup("<span foreground='#dc3545'>Hatalı şifre! Lütfen tekrar deneyin.</span>")
+                dialog.stop_emission_by_name("response")
+
+
 class Controller:
     def __init__(self, window):
         self.window = window
@@ -272,6 +348,21 @@ class Controller:
 
     def set_status(self, text):
         self.status_label.set_text(text)
+
+    def _ensure_auth(self):
+        if self.manager.password is not None:
+            return True
+            
+        dlg = PasswordDialog(self.window, self.manager)
+        dlg.run()
+        success = dlg.success
+        pwd = dlg.entered_password
+        dlg.destroy()
+        
+        if success and pwd is not None:
+            self.manager.password = pwd
+            return True
+        return False
 
     def _build_ui(self):
         main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -635,6 +726,9 @@ class Controller:
         dlg.destroy()
         
         if resp == Gtk.ResponseType.YES:
+            if not self._ensure_auth():
+                self.set_status("Yetkilendirme iptal edildi.")
+                return
             self.set_status(f"'{name}' hizmeti kapatılıyor...")
             def task():
                 ok1, msg1 = self.manager.disable_service(name)
@@ -685,6 +779,10 @@ class Controller:
         dlg.destroy()
         
         if resp != Gtk.ResponseType.YES:
+            return
+            
+        if not self._ensure_auth():
+            self.set_status("Yetkilendirme iptal edildi.")
             return
             
         self._run_quick_optimize_batch(services_to_disable)
@@ -1584,6 +1682,10 @@ class Controller:
                      "start": "Başlatma", "stop": "Durdurma",
                      "mask": "Maskeleme", "unmask": "Maske kaldırma"}.get(action, action)
                      
+        if not self._ensure_auth():
+            self.set_status("Yetkilendirme iptal edildi.")
+            return
+            
         self.set_status(f"'{name}' için {action_tr} eylemi başlatıldı...")
         
         def task():
@@ -1945,6 +2047,10 @@ class Controller:
             info.destroy()
             return
             
+        if not self._ensure_auth():
+            self.set_status("Yetkilendirme iptal edildi.")
+            return
+            
         self._run_profile_batch(enable_list, disable_list)
 
     def _on_apply_custom_profile_clicked(self, button, fpath):
@@ -1986,6 +2092,10 @@ class Controller:
                 
         if not enable_list and not disable_list:
             self.set_status("Sistem zaten bu profile uygun durumda.")
+            return
+            
+        if not self._ensure_auth():
+            self.set_status("Yetkilendirme iptal edildi.")
             return
             
         self._run_profile_batch(enable_list, disable_list)
