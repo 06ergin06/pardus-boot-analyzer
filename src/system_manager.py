@@ -51,6 +51,20 @@ class SystemManager:
         )
         return result.returncode == 0, result.stdout + result.stderr
 
+    def start_service(self, name):
+        result = subprocess.run(
+            ["systemctl", "start", name],
+            capture_output=True, text=True
+        )
+        return result.returncode == 0, result.stdout + result.stderr
+
+    def stop_service(self, name):
+        result = subprocess.run(
+            ["systemctl", "stop", name],
+            capture_output=True, text=True
+        )
+        return result.returncode == 0, result.stdout + result.stderr
+
     def mask_service(self, name):
         result = subprocess.run(
             ["systemctl", "mask", name],

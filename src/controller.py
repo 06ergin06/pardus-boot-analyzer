@@ -142,6 +142,8 @@ class Controller:
         self.builder.get_object("btn_refresh").connect("clicked", self.load_all)
         self.builder.get_object("btn_enable").connect("clicked", self._on_enable)
         self.builder.get_object("btn_disable").connect("clicked", self._on_disable)
+        self.builder.get_object("btn_start").connect("clicked", self._on_start)
+        self.builder.get_object("btn_stop").connect("clicked", self._on_stop)
         self.builder.get_object("btn_mask").connect("clicked", self._on_mask)
         self.builder.get_object("btn_unmask").connect("clicked", self._on_unmask)
         self.builder.get_object("btn_show_log").connect("clicked", self._on_show_log)
@@ -311,6 +313,8 @@ class Controller:
             try:
                 m = {"enable": self.manager.enable_service,
                      "disable": self.manager.disable_service,
+                     "start": self.manager.start_service,
+                     "stop": self.manager.stop_service,
                      "mask": self.manager.mask_service,
                      "unmask": self.manager.unmask_service}
                 fn = m.get(action)
@@ -324,6 +328,20 @@ class Controller:
         self.set_status(msg)
         if ok and cb:
             cb()
+
+    def _on_start(self, *args):
+        n = self._get_selected_name()
+        if n:
+            self._run_systemctl("start", n, self.load_all)
+        else:
+            self.set_status("Bir servis secin.")
+
+    def _on_stop(self, *args):
+        n = self._get_selected_name()
+        if n:
+            self._run_systemctl("stop", n, self.load_all)
+        else:
+            self.set_status("Bir servis secin.")
 
     def _on_enable(self, *args):
         n = self._get_selected_name()
