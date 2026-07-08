@@ -116,3 +116,22 @@ class SystemManager:
             if parts:
                 services.append({"name": parts[0], "state": parts[1] if len(parts) > 1 else "masked"})
         return services
+
+    def get_device_units(self):
+        output = subprocess.check_output(
+            ["systemctl", "list-units", "--type=device", "--all", "--no-pager", "--no-legend"],
+            text=True
+        )
+        units = []
+        for line in output.strip().splitlines():
+            line = line.strip().lstrip("\u25cf").strip()
+            parts = line.split()
+            if len(parts) >= 4:
+                units.append({
+                    "name": parts[0],
+                    "load": parts[1],
+                    "active": parts[2],
+                    "sub": parts[3],
+                    "description": " ".join(parts[4:]) if len(parts) > 4 else ""
+                })
+        return units

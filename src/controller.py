@@ -41,6 +41,12 @@ TIP_MAP = {
     3: "gerekli",
 }
 
+VIEW_MAP = {
+    0: "services",
+    1: "disabled",
+    2: "devices",
+}
+
 
 def parse_blame_time(time_str):
     if not time_str:
@@ -99,10 +105,12 @@ class Controller:
 
         self._all_data = []
         self._all_data_map = {}
+        self._all_device_data = []
         self._status_filter = "all"
         self._tip_filter = "all"
         self._search_text = ""
         self._debounce_id = 0
+        self._updating_toggles = False
 
         self.liststore = builder.get_object("service_liststore")
         self.treeview = builder.get_object("service_treeview")
@@ -113,10 +121,14 @@ class Controller:
         self.status_label = builder.get_object("status_label")
         self.filter_combo = builder.get_object("filter_combo")
         self.tip_combo = builder.get_object("tip_combo")
+        self.view_combo = builder.get_object("view_combo")
         self.detail_name = builder.get_object("detail_name")
         self.detail_desc = builder.get_object("detail_desc")
         self.detail_suggestion = builder.get_object("detail_suggestion")
         self.main_window = builder.get_object("main_window")
+        self.btn_toggle_enable = builder.get_object("btn_toggle_enable")
+        self.btn_toggle_run = builder.get_object("btn_toggle_run")
+        self.btn_toggle_mask = builder.get_object("btn_toggle_mask")
 
         self._load_css()
         self._connect_signals()
@@ -140,17 +152,15 @@ class Controller:
 
     def _connect_signals(self):
         self.builder.get_object("btn_refresh").connect("clicked", self.load_all)
-        self.builder.get_object("btn_enable").connect("clicked", self._on_enable)
-        self.builder.get_object("btn_disable").connect("clicked", self._on_disable)
-        self.builder.get_object("btn_start").connect("clicked", self._on_start)
-        self.builder.get_object("btn_stop").connect("clicked", self._on_stop)
-        self.builder.get_object("btn_mask").connect("clicked", self._on_mask)
-        self.builder.get_object("btn_unmask").connect("clicked", self._on_unmask)
+        self.btn_toggle_enable.connect("toggled", self._on_toggle_enable)
+        self.btn_toggle_run.connect("toggled", self._on_toggle_run)
+        self.btn_toggle_mask.connect("toggled", self._on_toggle_mask)
         self.builder.get_object("btn_show_log").connect("clicked", self._on_show_log)
         self.search_entry.connect("changed", self._on_search_changed)
         self.selection.connect("changed", self._on_selection_changed)
         self.filter_combo.connect("changed", self._on_filter_changed)
         self.tip_combo.connect("changed", self._on_tip_changed)
+        self.view_combo.connect("changed", self._on_view_changed)
 
     def load_all(self, *args):
         self.liststore.clear()
@@ -210,17 +220,33 @@ class Controller:
         return False
 
     def _update_count_label(self):
+        view = VIEW_MAP.get(self.view_combo.get_active(), "services")
         n = len(self.liststore)
-        t = len(self._all_data)
+        if view == "devices":
+            t = len(self._all_device_data)
+        else:
+            t = len(self._all_data)
         self.service_count_label.set_text(f"{n} servis" if n == t else f"{n}/{t} servis")
 
     def _apply_filters(self):
         self.liststore.clear()
+        self._updating_toggles = True
+        self.btn_toggle_enable.set_active(False)
+        self.btn_toggle_run.set_active(False)
+        self.btn_toggle_mask.set_active(False)
+        self._updating_toggles = False
+
+        view = VIEW_MAP.get(self.view_combo.get_active(), "services")
+
+        if view == "devices":
+            self._do_load_devices()
+            return
+
         q = self._search_text.lower()
         for d in self._all_data:
             if q and q not in d["name"].lower():
                 continue
-            if not self._matches_status(d["active"], d["sub"]):
+            if not self._matches_status(d["active"], d["sub"], view):
                 continue
             if self._tip_filter != "all" and d["tip"] != self._tip_filter:
                 continue
@@ -236,7 +262,43 @@ class Controller:
             ])
         self._update_count_label()
 
-    def _matches_status(self, active, sub):
+    def _do_load_devices(self):
+        try:
+            devs = self.manager.get_device_units()
+        except Exception as e:
+            self.set_status(f"Aygit hatasi: {e}")
+            self._update_count_label()
+            return
+        self._all_device_data = []
+        for d in devs:
+            desc = d.get("description", "")
+            self._all_device_data.append({
+                "name": d["name"],
+                "active": d["active"],
+                "sub": d["sub"],
+                "time_str": "",
+                "seconds": 0,
+                "desc": desc,
+                "tip": "",
+                "oneri": "",
+            })
+        self.set_status("")
+        for d in self._all_device_data:
+            self.liststore.append([
+                d["name"],
+                make_status_markup(d["active"]),
+                d["sub"],
+                d["time_str"],
+                d["desc"],
+                d["tip"],
+                d["oneri"],
+                "",
+            ])
+        self._update_count_label()
+
+    def _matches_status(self, active, sub, view="services"):
+        if view == "disabled":
+            return sub == "disabled" or active == "inactive"
         f = self._status_filter
         if f == "all":
             return True
@@ -249,6 +311,9 @@ class Controller:
         if f == "masked":
             return sub == "masked"
         return True
+
+    def _on_view_changed(self, *args):
+        self._apply_filters()
 
     def _on_filter_changed(self, *args):
         self._status_filter = FILTER_MAP.get(self.filter_combo.get_active(), "all")
@@ -278,6 +343,7 @@ class Controller:
             self.detail_name.set_text("Servis secilmedi")
             self.detail_desc.set_text("Bir servis secin.")
             self.detail_suggestion.set_text("")
+            self._set_toggle_sensitive(False)
             return
 
         d = self._all_data_map.get(r[0])
@@ -307,6 +373,95 @@ class Controller:
         else:
             self.detail_suggestion.set_text("")
 
+        self._update_toggle_buttons(r[0], d)
+
+    def _set_toggle_sensitive(self, sensitive):
+        self.btn_toggle_enable.set_sensitive(sensitive)
+        self.btn_toggle_run.set_sensitive(sensitive)
+        self.btn_toggle_mask.set_sensitive(sensitive)
+
+    def _update_toggle_buttons(self, name, d=None):
+        if d is None:
+            d = self._all_data_map.get(name)
+        if d is None:
+            self._set_toggle_sensitive(False)
+            return
+
+        view = VIEW_MAP.get(self.view_combo.get_active(), "services")
+        if view == "devices":
+            self._set_toggle_sensitive(False)
+            return
+
+        self._set_toggle_sensitive(True)
+        sub = d["sub"]
+        active = d["active"]
+
+        self._updating_toggles = True
+        self.btn_toggle_enable.set_active(sub == "enabled")
+        self.btn_toggle_run.set_active(active == "active")
+        self.btn_toggle_mask.set_active(sub == "masked")
+        self._updating_toggles = False
+
+        if sub in ("static", "indirect"):
+            self.btn_toggle_enable.set_sensitive(False)
+        if sub == "masked":
+            self.btn_toggle_enable.set_sensitive(False)
+            self.btn_toggle_run.set_sensitive(False)
+        if active in ("activating", "deactivating"):
+            self.btn_toggle_run.set_sensitive(False)
+
+    def _get_toggle_action(self, toggle, active_true, active_false):
+        if self._updating_toggles:
+            return None
+        action = active_true if toggle.get_active() else active_false
+        n = self._get_selected_name()
+        if not n:
+            self.set_status("Bir servis secin.")
+            toggle.set_active(not toggle.get_active())
+            return None
+        return (action, n)
+
+    def _on_toggle_enable(self, toggle, *args):
+        r = self._get_toggle_action(toggle, "enable", "disable")
+        if r:
+            self._run_systemctl(r[0], r[1], self.load_all)
+
+    def _on_toggle_run(self, toggle, *args):
+        r = self._get_toggle_action(toggle, "start", "stop")
+        if r:
+            self._run_systemctl(r[0], r[1], self.load_all)
+
+    def _on_toggle_mask(self, toggle, *args):
+        if self._updating_toggles:
+            return
+        action = "mask" if toggle.get_active() else "unmask"
+        n = self._get_selected_name()
+        if not n:
+            self.set_status("Bir servis secin.")
+            toggle.set_active(not toggle.get_active())
+            return
+
+        if action == "mask":
+            d = self._all_data_map.get(n)
+            tip = d["tip"] if d else ""
+            warn = ("\n\nBu servis sistem icin KRITIK olarak isaretlenmistir. "
+                    "Kapatmaniz sorunlara yol acabilir!") if tip == "kritik" else ""
+            dlg = Gtk.MessageDialog(
+                parent=self.main_window, flags=Gtk.DialogFlags.MODAL,
+                type=Gtk.MessageType.WARNING if tip == "kritik" else Gtk.MessageType.QUESTION,
+                buttons=Gtk.ButtonsType.YES_NO,
+                message_format=f"'{n}' servisini maskelemek istiyor musunuz?"
+            )
+            if warn:
+                dlg.format_secondary_text(warn)
+            resp = dlg.run()
+            dlg.destroy()
+            if resp != Gtk.ResponseType.YES:
+                toggle.set_active(False)
+                return
+
+        self._run_systemctl(action, n, self.load_all)
+
     def _run_systemctl(self, action, name, cb):
         self.set_status(f"{action} baslatildi...")
         def task():
@@ -325,66 +480,12 @@ class Controller:
         threading.Thread(target=task, daemon=True).start()
 
     def _on_cmd_done(self, ok, msg, cb):
-        self.set_status(msg)
-        if ok and cb:
-            cb()
-
-    def _on_start(self, *args):
-        n = self._get_selected_name()
-        if n:
-            self._run_systemctl("start", n, self.load_all)
-        else:
-            self.set_status("Bir servis secin.")
-
-    def _on_stop(self, *args):
-        n = self._get_selected_name()
-        if n:
-            self._run_systemctl("stop", n, self.load_all)
-        else:
-            self.set_status("Bir servis secin.")
-
-    def _on_enable(self, *args):
-        n = self._get_selected_name()
-        if n:
-            self._run_systemctl("enable", n, self.load_all)
-        else:
-            self.set_status("Bir servis secin.")
-
-    def _on_disable(self, *args):
-        n = self._get_selected_name()
-        if n:
-            self._run_systemctl("disable", n, self.load_all)
-        else:
-            self.set_status("Bir servis secin.")
-
-    def _on_mask(self, *args):
-        n = self._get_selected_name()
-        if not n:
-            self.set_status("Bir servis secin.")
+        if not ok:
+            self.set_status(msg)
             return
-        d = self._all_data_map.get(n)
-        tip = d["tip"] if d else ""
-        warn = ("\n\nBu servis sistem icin KRITIK olarak isaretlenmistir. "
-                "Kapatmaniz sorunlara yol acabilir!") if tip == "kritik" else ""
-        dlg = Gtk.MessageDialog(
-            parent=self.main_window, flags=Gtk.DialogFlags.MODAL,
-            type=Gtk.MessageType.WARNING if tip == "kritik" else Gtk.MessageType.QUESTION,
-            buttons=Gtk.ButtonsType.YES_NO,
-            message_format=f"'{n}' servisini maskelemek istiyor musunuz?"
-        )
-        if warn:
-            dlg.format_secondary_text(warn)
-        r = dlg.run()
-        dlg.destroy()
-        if r == Gtk.ResponseType.YES:
-            self._run_systemctl("mask", n, self.load_all)
-
-    def _on_unmask(self, *args):
-        n = self._get_selected_name()
-        if n:
-            self._run_systemctl("unmask", n, self.load_all)
-        else:
-            self.set_status("Bir servis secin.")
+        self.set_status(msg)
+        if cb:
+            cb()
 
     def _on_show_log(self, *args):
         n = self._get_selected_name()
