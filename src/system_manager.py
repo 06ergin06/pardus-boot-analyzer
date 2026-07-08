@@ -7,6 +7,12 @@ import json
 class SystemManager:
     def __init__(self):
         self.password = None
+        self._blame_data_cache = None
+        self._total_boot_time_cache = None
+
+    def clear_cache(self):
+        self._blame_data_cache = None
+        self._total_boot_time_cache = None
 
     # --- Service & Device Management ---
     def get_services(self):
@@ -41,6 +47,8 @@ class SystemManager:
         return states
 
     def get_blame_data(self):
+        if self._blame_data_cache is not None:
+            return self._blame_data_cache
         my_env = os.environ.copy()
         my_env["LC_ALL"] = "C"
         output = subprocess.check_output(["systemd-analyze", "blame"], text=True, env=my_env)
@@ -50,9 +58,12 @@ class SystemManager:
             if len(parts) == 2:
                 time_str, name = parts
                 data.append({"name": name, "time": time_str})
-        return data, output
+        self._blame_data_cache = (data, output)
+        return self._blame_data_cache
 
     def get_total_boot_time(self):
+        if self._total_boot_time_cache is not None:
+            return self._total_boot_time_cache
         my_env = os.environ.copy()
         my_env["LC_ALL"] = "C"
         output = subprocess.check_output(["systemd-analyze"], text=True, env=my_env)
@@ -62,10 +73,13 @@ class SystemManager:
             parts = output.split("=")
             match = re.search(r"([\d.]+(?:s|ms|min))", parts[-1])
             if match:
-                return match.group(1), output.strip()
+                self._total_boot_time_cache = (match.group(1), output.strip())
+                return self._total_boot_time_cache
                 
         match = re.search(r"([\d.]+(?:s|ms|min))", output)
-        return match.group(1) if match else output.strip(), output.strip()
+        res = match.group(1) if match else output.strip()
+        self._total_boot_time_cache = (res, output.strip())
+        return self._total_boot_time_cache
 
     def enable_service(self, name):
         return self._run_auth(["enable", name])

@@ -1315,6 +1315,7 @@ class Controller:
         
         self.detail_name = Gtk.Label(xalign=0)
         self.detail_name.set_markup("<b>Servis seçilmedi</b>")
+        self.detail_name.set_ellipsize(Pango.EllipsizeMode.END)
         v_detail_text.pack_start(self.detail_name, False, False, 0)
         
         self.detail_desc = Gtk.Label(xalign=0)
@@ -1369,6 +1370,7 @@ class Controller:
         return box
 
     def load_all(self, *args):
+        self.manager.clear_cache()
         self._updating_widgets = True
         self.liststore.clear()
         self._all_data_map = {}
