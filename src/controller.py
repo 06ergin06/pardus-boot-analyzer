@@ -26,6 +26,12 @@ STATUS_TR = {
     "deactivating": "Devre Disi",
 }
 
+TIP_TR = {
+    "kritik": "Kapatilmamali",
+    "oneri": "Kapatilabilir",
+    "gerekli": "Gerekli",
+}
+
 
 def parse_blame_time(time_str):
     if not time_str:
@@ -41,36 +47,40 @@ def parse_blame_time(time_str):
             seconds = val / 1000 if unit == "ms" else val
             return minutes * 60 + seconds
         return 0
-    elif time_str.endswith("us"):
+    if time_str.endswith("us"):
         return float(time_str.rstrip("us")) / 1000000
-    elif time_str.endswith("ms"):
+    if time_str.endswith("ms"):
         return float(time_str.rstrip("ms")) / 1000
-    elif time_str.endswith("u"):
+    if time_str.endswith("u"):
         return float(time_str.rstrip("u")) / 1000000
-    elif time_str.endswith("s"):
+    if time_str.endswith("s"):
         return float(time_str.rstrip("s"))
-    elif time_str.endswith("m"):
+    if time_str.endswith("m"):
         return float(time_str.rstrip("m")) * 60
-    elif time_str.endswith("h"):
+    if time_str.endswith("h"):
         return float(time_str.rstrip("h")) * 3600
     return 0
-
-
-def format_time(seconds):
-    if seconds >= 60:
-        m = int(seconds // 60)
-        s = seconds % 60
-        return f"{m}dk {s:.1f}s"
-    elif seconds >= 1:
-        return f"{seconds:.3f}s"
-    else:
-        return f"{int(seconds * 1000)}ms"
 
 
 def make_status_markup(status):
     tr = STATUS_TR.get(status, status)
     color = STATUS_COLORS.get(status, "#000000")
     return f'<span foreground="{color}">\u25cf</span> {tr}'
+
+
+def _is_dark_theme():
+    try:
+        s = Gtk.Settings.get_default()
+        if s.get_property("gtk-application-prefer-dark-theme"):
+            return True
+        name = (s.get_property("gtk-theme-name") or "").lower()
+        if any(w in name for w in ("dark", "black", "night", "adwaita")):
+            if "adwaita" in name:
+                return s.get_property("gtk-application-prefer-dark-theme")
+            return True
+    except Exception:
+        pass
+    return False
 
 
 class Controller:
@@ -80,7 +90,8 @@ class Controller:
 
         self._all_data = []
         self._all_data_map = {}
-        self._current_filter = "all"
+        self._status_filter = "all"
+        self._tip_filter = "all"
         self._search_text = ""
         self._debounce_id = 0
 
@@ -90,7 +101,7 @@ class Controller:
         self.boot_time_label = builder.get_object("boot_time_label")
         self.service_count_label = builder.get_object("service_count_label")
         self.search_entry = builder.get_object("search_entry")
-        self.log_textview = builder.get_object("log_textview")
+        self.status_label = builder.get_object("status_label")
         self.detail_name = builder.get_object("detail_name")
         self.detail_desc = builder.get_object("detail_desc")
         self.detail_suggestion = builder.get_object("detail_suggestion")
@@ -101,9 +112,10 @@ class Controller:
         self.load_all()
 
     def _load_css(self):
+        css_file = "ui/style-dark.css" if _is_dark_theme() else "ui/style.css"
         provider = Gtk.CssProvider()
         try:
-            provider.load_from_path("ui/style.css")
+            provider.load_from_path(css_file)
             Gtk.StyleContext.add_provider_for_screen(
                 Gdk.Screen.get_default(),
                 provider,
@@ -112,11 +124,8 @@ class Controller:
         except Exception:
             pass
 
-        try:
-            settings = Gtk.Settings.get_default()
-            settings.set_property("gtk-application-prefer-dark-theme", False)
-        except Exception:
-            pass
+    def set_status(self, text):
+        self.status_label.set_text(text)
 
     def _connect_signals(self):
         self.builder.get_object("btn_refresh").connect("clicked", self.load_all)
@@ -136,7 +145,17 @@ class Controller:
             ("filter_masked", "masked"),
         ]:
             self.builder.get_object(btn_name).connect(
-                "toggled", self._on_filter_toggled, state
+                "toggled", self._on_status_filter_toggled, state
+            )
+
+        for btn_name, tip in [
+            ("cat_all", "all"),
+            ("cat_kritik", "kritik"),
+            ("cat_oneri", "oneri"),
+            ("cat_gerekli", "gerekli"),
+        ]:
+            self.builder.get_object(btn_name).connect(
+                "toggled", self._on_tip_filter_toggled, tip
             )
 
     def load_all(self, *args):
@@ -146,8 +165,7 @@ class Controller:
         self.detail_desc.set_text("Detaylar icin bir servis secin.")
         self.detail_suggestion.set_text("")
         self.service_count_label.set_text("0 servis")
-        self.log_textview.get_buffer().set_text("Yukleniyor...")
-
+        self.set_status("Yukleniyor...")
         GLib.timeout_add(10, self._do_load)
 
     def _do_load(self):
@@ -161,7 +179,7 @@ class Controller:
                 }
             total_time, _ = self.manager.get_total_boot_time()
         except Exception as e:
-            self.log_textview.get_buffer().set_text(f"Hata: {str(e)}")
+            self.set_status(f"Hata: {str(e)}")
             self.service_count_label.set_text("Hata")
             return False
 
@@ -194,6 +212,7 @@ class Controller:
         self._all_data.sort(key=lambda x: (-x["seconds"], x["name"]))
         self._all_data_map = {d["name"]: d for d in self._all_data}
         self._apply_filters()
+        self.set_status("")
         return False
 
     def _update_count_label(self):
@@ -211,7 +230,9 @@ class Controller:
         for d in self._all_data:
             if query and query not in d["name"].lower():
                 continue
-            if not self._matches_filter(d["active"], d["sub"]):
+            if not self._matches_status_filter(d["active"], d["sub"]):
+                continue
+            if not self._matches_tip_filter(d["tip"]):
                 continue
             markup = make_status_markup(d["active"])
             self.liststore.append([
@@ -227,8 +248,8 @@ class Controller:
 
         self._update_count_label()
 
-    def _matches_filter(self, active_state, sub_state):
-        f = self._current_filter
+    def _matches_status_filter(self, active_state, sub_state):
+        f = self._status_filter
         if f == "all":
             return True
         if f == "active":
@@ -241,13 +262,24 @@ class Controller:
             return sub_state == "masked"
         return True
 
+    def _matches_tip_filter(self, tip):
+        if self._tip_filter == "all":
+            return True
+        return tip == self._tip_filter
+
     def _get_color(self, status):
         return STATUS_COLORS.get(status, "#000000")
 
-    def _on_filter_toggled(self, button, state):
+    def _on_status_filter_toggled(self, button, state):
         if not button.get_active():
             return
-        self._current_filter = state
+        self._status_filter = state
+        self._apply_filters()
+
+    def _on_tip_filter_toggled(self, button, tip):
+        if not button.get_active():
+            return
+        self._tip_filter = tip
         self._apply_filters()
 
     def _on_search_changed(self, *args):
@@ -307,8 +339,7 @@ class Controller:
             self.detail_suggestion.set_text("")
 
     def _run_systemctl(self, action, name, on_success):
-        buf = self.log_textview.get_buffer()
-        buf.set_text(f"{action} islemi baslatildi...\nYetki girisi gerekebilir.")
+        self.set_status(f"{action} islemi baslatildi... Yetki girisi gerekebilir.")
 
         def _task():
             try:
@@ -330,28 +361,28 @@ class Controller:
         threading.Thread(target=_task, daemon=True).start()
 
     def _on_command_done(self, ok, msg, on_success):
-        self.log_textview.get_buffer().set_text(msg)
+        self.set_status(msg)
         if ok and on_success:
             on_success()
 
     def _on_enable(self, *args):
         name = self._get_selected_name()
         if not name:
-            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
+            self.set_status("Lutfen bir servis secin.")
             return
         self._run_systemctl("enable", name, self.load_all)
 
     def _on_disable(self, *args):
         name = self._get_selected_name()
         if not name:
-            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
+            self.set_status("Lutfen bir servis secin.")
             return
         self._run_systemctl("disable", name, self.load_all)
 
     def _on_mask(self, *args):
         name = self._get_selected_name()
         if not name:
-            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
+            self.set_status("Lutfen bir servis secin.")
             return
 
         d = self._all_data_map.get(name)
@@ -378,23 +409,23 @@ class Controller:
     def _on_unmask(self, *args):
         name = self._get_selected_name()
         if not name:
-            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
+            self.set_status("Lutfen bir servis secin.")
             return
         self._run_systemctl("unmask", name, self.load_all)
 
     def _on_show_log(self, *args):
         name = self._get_selected_name()
         if not name:
-            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
+            self.set_status("Lutfen bir servis secin.")
             return
 
-        self.log_textview.get_buffer().set_text("Log yukleniyor...")
+        self.set_status("Log yukleniyor...")
 
         def _task():
             try:
                 log = self.manager.get_journal_log(name)
-                GLib.idle_add(self.log_textview.get_buffer().set_text, log or "Log bulunamadi.")
+                GLib.idle_add(self.set_status, log or "Log bulunamadi.")
             except Exception as e:
-                GLib.idle_add(self.log_textview.get_buffer().set_text, f"Hata: {e}")
+                GLib.idle_add(self.set_status, f"Hata: {e}")
 
         threading.Thread(target=_task, daemon=True).start()

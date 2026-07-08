@@ -19,7 +19,6 @@
             <property name="margin-start">8</property>
             <property name="margin-end">8</property>
             <property name="spacing">8</property>
-            <property name="name">header_box</property>
             <style>
               <class name="header-box"/>
             </style>
@@ -69,23 +68,100 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="filter_box">
+          <object class="GtkBox" id="filter_area">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
             <property name="margin-start">8</property>
             <property name="margin-end">8</property>
-            <property name="margin-top">4</property>
-            <property name="margin-bottom">4</property>
-            <property name="spacing">4</property>
-            <property name="name">filter_box</property>
-            <style>
-              <class name="filter-box"/>
-            </style>
             <child>
-              <object class="GtkLabel" id="filter_label">
+              <object class="GtkBox" id="filter_row1">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Filtre:</property>
+                <property name="spacing">4</property>
+                <property name="margin-top">4</property>
+                <property name="margin-bottom">2</property>
+                <style>
+                  <class name="filter-box"/>
+                </style>
+                <child>
+                  <object class="GtkLabel" id="filter_label">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Durum:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="filter_all">
+                    <property name="label" translatable="yes">Tumu</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="active">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="filter_active">
+                    <property name="label" translatable="yes">Aktif</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="filter_inactive">
+                    <property name="label" translatable="yes">Pasif</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="filter_disabled">
+                    <property name="label" translatable="yes">Devre Disi</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="filter_masked">
+                    <property name="label" translatable="yes">Maskeli</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -94,69 +170,85 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToggleButton" id="filter_all">
-                <property name="label" translatable="yes">Tumu</property>
+              <object class="GtkBox" id="filter_row2">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="active">True</property>
+                <property name="can-focus">False</property>
+                <property name="spacing">4</property>
+                <property name="margin-top">2</property>
+                <property name="margin-bottom">4</property>
+                <style>
+                  <class name="filter-box"/>
+                </style>
+                <child>
+                  <object class="GtkLabel" id="cat_label">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Kategori:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="cat_all">
+                    <property name="label" translatable="yes">Tumu</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="active">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="cat_kritik">
+                    <property name="label" translatable="yes">Kapatilmamali</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="cat_oneri">
+                    <property name="label" translatable="yes">Kapatilabilir</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="cat_gerekli">
+                    <property name="label" translatable="yes">Gerekli</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToggleButton" id="filter_active">
-                <property name="label" translatable="yes">Aktif</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToggleButton" id="filter_inactive">
-                <property name="label" translatable="yes">Pasif</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToggleButton" id="filter_disabled">
-                <property name="label" translatable="yes">Devre Disi</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToggleButton" id="filter_masked">
-                <property name="label" translatable="yes">Maskeli</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">5</property>
               </packing>
             </child>
           </object>
@@ -271,7 +363,6 @@
                             <property name="can-focus">False</property>
                             <property name="orientation">vertical</property>
                             <property name="spacing">2</property>
-                            <property name="name">detail_box</property>
                             <style>
                               <class name="detail-box"/>
                             </style>
@@ -338,7 +429,6 @@
                     <property name="margin-top">4</property>
                     <property name="margin-bottom">4</property>
                     <property name="spacing">6</property>
-                    <property name="name">action_box</property>
                     <style>
                       <class name="action-box"/>
                     </style>
@@ -428,30 +518,30 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScrolledWindow" id="log_scroll">
+                  <object class="GtkBox" id="status_area">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
+                    <property name="can-focus">False</property>
                     <property name="margin-start">8</property>
                     <property name="margin-end">8</property>
-                    <property name="margin-bottom">8</property>
-                    <property name="shadow-type">none</property>
-                    <property name="height-request">80</property>
+                    <property name="margin-bottom">4</property>
                     <child>
-                      <object class="GtkTextView" id="log_textview">
+                      <object class="GtkLabel" id="status_label">
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="editable">False</property>
-                        <property name="wrap-mode">word</property>
-                        <property name="monospace">True</property>
-                        <property name="left-margin">6</property>
-                        <property name="right-margin">6</property>
-                        <property name="top-margin">4</property>
-                        <property name="bottom-margin">4</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"></property>
+                        <property name="halign">start</property>
+                        <property name="xalign">0</property>
+                        <property name="ellipsize">end</property>
                       </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">2</property>
                   </packing>

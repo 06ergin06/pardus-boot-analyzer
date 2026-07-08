@@ -1,5 +1,5 @@
 window {
-    background-color: #f5f6f8;
+    background-color: #1e1e2e;
 }
 
 box {
@@ -15,9 +15,9 @@ frame > border {
 }
 
 treeview {
-    background-color: #ffffff;
+    background-color: #181825;
     font-size: 11pt;
-    color: #202124;
+    color: #cdd6f4;
 }
 
 treeview.view {
@@ -25,108 +25,108 @@ treeview.view {
 }
 
 treeview.view:selected {
-    background-color: #3584e4;
-    color: #ffffff;
+    background-color: #45475a;
+    color: #cdd6f4;
 }
 
 treeview.view:selected:focus {
-    background-color: #3584e4;
-    color: #ffffff;
+    background-color: #45475a;
+    color: #cdd6f4;
 }
 
 treeview.view:selected label {
-    color: #ffffff;
+    color: #cdd6f4;
 }
 
 treeview.view:nth-child(even) {
-    background-color: #f8f9fb;
+    background-color: #1e1e2e;
 }
 
 scrolledwindow {
-    border: 1px solid #dadce0;
+    border: 1px solid #313244;
     border-radius: 6px;
-    background-color: #ffffff;
+    background-color: #181825;
 }
 
 scrolledwindow > scrollbar {
-    background-color: #f1f3f4;
+    background-color: #1e1e2e;
 }
 
 entry {
     min-height: 32px;
-    border: 1px solid #dadce0;
+    border: 1px solid #45475a;
     border-radius: 6px;
-    background-color: #ffffff;
+    background-color: #181825;
     padding: 4px 10px;
     font-size: 11pt;
-    color: #202124;
-    caret-color: #3584e4;
+    color: #cdd6f4;
+    caret-color: #89b4fa;
 }
 
 entry:focus {
-    border-color: #3584e4;
-    box-shadow: 0 0 0 1px #3584e4;
+    border-color: #89b4fa;
+    box-shadow: 0 0 0 1px #89b4fa;
 }
 
 button {
     min-height: 30px;
     padding: 4px 14px;
-    border: 1px solid #dadce0;
+    border: 1px solid #45475a;
     border-radius: 6px;
-    background-color: #ffffff;
-    color: #202124;
+    background-color: #313244;
+    color: #cdd6f4;
     font-size: 10.5pt;
 }
 
 button:hover {
-    background-color: #f1f3f4;
-    border-color: #c4c7cc;
+    background-color: #45475a;
+    border-color: #585b70;
 }
 
 button:active {
-    background-color: #e8eaed;
+    background-color: #585b70;
 }
 
 togglebutton {
     padding: 4px 14px;
-    border: 1px solid #dadce0;
+    border: 1px solid #45475a;
     border-radius: 6px;
-    background-color: #ffffff;
-    color: #202124;
+    background-color: #313244;
+    color: #cdd6f4;
     font-size: 10.5pt;
 }
 
 togglebutton:hover {
-    background-color: #f1f3f4;
+    background-color: #45475a;
 }
 
 togglebutton:checked {
-    background-color: #e8f0fe;
-    border-color: #3584e4;
-    color: #1a73e8;
+    background-color: #1e1e2e;
+    border-color: #89b4fa;
+    color: #89b4fa;
     font-weight: bold;
 }
 
 togglebutton:checked:hover {
-    background-color: #d2e3fc;
+    background-color: #313244;
 }
 
 label {
-    color: #202124;
+    color: #cdd6f4;
 }
 
 label#boot_time_label {
     font-weight: bold;
     font-size: 11pt;
-    color: #202124;
+    color: #cdd6f4;
     padding: 4px;
 }
 
 label#service_count_label {
     font-size: 10pt;
-    color: #5f6368;
+    color: #a6adc8;
     padding: 4px 8px;
-    background-color: #f1f3f4;
+    background-color: #313244;
     border-radius: 12px;
 }
 
@@ -136,7 +136,7 @@ label#detail_name {
 
 label#detail_desc {
     font-size: 10.5pt;
-    color: #444746;
+    color: #bac2de;
 }
 
 label#detail_suggestion {
@@ -145,10 +145,10 @@ label#detail_suggestion {
 
 label#status_label {
     font-size: 9.5pt;
-    color: #5f6368;
+    color: #a6adc8;
     padding: 2px 8px;
-    background-color: #f1f3f4;
-    border: 1px solid #dadce0;
+    background-color: #1e1e2e;
+    border: 1px solid #313244;
     border-radius: 4px;
 }
 
@@ -157,17 +157,17 @@ paned {
 }
 
 paned > separator {
-    background-color: #dadce0;
+    background-color: #313244;
     min-height: 2px;
 }
 
 paned > separator:hover {
-    background-color: #3584e4;
+    background-color: #89b4fa;
 }
 
 .header-box {
-    background-color: #ffffff;
-    border-bottom: 1px solid #dadce0;
+    background-color: #181825;
+    border-bottom: 1px solid #313244;
     padding: 8px;
 }
 
@@ -177,13 +177,13 @@ paned > separator:hover {
 }
 
 .action-box {
-    background-color: #ffffff;
-    border-top: 1px solid #dadce0;
+    background-color: #181825;
+    border-top: 1px solid #313244;
     padding: 6px 8px;
 }
 
 .detail-box {
-    background-color: #ffffff;
+    background-color: #181825;
     border-radius: 0;
     padding: 8px;
 }
