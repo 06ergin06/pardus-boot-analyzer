@@ -154,6 +154,17 @@ class SystemManager:
             ["journalctl", "-u", name, "--no-pager", "-n", str(lines)],
             capture_output=True, text=True
         )
+        out = result.stdout.strip()
+        if (not out or "-- no entries --" in out.lower() or "permission" in out.lower()) and self.password is not None:
+            try:
+                res = subprocess.run(
+                    ["sudo", "-S", "journalctl", "-u", name, "--no-pager", "-n", str(lines)],
+                    input=self.password, capture_output=True, text=True
+                )
+                if res.returncode == 0:
+                    return res.stdout
+            except Exception:
+                pass
         return result.stdout if result.returncode == 0 else result.stderr
 
     def get_device_units(self):

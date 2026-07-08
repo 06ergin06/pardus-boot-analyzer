@@ -6,25 +6,22 @@ from src.controller import Controller
 class PardusAboutDialog(Gtk.Dialog):
     def __init__(self, parent):
         super().__init__(parent=parent, flags=Gtk.DialogFlags.MODAL)
-        self.set_default_size(420, 320)
+        self.set_default_size(420, 360)
         self.set_resizable(False)
         
         # HeaderBar for the about dialog itself
         hb = Gtk.HeaderBar()
         hb.set_show_close_button(True)
+        hb.set_title("Hakkında")
         self.set_titlebar(hb)
         
-        # Stack switcher at the top center of the HeaderBar
-        stack = Gtk.Stack()
-        stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
-        stack.set_transition_duration(200)
-        
-        switcher = Gtk.StackSwitcher()
-        switcher.set_stack(stack)
-        hb.set_custom_title(switcher)
+        # Stack
+        self.stack = Gtk.Stack()
+        self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
+        self.stack.set_transition_duration(300)
         
         # --- Tab 1: Hakkında (About) ---
-        vbox1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        vbox1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         vbox1.set_margin_start(24)
         vbox1.set_margin_end(24)
         vbox1.set_margin_top(16)
@@ -32,7 +29,7 @@ class PardusAboutDialog(Gtk.Dialog):
         
         # Icon
         img = Gtk.Image.new_from_icon_name("utilities-system-monitor", Gtk.IconSize.DIALOG)
-        vbox1.pack_start(img, False, False, 10)
+        vbox1.pack_start(img, False, False, 8)
         
         # Title
         lbl_title = Gtk.Label()
@@ -52,12 +49,12 @@ class PardusAboutDialog(Gtk.Dialog):
         # Website link
         lbl_web = Gtk.Label()
         lbl_web.set_markup("<a href='https://github.com/06ergin06/pardus-boot-analyzer'>Web sitesi</a>")
-        vbox1.pack_start(lbl_web, False, False, 6)
+        vbox1.pack_start(lbl_web, False, False, 4)
         
         # Copyright
         lbl_copy = Gtk.Label(label="© 2026 TÜBİTAK BİLGEM")
         lbl_copy.get_style_context().add_class("dim-label")
-        vbox1.pack_start(lbl_copy, False, False, 4)
+        vbox1.pack_start(lbl_copy, False, False, 2)
         
         # License Disclaimer
         lbl_license = Gtk.Label()
@@ -67,9 +64,14 @@ class PardusAboutDialog(Gtk.Dialog):
         )
         lbl_license.set_justify(Gtk.Justification.CENTER)
         lbl_license.set_line_wrap(True)
-        vbox1.pack_start(lbl_license, False, False, 6)
+        vbox1.pack_start(lbl_license, False, False, 4)
         
-        stack.add_titled(vbox1, "about", "Hakkında")
+        # Credits button
+        btn_show_credits = Gtk.Button(label="Hazırlayanlar")
+        btn_show_credits.connect("clicked", self._on_credits_clicked)
+        vbox1.pack_start(btn_show_credits, False, False, 8)
+        
+        self.stack.add_named(vbox1, "about")
         
         # --- Tab 2: Hazırlayanlar (Credits) ---
         vbox2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -78,12 +80,25 @@ class PardusAboutDialog(Gtk.Dialog):
         vbox2.set_margin_top(16)
         vbox2.set_margin_bottom(16)
         
+        # Back Header
+        h_nav = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        btn_back = Gtk.Button()
+        btn_back.set_image(Gtk.Image.new_from_icon_name("go-previous-symbolic", Gtk.IconSize.BUTTON))
+        btn_back.set_relief(Gtk.ReliefStyle.NONE)
+        btn_back.connect("clicked", self._on_back_clicked)
+        h_nav.pack_start(btn_back, False, False, 0)
+        
+        lbl_credits_title = Gtk.Label()
+        lbl_credits_title.set_markup("<span size='medium' weight='bold'>Hazırlayanlar</span>")
+        h_nav.pack_start(lbl_credits_title, False, False, 0)
+        vbox2.pack_start(h_nav, False, False, 4)
+        
         # Credits grid
         grid = Gtk.Grid()
         grid.set_column_spacing(18)
         grid.set_row_spacing(10)
         grid.set_halign(Gtk.Align.CENTER)
-        vbox2.pack_start(grid, True, True, 20)
+        vbox2.pack_start(grid, True, True, 10)
         
         # Row 0: Oluşturan
         lbl_cr_title = Gtk.Label(xalign=1)
@@ -115,12 +130,20 @@ class PardusAboutDialog(Gtk.Dialog):
         lbl_gr_val.set_text("İbrahim Hakkı Ergin")
         grid.attach(lbl_gr_val, 1, 2, 1, 1)
         
-        stack.add_titled(vbox2, "credits", "Hazırlayanlar")
+        self.stack.add_named(vbox2, "credits")
         
         content = self.get_content_area()
-        content.pack_start(stack, True, True, 0)
+        content.pack_start(self.stack, True, True, 0)
         
         self.show_all()
+
+    def _on_credits_clicked(self, button):
+        self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
+        self.stack.set_visible_child_name("credits")
+
+    def _on_back_clicked(self, button):
+        self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_DOWN)
+        self.stack.set_visible_child_name("about")
 
 class PardusBootManager:
     def __init__(self):
@@ -136,9 +159,19 @@ class PardusBootManager:
         hb.set_subtitle("Sistem Açılış Analiz ve Optimizasyon Aracı")
         self.window.set_titlebar(hb)
         
+        # Sol üst köşede Pardus logosu
+        icon_theme = Gtk.IconTheme.get_default()
+        if icon_theme.has_icon("pardus"):
+            img_logo = Gtk.Image.new_from_icon_name("pardus", Gtk.IconSize.MENU)
+        else:
+            img_logo = Gtk.Image.new_from_icon_name("system-run", Gtk.IconSize.MENU)
+        img_logo.set_margin_start(6)
+        img_logo.set_margin_end(6)
+        hb.pack_start(img_logo)
+        
         # Add About button to HeaderBar
         btn_about = Gtk.Button()
-        btn_about.set_image(Gtk.Image.new_from_icon_name("help-about", Gtk.IconSize.BUTTON))
+        btn_about.set_image(Gtk.Image.new_from_icon_name("dialog-information", Gtk.IconSize.BUTTON))
         btn_about.set_tooltip_text("Hakkında")
         btn_about.connect("clicked", self._on_about_clicked)
         hb.pack_end(btn_about)

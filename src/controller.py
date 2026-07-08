@@ -1021,7 +1021,7 @@ class Controller:
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(12)
         cr.move_to(50, y + 15)
-        cr.show_text("3. Başlangıç Optimizasyonu Önerileri")
+        cr.show_text("3. En Yavaş Başlayan 5 Hizmet")
         
         cr.set_source_rgb(0.8, 0.8, 0.8)
         cr.move_to(50, y + 22)
@@ -1030,6 +1030,27 @@ class Controller:
         
         enabled_map = self.manager.get_unit_file_states()
         blame_list, _ = self.manager.get_blame_data()
+        
+        y += 38
+        cr.set_source_rgb(0.3, 0.3, 0.3)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        cr.set_font_size(10)
+        
+        for item in blame_list[:5]:
+            cr.move_to(70, y); cr.show_text(f"•  {item['name']}:")
+            cr.move_to(350, y); cr.show_text(item['time'])
+            y += 16
+            
+        cr.set_source_rgb(0.2, 0.2, 0.2)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.set_font_size(12)
+        cr.move_to(50, y + 15)
+        cr.show_text("4. Başlangıç Optimizasyonu Önerileri")
+        
+        cr.set_source_rgb(0.8, 0.8, 0.8)
+        cr.move_to(50, y + 22)
+        cr.line_to(545, y + 22)
+        cr.stroke()
         
         optimizable_services = []
         total_savings_sec = 0.0
