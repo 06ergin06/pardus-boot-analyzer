@@ -1,27 +1,29 @@
-/* Light Theme Stylesheet */
+/* GNOME / Adwaita Native System Integration Stylesheet */
+
 window {
-    background-color: #f6f8fa;
+    background-color: @theme_bg_color;
+    color: @theme_fg_color;
 }
 
-/* Sidebar Styling */
+/* Sidebar Styling matching GNOME Settings navigation sidebar */
 .sidebar {
-    background-color: #ffffff;
-    border-right: 1px solid #e1e4e6;
-    padding: 18px 8px;
+    background-color: shade(@theme_bg_color, 0.96);
+    border-right: 1px solid shade(@theme_bg_color, 0.90);
+    padding: 16px 6px;
 }
 
 .sidebar-title {
-    font-size: 15pt;
+    font-size: 14pt;
     font-weight: 800;
-    color: #17a2b8; /* Pardus-like cyan/teal */
+    color: @theme_selected_bg_color;
     margin-bottom: 2px;
 }
 
 .sidebar-subtitle {
-    font-size: 9pt;
+    font-size: 8.5pt;
     font-weight: bold;
-    color: #6c757d;
-    margin-bottom: 24px;
+    color: mix(@theme_fg_color, @theme_bg_color, 0.5);
+    margin-bottom: 20px;
 }
 
 .sidebar-list {
@@ -30,266 +32,148 @@ window {
 }
 
 .sidebar-row {
-    border-radius: 8px;
-    margin-bottom: 4px;
-    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 3px;
+    padding: 8px 12px;
     background-color: transparent;
-    transition: all 0.2s ease;
+    color: @theme_fg_color;
 }
 
 .sidebar-row:hover {
-    background-color: #f1f3f5;
+    background-color: alpha(@theme_fg_color, 0.05);
 }
 
 .sidebar-row:selected {
-    background-color: #e3f2fd;
-    color: #0d6efd;
-    font-weight: bold;
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
 }
 
 .sidebar-row:selected label {
-    color: #0d6efd;
-}
-
-.sidebar-item-box {
-    spacing: 12px;
+    color: @theme_selected_fg_color;
 }
 
 .sidebar-item-label {
-    font-size: 10.5pt;
+    font-size: 10pt;
+    font-weight: 500;
 }
 
-/* Content Area Styling */
+/* Content Area */
 .content-title {
-    font-size: 18pt;
+    font-size: 16pt;
     font-weight: bold;
-    color: #212529;
+    color: @theme_fg_color;
     margin-bottom: 4px;
 }
 
 .content-subtitle {
-    font-size: 10pt;
-    color: #6c757d;
+    font-size: 9.5pt;
+    color: mix(@theme_fg_color, @theme_bg_color, 0.6);
     margin-bottom: 16px;
 }
 
-/* Card Widget Styling */
+/* Card Widget (GNOME Card style) */
 .card {
-    background-color: #ffffff;
-    border: 1px solid #e1e4e6;
-    border-radius: 10px;
+    background-color: @theme_base_color;
+    border: 1px solid shade(@theme_bg_color, 0.92);
+    border-radius: 8px;
     padding: 16px;
     margin-bottom: 12px;
 }
 
 .card-title {
-    font-size: 12pt;
+    font-size: 11pt;
     font-weight: bold;
-    color: #343a40;
+    color: @theme_fg_color;
     margin-bottom: 10px;
 }
 
-/* Boot Summary Dashboard */
+/* Boot circle */
 .boot-circle-container {
-    background-color: #f8f9fa;
-    border: 2px solid #e9ecef;
+    background-color: shade(@theme_bg_color, 0.97);
+    border: 2px solid shade(@theme_bg_color, 0.92);
     border-radius: 50%;
-    min-width: 140px;
-    min-height: 140px;
+    min-width: 130px;
+    min-height: 130px;
     margin: 12px;
 }
 
 .boot-time-value {
-    font-size: 26pt;
+    font-size: 24pt;
     font-weight: 800;
-    color: #dc3545; /* Red accent for boot time */
+    color: @theme_selected_bg_color;
 }
 
 .boot-time-label {
-    font-size: 9pt;
-    color: #6c757d;
+    font-size: 8.5pt;
+    color: mix(@theme_fg_color, @theme_bg_color, 0.5);
 }
 
-/* Custom Progress Bar for Blame */
+/* Custom progress bars */
 .blame-row {
-    padding: 6px 0;
-}
-
-.blame-progress-bg {
-    background-color: #e9ecef;
-    border-radius: 4px;
-    min-height: 8px;
-}
-
-.blame-progress-fill {
-    background-color: #ffc107;
-    border-radius: 4px;
-    min-height: 8px;
+    padding: 4px 0;
 }
 
 .badge-slow {
-    background-color: #fff3cd;
-    color: #856404;
+    background-color: alpha(@theme_selected_bg_color, 0.15);
+    color: @theme_selected_bg_color;
     font-size: 8.5pt;
     font-weight: bold;
     padding: 2px 6px;
     border-radius: 4px;
 }
 
-/* Autostart Card List */
+/* Autostart applications rows */
 .autostart-row {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    padding: 12px 16px;
+    background-color: @theme_base_color;
+    border: 1px solid shade(@theme_bg_color, 0.92);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    padding: 10px 14px;
 }
 
 .autostart-row:hover {
-    border-color: #ced4da;
-    background-color: #f8f9fa;
+    background-color: shade(@theme_base_color, 0.98);
 }
 
-/* Profile Section Styling */
+/* Profile Presets */
 .profile-card {
-    background-color: #ffffff;
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
-    padding: 20px;
-    transition: all 0.2s ease;
-}
-
-.profile-card:hover {
-    border-color: #0d6efd;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.profile-title {
-    font-size: 13pt;
-    font-weight: bold;
-    color: #212529;
-}
-
-.profile-desc {
-    font-size: 9.5pt;
-    color: #495057;
-}
-
-/* Treeview and scrolled window adjustments */
-scrolledwindow {
-    border: 1px solid #e1e4e6;
+    background-color: @theme_base_color;
+    border: 1px solid shade(@theme_bg_color, 0.92);
     border-radius: 8px;
-    background-color: #ffffff;
-}
-
-treeview {
-    background-color: #ffffff;
-    color: #212529;
-}
-
-treeview.view:selected {
-    background-color: #0d6efd;
-    color: #ffffff;
-}
-
-/* Button & Entry styling */
-button {
-    min-height: 32px;
-    padding: 4px 16px;
-    border-radius: 6px;
-    background-color: #ffffff;
-    border: 1px solid #ced4da;
-    color: #212529;
-    font-weight: 500;
-}
-
-button:hover {
-    background-color: #f8f9fa;
-    border-color: #b0b4b8;
-}
-
-button.primary {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-    color: #ffffff;
-}
-
-button.primary:hover {
-    background-color: #0b5ed7;
-}
-
-button.danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    color: #ffffff;
-}
-
-button.danger:hover {
-    background-color: #bb2d3b;
-}
-
-button.warning {
-    background-color: #ffc107;
-    border-color: #ffc107;
-    color: #212529;
-}
-
-button.warning:hover {
-    background-color: #ffca2c;
-}
-
-button.success {
-    background-color: #198754;
-    border-color: #198754;
-    color: #ffffff;
-}
-
-button.success:hover {
-    background-color: #157347;
-}
-
-entry {
-    min-height: 34px;
-    border-radius: 6px;
-    border: 1px solid #ced4da;
-    padding: 4px 10px;
-    background-color: #ffffff;
-}
-
-entry:focus {
-    border-color: #86b7fe;
-}
-
-/* Details area */
-.detail-box {
-    background-color: #f8f9fa;
-    border-top: 1px solid #e1e4e6;
     padding: 16px;
 }
 
-.monospaced-log {
-    font-family: monospace;
-    font-size: 9.5pt;
-    background-color: #1e1e1e;
-    color: #f8f8f2;
-    padding: 10px;
-    border-radius: 6px;
+.profile-card:hover {
+    border-color: @theme_selected_bg_color;
+}
+
+.profile-title {
+    font-size: 11pt;
+    font-weight: bold;
+    color: @theme_fg_color;
+}
+
+.profile-desc {
+    font-size: 9pt;
+    color: mix(@theme_fg_color, @theme_bg_color, 0.6);
 }
 
 /* Auth Dialog Styling */
 .auth-dialog {
-    background-color: #ffffff;
+    background-color: @theme_bg_color;
 }
+
 .auth-head {
-    font-size: 15px;
+    font-size: 13pt;
     font-weight: bold;
-    color: #212529;
+    color: @theme_fg_color;
 }
+
 .auth-sub {
-    font-size: 12px;
-    color: #495057;
+    font-size: 9.5pt;
+    color: mix(@theme_fg_color, @theme_bg_color, 0.6);
 }
+
 .error-text {
-    font-size: 11px;
-    color: #dc3545;
+    font-size: 9.5pt;
 }
