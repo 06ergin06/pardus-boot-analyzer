@@ -70,16 +70,15 @@ class SystemManager:
         return self._run_auth(["unmask", name])
 
     def _run_auth(self, args):
-        # Run using pkexec
+        # Run using pkexec without redirecting output so it can access terminal TTY if needed
         try:
             result = subprocess.run(
-                ["pkexec", "systemctl"] + args,
-                capture_output=True, text=True
+                ["pkexec", "systemctl"] + args
             )
             if result.returncode == 0:
                 return True, "İşlem başarılı."
             else:
-                return False, result.stderr or result.stdout
+                return False, "Yetkilendirme başarısız oldu veya işlem iptal edildi."
         except FileNotFoundError:
             pass
         
@@ -298,13 +297,12 @@ class SystemManager:
         shell_cmd = " && ".join(commands)
         try:
             result = subprocess.run(
-                ["pkexec", "sh", "-c", shell_cmd],
-                capture_output=True, text=True
+                ["pkexec", "sh", "-c", shell_cmd]
             )
             if result.returncode == 0:
                 return True, "Profil başarıyla uygulandı."
             else:
-                return False, result.stderr or result.stdout
+                return False, "Yetkilendirme başarısız oldu veya işlem iptal edildi."
         except Exception as e:
             return False, str(e)
 
