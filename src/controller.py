@@ -1,50 +1,9 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib
+import threading
 from src.system_manager import SystemManager
-
-
-SERVICE_DESCRIPTIONS = {
-    "NetworkManager-wait-online.service": "Aglar hazir olana kadar bekler. Gereksizse kapatilabilir.",
-    "NetworkManager.service": "Ag baglantilarini yonetir. Internet kullaniyorsaniz gerekli.",
-    "upower.service": "Pil ve guc yonetimi. Masaustu bilgisayarda gereksiz.",
-    "bluetooth.service": "Bluetooth destegi. Bluetooth kullanmiyorsaniz kapatabilirsiniz.",
-    "cups.service": "Yazici destegi (CUPS). Yazici kullanmiyorsaniz kapatabilirsiniz.",
-    "avahi-daemon.service": "Agda cihaz kesfi. Genelde gereksiz.",
-    "ModemManager.service": "Mobil broadband (3G/4G) modem destegi. Gerekmiyorsa kapatilabilir.",
-    "cups-browsed.service": "Ag yazicilarini otomatik bulur. Yazici yoksa gereksiz.",
-    "colord.service": "Renk yonetimi. Grafik isiyle ugrasmiyorsaniz gereksiz.",
-    "PackageKit.service": "Yazilim yoneticisi arka plan servisi.",
-    "gdm.service": "Giris ekrani (GDM). Pardus'un calismasi icin gerekli.",
-    "accounts-daemon.service": "Kullanici hesaplari servisi. Sistem icin gerekli.",
-    "udisks2.service": "Disk takip-cikar yonetimi. Genelde gerekli.",
-    "polkit.service": "Yetki yonetimi. Sistem icin gerekli.",
-    "systemd-journald.service": "Sistem log kayitlari. Genelde gerekli.",
-    "systemd-logind.service": "Kullanici oturum yonetimi. Sistem icin gerekli.",
-    "systemd-udevd.service": "Cihaz yonetimi (udev). Sistem icin gerekli.",
-    "wpa_supplicant.service": "Kablosuz ag baglantisi. Wi-Fi kullaniyorsaniz gerekli.",
-    "smartmontools.service": "Disk sagligi izleme. Gereksiz olabilir.",
-    "lm-sensors.service": "Isi ve voltaj sensorleri. Gereksiz olabilir.",
-    "apparmor.service": "Guvenlik modulu (AppArmor). Guvenlik icin onerilir.",
-}
-
-
-SERVICE_SUGGESTIONS = {
-    "NetworkManager-wait-online.service": ("oneri", "Genelde kapatilabilir. Ag hazir olana kadar bekletir."),
-    "upower.service": ("oneri", "Masaustu PC'de kapatilabilir."),
-    "bluetooth.service": ("oneri", "Bluetooth kullanmiyorsaniz kapatabilirsiniz."),
-    "cups.service": ("oneri", "Yazici kullanmiyorsaniz kapatilabilir."),
-    "avahi-daemon.service": ("oneri", "Guvenlik ve performans icin kapatilabilir."),
-    "ModemManager.service": ("oneri", "3G/4G modem kullanmiyorsaniz kapatilabilir."),
-    "NetworkManager.service": ("kritik", "Internet baglantisi icin gerekli."),
-    "gdm.service": ("kritik", "Grafik arayuz icin gerekli. Kapatmayin."),
-    "accounts-daemon.service": ("kritik", "Kullanici hesaplari icin gerekli."),
-    "polkit.service": ("kritik", "Yetki yonetimi icin gerekli."),
-    "systemd-journald.service": ("kritik", "Sistem loglari icin gerekli."),
-    "systemd-logind.service": ("kritik", "Oturum yonetimi icin gerekli."),
-    "systemd-udevd.service": ("kritik", "Cihaz algilama icin gerekli."),
-    "apparmor.service": ("kritik", "Guvenlik icin onerilir."),
-}
+from src.service_db import get_description
 
 
 STATUS_COLORS = {
@@ -58,11 +17,55 @@ STATUS_COLORS = {
 }
 
 
+def parse_blame_time(time_str):
+    if not time_str:
+        return 0
+    time_str = time_str.strip()
+    if "min" in time_str:
+        import re
+        m = re.match(r"([\d.]+)\s*min\s+([\d.]+)(ms|s)?", time_str)
+        if m:
+            minutes = float(m.group(1))
+            val = float(m.group(2))
+            unit = m.group(3) or "s"
+            seconds = val / 1000 if unit == "ms" else val
+            return minutes * 60 + seconds
+        return 0
+    elif time_str.endswith("us"):
+        return float(time_str.rstrip("us")) / 1000000
+    elif time_str.endswith("ms"):
+        return float(time_str.rstrip("ms")) / 1000
+    elif time_str.endswith("u"):
+        return float(time_str.rstrip("u")) / 1000000
+    elif time_str.endswith("s"):
+        return float(time_str.rstrip("s"))
+    elif time_str.endswith("m"):
+        return float(time_str.rstrip("m")) * 60
+    elif time_str.endswith("h"):
+        return float(time_str.rstrip("h")) * 3600
+    return 0
+
+
+def format_time(seconds):
+    if seconds >= 60:
+        m = int(seconds // 60)
+        s = seconds % 60
+        return f"{m}dk {s:.1f}s"
+    elif seconds >= 1:
+        return f"{seconds:.3f}s"
+    else:
+        return f"{int(seconds * 1000)}ms"
+
+
 class Controller:
     def __init__(self, builder):
         self.builder = builder
         self.manager = SystemManager()
+
+        self._all_data = []
         self._current_filter = "all"
+        self._search_text = ""
+        self._debounce_id = 0
 
         self.liststore = builder.get_object("service_liststore")
         self.treeview = builder.get_object("service_treeview")
@@ -73,11 +76,29 @@ class Controller:
         self.detail_name = builder.get_object("detail_name")
         self.detail_desc = builder.get_object("detail_desc")
         self.detail_suggestion = builder.get_object("detail_suggestion")
-        self.renderer_status = builder.get_object("renderer_status")
-        self.renderer_name = builder.get_object("renderer_name")
+        self.main_window = builder.get_object("main_window")
 
+        self._load_css()
         self._connect_signals()
         self.load_all()
+
+    def _load_css(self):
+        provider = Gtk.CssProvider()
+        try:
+            provider.load_from_path("ui/style.css")
+            Gtk.StyleContext.add_provider_for_screen(
+                Gdk.Screen.get_default(),
+                provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
+        except Exception:
+            pass
+
+        try:
+            settings = Gtk.Settings.get_default()
+            settings.set_property("gtk-application-prefer-dark-theme", False)
+        except Exception:
+            pass
 
     def _connect_signals(self):
         self.builder.get_object("btn_refresh").connect("clicked", self.load_all)
@@ -89,61 +110,99 @@ class Controller:
         self.search_entry.connect("changed", self._on_search_changed)
         self.selection.connect("changed", self._on_selection_changed)
 
-        filters = [
+        for btn_name, state in [
             ("filter_all", "all"),
             ("filter_active", "active"),
             ("filter_inactive", "inactive"),
             ("filter_disabled", "disabled"),
             ("filter_masked", "masked"),
-        ]
-        for btn_name, state in filters:
-            btn = self.builder.get_object(btn_name)
-            btn.connect("toggled", self._on_filter_toggled, state)
+        ]:
+            self.builder.get_object(btn_name).connect(
+                "toggled", self._on_filter_toggled, state
+            )
 
     def load_all(self, *args):
         self.liststore.clear()
-        self._set_log_text("Yukleniyor...")
         self.detail_name.set_text("Servis secilmedi")
         self.detail_desc.set_text("Detaylar icin bir servis secin.")
         self.detail_suggestion.set_text("")
+        self.log_textview.get_buffer().set_text("Yukleniyor...")
 
+        GLib.timeout_add(10, self._do_load)
+
+    def _do_load(self):
         try:
             services = self.manager.get_services()
             blame_data = {}
             for item in self.manager.get_blame_data()[0]:
-                blame_data[item["name"]] = item["time"]
-
-            total_time, raw = self.manager.get_total_boot_time()
-            self.boot_time_label.set_text("Toplam Acilis Suresi: " + total_time)
-
-            for svc in services:
-                name = svc["name"]
-                desc = SERVICE_DESCRIPTIONS.get(name, svc["description"])
-                color = self._get_color(svc["active"])
-                suggestion_text = ""
-                if name in SERVICE_SUGGESTIONS:
-                    stype, stext = SERVICE_SUGGESTIONS[name]
-                    suggestion_text = stext
-
-                if self._matches_filter(svc["active"], svc["sub"]):
-                    self.liststore.append([
-                        name,
-                        svc["active"],
-                        svc["sub"],
-                        svc["load"],
-                        blame_data.get(name, ""),
-                        desc,
-                        color,
-                        suggestion_text,
-                    ])
-
-            count = len(self.liststore)
-            self._set_log_text(f"{count} servis listelendi.")
+                blame_data[item["name"]] = {
+                    "time_str": item["time"],
+                    "seconds": parse_blame_time(item["time"]),
+                }
+            total_time, _ = self.manager.get_total_boot_time()
         except Exception as e:
-            self._set_log_text(f"Hata: {str(e)}")
+            self.log_textview.get_buffer().set_text(f"Hata: {str(e)}")
+            return False
 
-    def _get_color(self, status):
-        return STATUS_COLORS.get(status, "#000000")
+        self.boot_time_label.set_text(f"Toplam Acilis Suresi: {total_time}")
+
+        self._all_data = []
+        for svc in services:
+            name = svc["name"]
+            if svc["load"] == "not-found":
+                continue
+            if not name.endswith(".service") and not name.endswith(".mount") \
+               and not name.endswith(".device") and not name.endswith(".swap") \
+               and not name.endswith(".socket") and not name.endswith(".target"):
+                continue
+            blame_info = blame_data.get(name, {"time_str": "", "seconds": 0})
+            desc, tip, oneri = get_description(name)
+            if not desc:
+                desc = svc.get("description", "")
+            color = STATUS_COLORS.get(svc["active"], "#000000")
+
+            self._all_data.append({
+                "name": name,
+                "active": svc["active"],
+                "sub": svc["sub"],
+                "time_str": blame_info["time_str"],
+                "seconds": blame_info["seconds"],
+                "desc": desc,
+                "color": color,
+                "tip": tip or "",
+                "oneri": oneri or "",
+            })
+
+        self._all_data.sort(key=lambda x: (-x["seconds"], x["name"]))
+        self._apply_filters()
+        self.log_textview.get_buffer().set_text(
+            f"{len(self.liststore)} servis listelendi."
+        )
+        return False
+
+    def _apply_filters(self):
+        self.liststore.clear()
+        query = self._search_text.lower()
+
+        for d in self._all_data:
+            if query and query not in d["name"].lower():
+                continue
+            if not self._matches_filter(d["active"], d["sub"]):
+                continue
+            self.liststore.append([
+                d["name"],
+                d["active"],
+                d["sub"],
+                d["time_str"],
+                d["desc"],
+                d["color"],
+                d["tip"],
+                d["oneri"],
+            ])
+
+        self.log_textview.get_buffer().set_text(
+            f"{len(self.liststore)} servis listelendi."
+        )
 
     def _matches_filter(self, active_state, sub_state):
         f = self._current_filter
@@ -159,20 +218,35 @@ class Controller:
             return sub_state == "masked"
         return True
 
+    def _get_color(self, status):
+        return STATUS_COLORS.get(status, "#000000")
+
     def _on_filter_toggled(self, button, state):
         if not button.get_active():
             return
         self._current_filter = state
-        self.load_all()
+        self._apply_filters()
+
+    def _on_search_changed(self, *args):
+        self._search_text = self.search_entry.get_text()
+        if self._debounce_id:
+            GLib.source_remove(self._debounce_id)
+        self._debounce_id = GLib.timeout_add(250, self._apply_filters)
 
     def _get_selected_row(self):
         model, treeiter = self.selection.get_selected()
         if treeiter is not None:
-            return model, treeiter, model[treeiter]
-        return None, None, None
+            return model[treeiter]
+        return None
+
+    def _get_selected_name(self):
+        row = self._get_selected_row()
+        if row is not None:
+            return row[0]
+        return None
 
     def _on_selection_changed(self, *args):
-        model, treeiter, row = self._get_selected_row()
+        row = self._get_selected_row()
         if row is None:
             self.detail_name.set_text("Servis secilmedi")
             self.detail_desc.set_text("Detaylar icin bir servis secin.")
@@ -180,61 +254,92 @@ class Controller:
             return
 
         name = row[0]
-        desc = row[5]
-        suggestion = row[7]
-        status_text = row[1]
+        status = row[1]
+        tip = row[6]
+        oneri = row[7]
 
+        color = self._get_color(status)
         self.detail_name.set_markup(
-            "<b>" + name + "</b>  —  " + status_text
+            f"<b>{name}</b>  —  <span foreground='{color}'>{status}</span>"
         )
-        self.detail_desc.set_text(desc)
-        if suggestion:
-            self.detail_suggestion.set_markup(
-                "<span foreground='#1565c0'>" + suggestion + "</span>"
-            )
+        self.detail_desc.set_text(row[4])
+
+        if oneri:
+            if tip == "kritik":
+                self.detail_suggestion.set_markup(
+                    "<span foreground='#c62828' weight='bold'>KRITIK: </span>"
+                    f"<span foreground='#555555'>{oneri}</span>"
+                )
+            elif tip == "oneri":
+                self.detail_suggestion.set_markup(
+                    "<span foreground='#2e7d32'>ONERI: </span>"
+                    f"<span foreground='#555555'>{oneri}</span>"
+                )
+            else:
+                self.detail_suggestion.set_markup(
+                    f"<span foreground='#555555'>{oneri}</span>"
+                )
         else:
             self.detail_suggestion.set_text("")
 
-    def _get_selected_name(self):
-        model, treeiter, row = self._get_selected_row()
-        if row is not None:
-            return row[0]
-        return None
+    def _run_systemctl(self, action, name, on_success):
+        buf = self.log_textview.get_buffer()
+        buf.set_text(f"{action} islemi baslatildi...\nYetki girisi gerekebilir.")
+
+        def _task():
+            try:
+                if action == "enable":
+                    ok, msg = self.manager.enable_service(name)
+                elif action == "disable":
+                    ok, msg = self.manager.disable_service(name)
+                elif action == "mask":
+                    ok, msg = self.manager.mask_service(name)
+                elif action == "unmask":
+                    ok, msg = self.manager.unmask_service(name)
+                else:
+                    ok, msg = False, f"Bilinmeyen islem: {action}"
+
+                GLib.idle_add(self._on_command_done, ok, msg, on_success)
+            except Exception as e:
+                GLib.idle_add(self._on_command_done, False, str(e), on_success)
+
+        threading.Thread(target=_task, daemon=True).start()
+
+    def _on_command_done(self, ok, msg, on_success):
+        self.log_textview.get_buffer().set_text(msg)
+        if ok and on_success:
+            on_success()
 
     def _on_enable(self, *args):
         name = self._get_selected_name()
         if not name:
-            self._set_log_text("Lutfen bir servis secin.")
+            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
             return
-        success, msg = self.manager.enable_service(name)
-        self._set_log_text(msg)
-        if success:
-            self.load_all()
+        self._run_systemctl("enable", name, self.load_all)
 
     def _on_disable(self, *args):
         name = self._get_selected_name()
         if not name:
-            self._set_log_text("Lutfen bir servis secin.")
+            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
             return
-        success, msg = self.manager.disable_service(name)
-        self._set_log_text(msg)
-        if success:
-            self.load_all()
+        self._run_systemctl("disable", name, self.load_all)
 
     def _on_mask(self, *args):
         name = self._get_selected_name()
         if not name:
-            self._set_log_text("Lutfen bir servis secin.")
+            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
             return
 
-        stype = SERVICE_SUGGESTIONS.get(name, (None, ""))[0]
-        warning = ("Bu servis sistem icin KRITIK olarak isaretlenmistir. "
-                   "Kapatmaniz sorunlara yol acabilir!") if stype == "kritik" else ""
+        row = self._get_selected_row()
+        tip = row[6] if row is not None else ""
+
+        warning = ("\n\nBu servis sistem icin KRITIK olarak isaretlenmistir. "
+                   "Kapatmaniz sorunlara yol acabilir!") if tip == "kritik" else ""
 
         dialog = Gtk.MessageDialog(
-            parent=self.builder.get_object("main_window"),
+            parent=self.main_window,
             flags=Gtk.DialogFlags.MODAL,
-            type=Gtk.MessageType.WARNING if stype == "kritik" else Gtk.MessageType.QUESTION,
+            type=Gtk.MessageType.WARNING if tip == "kritik" else Gtk.MessageType.QUESTION,
             buttons=Gtk.ButtonsType.YES_NO,
             message_format=f"'{name}' servisini maskelemek istediginize emin misiniz?"
         )
@@ -244,32 +349,28 @@ class Controller:
         dialog.destroy()
 
         if response == Gtk.ResponseType.YES:
-            success, msg = self.manager.mask_service(name)
-            self._set_log_text(msg)
-            if success:
-                self.load_all()
+            self._run_systemctl("mask", name, self.load_all)
 
     def _on_unmask(self, *args):
         name = self._get_selected_name()
         if not name:
-            self._set_log_text("Lutfen bir servis secin.")
+            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
             return
-        success, msg = self.manager.unmask_service(name)
-        self._set_log_text(msg)
-        if success:
-            self.load_all()
+        self._run_systemctl("unmask", name, self.load_all)
 
     def _on_show_log(self, *args):
         name = self._get_selected_name()
         if not name:
-            self._set_log_text("Lutfen bir servis secin.")
+            self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
             return
-        log = self.manager.get_journal_log(name)
-        self._set_log_text(log)
 
-    def _on_search_changed(self, *args):
-        self.load_all()
+        self.log_textview.get_buffer().set_text("Log yukleniyor...")
 
-    def _set_log_text(self, text):
-        buffer = self.log_textview.get_buffer()
-        buffer.set_text(text)
+        def _task():
+            try:
+                log = self.manager.get_journal_log(name)
+                GLib.idle_add(self.log_textview.get_buffer().set_text, log or "Log bulunamadi.")
+            except Exception as e:
+                GLib.idle_add(self.log_textview.get_buffer().set_text, f"Hata: {e}")
+
+        threading.Thread(target=_task, daemon=True).start()

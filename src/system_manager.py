@@ -10,6 +10,7 @@ class SystemManager:
         )
         services = []
         for line in output.strip().splitlines():
+            line = line.strip().lstrip("\u25cf").strip()
             parts = line.split()
             if len(parts) >= 4:
                 services.append({
