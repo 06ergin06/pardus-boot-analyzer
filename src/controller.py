@@ -250,9 +250,14 @@ class PasswordDialog(Gtk.Dialog):
         
         self.get_style_context().add_class("auth-dialog")
         
+        # Vazgeç button closes dialog with CANCEL response
         self.btn_cancel = self.add_button("Vazgeç", Gtk.ResponseType.CANCEL)
-        self.btn_auth = self.add_button("Yetkilendir", Gtk.ResponseType.OK)
+        
+        # Yetkilendir button triggers click handler directly (doesn't auto-close)
+        self.btn_auth = Gtk.Button(label="Yetkilendir")
         self.btn_auth.get_style_context().add_class("primary")
+        self.btn_auth.connect("clicked", self._on_auth_clicked)
+        self.get_action_area().pack_end(self.btn_auth, False, False, 0)
         
         content = self.get_content_area()
         content.set_margin_start(16)
@@ -280,7 +285,7 @@ class PasswordDialog(Gtk.Dialog):
         self.entry_pwd = Gtk.Entry()
         self.entry_pwd.set_visibility(False)
         self.entry_pwd.set_placeholder_text("Yönetici şifresi")
-        self.entry_pwd.set_activates_default(True)
+        self.entry_pwd.connect("activate", lambda e: self._on_auth_clicked(None))
         h_row.pack_start(self.entry_pwd, True, True, 0)
         
         self.chk_show = Gtk.CheckButton(label="Şifreyi Göster")
@@ -291,29 +296,28 @@ class PasswordDialog(Gtk.Dialog):
         self.lbl_error.get_style_context().add_class("error-text")
         vbox.pack_start(self.lbl_error, False, False, 0)
         
-        self.set_default_response(Gtk.ResponseType.OK)
-        self.connect("response", self._on_response)
-        
         self.show_all()
 
     def _on_show_toggled(self, widget):
         self.entry_pwd.set_visibility(widget.get_active())
 
-    def _on_response(self, dialog, response_id):
-        if response_id == Gtk.ResponseType.OK:
-            pwd = self.entry_pwd.get_text()
-            self.lbl_error.set_text("")
+    def _on_auth_clicked(self, button):
+        pwd = self.entry_pwd.get_text()
+        self.lbl_error.set_text("")
+        
+        self.set_sensitive(False)
+        while Gtk.events_pending():
+            Gtk.main_iteration()
             
-            self.set_sensitive(False)
-            valid = self.manager.verify_sudo_password(pwd)
-            self.set_sensitive(True)
-            
-            if valid:
-                self.success = True
-                self.entered_password = pwd
-            else:
-                self.lbl_error.set_markup("<span foreground='#dc3545'>Hatalı şifre! Lütfen tekrar deneyin.</span>")
-                dialog.stop_emission_by_name("response")
+        valid = self.manager.verify_sudo_password(pwd)
+        self.set_sensitive(True)
+        
+        if valid:
+            self.success = True
+            self.entered_password = pwd
+            self.response(Gtk.ResponseType.OK)
+        else:
+            self.lbl_error.set_markup("<span foreground='#dc3545'>Hatalı şifre! Lütfen tekrar deneyin.</span>")
 
 
 class Controller:
