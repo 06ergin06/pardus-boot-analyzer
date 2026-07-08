@@ -27,3 +27,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.code-workspace
+
+# Packages
+*.deb
+
