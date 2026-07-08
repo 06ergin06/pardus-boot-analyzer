@@ -63,6 +63,14 @@ SAFE_TO_DISABLE_ONERI_SERVICES = {
     "smartmontools.service"
 }
 
+PROFILE_SERVICE_LABELS = {
+    "cups.service": "Yazıcı Servisi (CUPS)",
+    "bluetooth.service": "Bluetooth Desteği",
+    "docker.service": "Docker Konteyner",
+    "postgresql.service": "PostgreSQL Servisi",
+    "ssh.service": "SSH Uzaktan Erişim",
+}
+
 def parse_blame_time(time_str):
     if not time_str:
         return 0
@@ -1903,11 +1911,22 @@ class Controller:
             h_box.pack_start(lbl_pname, True, True, 0)
             card.pack_start(h_box, False, False, 0)
             
-            lbl_pdesc = Gtk.Label(xalign=0, yalign=0)
-            lbl_pdesc.get_style_context().add_class("profile-desc")
-            lbl_pdesc.set_text(p_info["desc"])
-            lbl_pdesc.set_line_wrap(True)
-            card.pack_start(lbl_pdesc, True, True, 0)
+            vbox_checklist = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            vbox_checklist.set_margin_top(6)
+            vbox_checklist.set_margin_bottom(6)
+            
+            for svc_name, friendly_name in PROFILE_SERVICE_LABELS.items():
+                action = p_info["services"].get(svc_name)
+                if action is not None:
+                    lbl_item = Gtk.Label(xalign=0)
+                    lbl_item.get_style_context().add_class("profile-desc")
+                    if action == "enable":
+                        lbl_item.set_markup(f"<span foreground='#2ec27e'>✔</span>  {friendly_name}")
+                    else:
+                        lbl_item.set_markup(f"<span foreground='#e01b24'>✘</span>  {friendly_name}")
+                    vbox_checklist.pack_start(lbl_item, False, False, 0)
+            
+            card.pack_start(vbox_checklist, True, True, 0)
             
             btn_apply = Gtk.Button(label="Profili Uygula")
             btn_apply.get_style_context().add_class("primary")
