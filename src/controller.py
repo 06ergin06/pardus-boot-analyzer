@@ -411,10 +411,17 @@ class Controller:
         active_state = d["active"]
         enabled_state = d.get("enabled", "unknown")
 
+        is_enabled = enabled_state in ("enabled", "enabled-runtime", "generated")
+        is_running = active_state == "active"
+        is_masked = sub == "masked" or enabled_state == "masked"
+
         self._updating_toggles = True
-        self.btn_toggle_enable.set_active(enabled_state in ("enabled", "enabled-runtime", "generated"))
-        self.btn_toggle_run.set_active(active_state == "active")
-        self.btn_toggle_mask.set_active(sub == "masked" or enabled_state == "masked")
+        self.btn_toggle_enable.set_active(is_enabled)
+        self.btn_toggle_enable.set_label("Devre Disi" if is_enabled else "Etkinlestir")
+        self.btn_toggle_run.set_active(is_running)
+        self.btn_toggle_run.set_label("Durdur" if is_running else "Baslat")
+        self.btn_toggle_mask.set_active(is_masked)
+        self.btn_toggle_mask.set_label("Kaldir" if is_masked else "Maskele")
         self._updating_toggles = False
 
         if enabled_state in ("static", "indirect", "masked", "generated"):

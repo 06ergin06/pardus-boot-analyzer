@@ -68,22 +68,24 @@ class SystemManager:
         return self._run_auth(["unmask", name])
 
     def _run_auth(self, args):
-        # Direct systemctl first
-        result = subprocess.run(
-            ["systemctl"] + args,
-            capture_output=True, text=True
-        )
-        if result.returncode == 0:
-            return True, result.stdout + result.stderr
-        # Auth failure? Try pkexec for GUI password dialog
-        stderr_lower = result.stderr.lower()
-        if any(w in stderr_lower for w in ("authentication", "permission", "not authorized", "interactive")):
+        # pkexec first — shows GTK password dialog even without polkit agent
+        try:
             result = subprocess.run(
                 ["pkexec", "systemctl"] + args,
                 capture_output=True, text=True
             )
-            return result.returncode == 0, result.stdout + result.stderr
-        return False, result.stdout + result.stderr
+            if result.returncode == 0:
+                return True, result.stdout + result.stderr
+            if "refused" not in result.stderr.lower():
+                return False, result.stdout + result.stderr
+        except FileNotFoundError:
+            pass
+        # Fallback: direct systemctl (requires running polkit agent)
+        result = subprocess.run(
+            ["systemctl"] + args,
+            capture_output=True, text=True
+        )
+        return result.returncode == 0, result.stdout + result.stderr
 
     def get_service_status(self, name):
         result = subprocess.run(
