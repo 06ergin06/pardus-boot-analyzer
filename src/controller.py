@@ -49,6 +49,19 @@ VIEW_MAP = {
     2: "devices",
 }
 
+# Universally safe to disable services for optimization (Pardus / Linux)
+SAFE_TO_DISABLE_ONERI_SERVICES = {
+    "NetworkManager-wait-online.service",
+    "bluetooth.service",
+    "cups.service",
+    "cups-browsed.service",
+    "avahi-daemon.service",
+    "ModemManager.service",
+    "colord.service",
+    "lm-sensors.service",
+    "smartmontools.service"
+}
+
 def parse_blame_time(time_str):
     if not time_str:
         return 0
@@ -351,7 +364,7 @@ class Controller:
         # Select first row in sidebar
         self.sidebar_listbox.select_row(self.sidebar_listbox.get_row_at_index(0))
 
-    # --- Page 1: Analiz ---
+    # --- Page 1: Analiz (Dashboard) ---
     def build_page_analiz(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         
@@ -360,7 +373,7 @@ class Controller:
         box.pack_start(lbl_title, False, False, 0)
         
         lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_markup("<span class='content-subtitle'>Sisteminizin açılış süresini ve en çok gecikmeye yol açan hizmetleri analiz edin.</span>")
+        lbl_sub.set_markup("<span class='content-subtitle'>Sisteminizin açılış süresini ve kapatılması güvenli olan önerilen hizmetleri yönetin.</span>")
         box.pack_start(lbl_sub, False, False, 0)
         
         h_split = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=18)
@@ -399,21 +412,43 @@ class Controller:
         self.breakdown_grid.set_halign(Gtk.Align.CENTER)
         self.card_boot.pack_start(self.breakdown_grid, False, False, 8)
         
-        # Right Card - Slowest Services
-        card_slow = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        card_slow.get_style_context().add_class("card")
-        h_split.pack_start(card_slow, True, True, 0)
+        # Right Card - Quick Optimization
+        self.card_optimize = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        self.card_optimize.get_style_context().add_class("card")
+        h_split.pack_start(self.card_optimize, True, True, 0)
         
-        lbl_slow_title = Gtk.Label(xalign=0)
-        lbl_slow_title.set_markup("<span class='card-title'>Açılışı En Çok Geciktiren Hizmetler</span>")
-        card_slow.pack_start(lbl_slow_title, False, False, 0)
+        lbl_opt_title = Gtk.Label(xalign=0)
+        lbl_opt_title.set_markup("<span class='card-title'>Başlangıç Optimizasyonu</span>")
+        self.card_optimize.pack_start(lbl_opt_title, False, False, 0)
         
+        lbl_opt_desc = Gtk.Label(xalign=0)
+        lbl_opt_desc.set_markup("<span size='small' foreground='#565f89'>Açılışı geciktiren ve kapatılması güvenli olan hizmetleri tek tıkla kapatarak hız kazanın.</span>")
+        lbl_opt_desc.set_line_wrap(True)
+        self.card_optimize.pack_start(lbl_opt_desc, False, False, 0)
+        
+        # Savings Highlight Box
+        self.opt_savings_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        self.opt_savings_box.set_margin_top(4)
+        self.opt_savings_box.set_margin_bottom(4)
+        self.card_optimize.pack_start(self.opt_savings_box, False, False, 0)
+        
+        self.lbl_savings_val = Gtk.Label(xalign=0)
+        self.lbl_savings_val.set_markup("Hızlandırma Potansiyeli: <b>-- saniye</b>")
+        self.opt_savings_box.pack_start(self.lbl_savings_val, True, True, 0)
+        
+        # Quick Optimize Button
+        self.btn_quick_optimize = Gtk.Button(label="Tüm Önerilenleri Kapat")
+        self.btn_quick_optimize.get_style_context().add_class("success")
+        self.btn_quick_optimize.connect("clicked", self._on_quick_optimize_clicked)
+        self.card_optimize.pack_start(self.btn_quick_optimize, False, False, 4)
+        
+        # List of recommended oneri services
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        card_slow.pack_start(scrolled, True, True, 0)
+        self.card_optimize.pack_start(scrolled, True, True, 0)
         
-        self.blame_list_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        scrolled.add(self.blame_list_box)
+        self.opt_list_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        scrolled.add(self.opt_list_box)
         
         box.show_all()
         return box
@@ -422,8 +457,8 @@ class Controller:
         for child in self.breakdown_grid.get_children():
             self.breakdown_grid.remove(child)
             
-        for child in self.blame_list_box.get_children():
-            self.blame_list_box.remove(child)
+        for child in self.opt_list_box.get_children():
+            self.opt_list_box.remove(child)
             
         try:
             total_time, full_text = self.manager.get_total_boot_time()
@@ -451,51 +486,98 @@ class Controller:
                     self.breakdown_grid.attach(lbl_val, 1, row, 1, 1)
                     row += 1
                     
+            # Load services and check which oneri services are active/enabled
+            enabled_map = self.manager.get_unit_file_states()
             blame_list, _ = self.manager.get_blame_data()
-            top_blame = blame_list[:6]
             
-            if top_blame:
-                max_seconds = max(parse_blame_time(item["time"]) for item in top_blame)
-                if max_seconds <= 0:
-                    max_seconds = 1.0
-                    
-                for item in top_blame:
+            optimizable_services = []
+            total_savings_sec = 0.0
+            
+            for item in blame_list:
+                name = item["name"]
+                time_str = item["time"]
+                sec = parse_blame_time(time_str)
+                
+                # Check if this service is in our safe list and is currently enabled/active
+                enabled_state = enabled_map.get(name, "unknown")
+                is_enabled = enabled_state in ("enabled", "enabled-runtime")
+                
+                if name in SAFE_TO_DISABLE_ONERI_SERVICES and is_enabled:
+                    desc, tip, oneri = get_description(name)
+                    optimizable_services.append({
+                        "name": name,
+                        "time_str": time_str,
+                        "seconds": sec,
+                        "oneri": oneri or desc or "Kapatılması önerilen gereksiz hizmet."
+                    })
+                    total_savings_sec += sec
+            
+            # Update savings label and quick optimize button
+            if total_savings_sec > 0:
+                self.lbl_savings_val.set_markup(
+                    f"Hızlandırma Potansiyeli: <span foreground='#198754' weight='bold'>~{total_savings_sec:.2f} saniye</span>"
+                )
+                self.btn_quick_optimize.set_label(f"Tüm Önerilenleri Kapat (+{total_savings_sec:.1f} sn Kazan)")
+                self.btn_quick_optimize.set_sensitive(True)
+            else:
+                self.lbl_savings_val.set_markup("Hızlandırma Potansiyeli: <span color='#6c757d'><b>0.00 saniye</b></span>")
+                self.btn_quick_optimize.set_label("Sisteminiz Zaten Optimize Edilmiş")
+                self.btn_quick_optimize.set_sensitive(False)
+                
+            # Populate list with individual controls
+            if optimizable_services:
+                for item in optimizable_services:
                     name = item["name"]
-                    time_str = item["time"]
-                    sec = parse_blame_time(time_str)
-                    fraction = sec / max_seconds
+                    time_str = item["time_str"]
+                    oneri_text = item["oneri"]
                     
-                    row_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+                    row_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
                     row_box.get_style_context().add_class("blame-row")
                     
+                    vbox_info = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+                    row_box.pack_start(vbox_info, True, True, 0)
+                    
+                    # Clickable button to jump to service details
                     btn_go = Gtk.Button(label=name)
                     btn_go.set_relief(Gtk.ReliefStyle.NONE)
                     btn_go.set_halign(Gtk.Align.START)
                     btn_go.connect("clicked", lambda b, n=name: self._go_to_service(n))
-                    row_box.pack_start(btn_go, True, True, 0)
+                    vbox_info.pack_start(btn_go, False, False, 0)
                     
-                    progress = Gtk.ProgressBar()
-                    progress.set_fraction(fraction)
-                    progress.set_size_request(140, 8)
-                    progress.set_valign(Gtk.Align.CENTER)
-                    row_box.pack_start(progress, False, False, 0)
+                    lbl_oneri = Gtk.Label(xalign=0)
+                    lbl_oneri.set_markup(f"<span size='small' foreground='#888888'>{oneri_text}</span>")
+                    lbl_oneri.set_line_wrap(True)
+                    vbox_info.pack_start(lbl_oneri, False, False, 0)
                     
+                    # Time badge
                     lbl_time = Gtk.Label(label=time_str)
                     lbl_time.get_style_context().add_class("badge-slow")
                     row_box.pack_start(lbl_time, False, False, 0)
                     
-                    self.blame_list_box.pack_start(row_box, False, False, 0)
+                    # Individual disable button
+                    btn_disable_one = Gtk.Button()
+                    img_dis = Gtk.Image.new_from_icon_name("media-playback-stop", Gtk.IconSize.BUTTON)
+                    btn_disable_one.set_image(img_dis)
+                    btn_disable_one.get_style_context().add_class("danger")
+                    btn_disable_one.set_tooltip_text("Sadece bu hizmeti devre dışı bırak ve durdur")
+                    btn_disable_one.connect("clicked", lambda b, n=name: self._disable_single_service(n))
+                    row_box.pack_start(btn_disable_one, False, False, 0)
+                    
+                    self.opt_list_box.pack_start(row_box, False, False, 0)
             else:
-                lbl = Gtk.Label(label="Blame verisi yüklenemedi.")
-                self.blame_list_box.pack_start(lbl, False, False, 0)
+                lbl_empty = Gtk.Label()
+                lbl_empty.set_markup("<span foreground='#6c757d'>Kapatılması önerilen aktif bir hizmet bulunamadı. Sisteminiz en iyi durumda!</span>")
+                lbl_empty.set_line_wrap(True)
+                lbl_empty.set_margin_top(16)
+                self.opt_list_box.pack_start(lbl_empty, False, False, 0)
                 
         except Exception as e:
             self.lbl_boot_val.set_text("Hata")
             lbl = Gtk.Label(label=f"Analiz yüklenirken hata oluştu:\n{e}")
-            self.blame_list_box.pack_start(lbl, False, False, 0)
+            self.opt_list_box.pack_start(lbl, False, False, 0)
             
         self.card_boot.show_all()
-        self.blame_list_box.show_all()
+        self.opt_list_box.show_all()
 
     def _go_to_service(self, service_name):
         self.sidebar_listbox.select_row(self.sidebar_listbox.get_row_at_index(2))
@@ -514,6 +596,122 @@ class Controller:
             return False
             
         GLib.timeout_add(100, select_row)
+
+    def _disable_single_service(self, name):
+        dlg = Gtk.MessageDialog(
+            parent=self.window, flags=Gtk.DialogFlags.MODAL,
+            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
+            message_format=f"'{name}' hizmetini kapatmak istiyor musunuz?"
+        )
+        dlg.format_secondary_text("Bu işlem hizmeti devre dışı bırakacak (disable) ve durduracaktır (stop).")
+        resp = dlg.run()
+        dlg.destroy()
+        
+        if resp == Gtk.ResponseType.YES:
+            self.set_status(f"'{name}' hizmeti kapatılıyor...")
+            def task():
+                ok1, msg1 = self.manager.disable_service(name)
+                ok2, msg2 = self.manager.stop_service(name)
+                GLib.idle_add(done, ok1 and ok2, f"'{name}' başarıyla kapatıldı." if ok1 and ok2 else f"Hata: {msg1} {msg2}")
+                
+            def done(ok, msg):
+                self.set_status(msg)
+                self.load_all()
+                self.load_analysis_page()
+                
+            threading.Thread(target=task, daemon=True).start()
+
+    def _on_quick_optimize_clicked(self, button):
+        try:
+            enabled_map = self.manager.get_unit_file_states()
+            blame_list, _ = self.manager.get_blame_data()
+        except Exception as e:
+            self.set_status(f"Hata: {e}")
+            return
+            
+        services_to_disable = []
+        for item in blame_list:
+            name = item["name"]
+            if name in SAFE_TO_DISABLE_ONERI_SERVICES:
+                enabled_state = enabled_map.get(name, "unknown")
+                if enabled_state in ("enabled", "enabled-runtime"):
+                    services_to_disable.append(name)
+                    
+        if not services_to_disable:
+            self.set_status("Kapatılacak hizmet bulunamadı.")
+            return
+            
+        dlg = Gtk.MessageDialog(
+            parent=self.window, flags=Gtk.DialogFlags.MODAL,
+            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
+            message_format="Önerilen Tüm Hizmetleri Kapatmak İstiyor musunuz?"
+        )
+        
+        svc_list_str = "\n".join(f"- {s}" for s in services_to_disable)
+        dlg.format_secondary_text(
+            "Aşağıdaki gereksiz hizmetler devre dışı bırakılacak ve durdurulacaktır:\n\n"
+            f"{svc_list_str}\n\n"
+            "Bu işlem sisteminizin açılışını hızlandıracaktır. Yetkilendirme şifresi istenecektir."
+        )
+        
+        resp = dlg.run()
+        dlg.destroy()
+        
+        if resp != Gtk.ResponseType.YES:
+            return
+            
+        self._run_quick_optimize_batch(services_to_disable)
+
+    def _run_quick_optimize_batch(self, services_to_disable):
+        loader = Gtk.Dialog(title="Sistem Optimize Ediliyor", parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        loader.set_default_size(320, 140)
+        
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        box.set_margin_start(18)
+        box.set_margin_end(18)
+        box.set_margin_top(18)
+        box.set_margin_bottom(18)
+        loader.get_content_area().add(box)
+        
+        lbl = Gtk.Label(label="Önerilen hizmetler kapatılıyor, lütfen bekleyin...")
+        box.pack_start(lbl, False, False, 0)
+        
+        spinner = Gtk.Spinner()
+        box.pack_start(spinner, True, True, 0)
+        spinner.start()
+        
+        loader.show_all()
+        
+        def task():
+            ok, msg = self.manager.apply_profile_batch(enable_list=[], disable_list=services_to_disable)
+            GLib.idle_add(done, ok, msg)
+            
+        def done(ok, msg):
+            spinner.stop()
+            loader.destroy()
+            self.set_status(msg)
+            if ok:
+                info = Gtk.MessageDialog(
+                    parent=self.window, flags=Gtk.DialogFlags.MODAL,
+                    type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
+                    message_format="Optimizasyon Tamamlandı!"
+                )
+                info.format_secondary_text("Önerilen tüm gereksiz hizmetler başarıyla kapatıldı.")
+                info.run()
+                info.destroy()
+                self.load_all()
+                self.load_analysis_page()
+            else:
+                err = Gtk.MessageDialog(
+                    parent=self.window, flags=Gtk.DialogFlags.MODAL,
+                    type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                    message_format="Optimizasyon Sırasında Hata Oluştu",
+                )
+                err.format_secondary_text(msg)
+                err.run()
+                err.destroy()
+                
+        threading.Thread(target=task, daemon=True).start()
 
     # --- Page 2: Autostart ---
     def build_page_autostart(self):
@@ -1151,7 +1349,7 @@ class Controller:
                      "start": "Başlatma", "stop": "Durdurma",
                      "mask": "Maskeleme", "unmask": "Maske kaldırma"}.get(action, action)
                      
-        self.set_status(f"'{name}' için {action_tr} işlemi başlatıldı...")
+        self.set_status(f"'{name}' için {action_tr} eylemi başlatıldı...")
         
         def task():
             try:
@@ -1452,7 +1650,6 @@ class Controller:
                 
         if not enable_list and not disable_list:
             self.set_status("Sistem zaten bu profile uygun durumda.")
-            # Show dialog
             info = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
                 type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
@@ -1509,7 +1706,6 @@ class Controller:
         self._run_profile_batch(enable_list, disable_list)
 
     def _run_profile_batch(self, enable_list, disable_list):
-        # Show loading dialog
         loader = Gtk.Dialog(title="Profil Uygulanıyor", parent=self.window, flags=Gtk.DialogFlags.MODAL)
         loader.set_default_size(320, 140)
         
@@ -1594,7 +1790,6 @@ class Controller:
             self.set_status(f"Hata: {e}")
             return
             
-        # Extract the current state of tracked services
         from src.service_db import DESCRIPTIONS
         profile_services = {}
         for name, state in enabled_map.items():
