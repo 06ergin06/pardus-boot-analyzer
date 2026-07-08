@@ -19,6 +19,10 @@
             <property name="margin-start">8</property>
             <property name="margin-end">8</property>
             <property name="spacing">8</property>
+            <property name="name">header_box</property>
+            <style>
+              <class name="header-box"/>
+            </style>
             <child>
               <object class="GtkLabel" id="boot_time_label">
                 <property name="visible">True</property>
@@ -44,6 +48,19 @@
                 <property name="position">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkLabel" id="service_count_label">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">0 servis</property>
+                <property name="halign">end</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -60,6 +77,10 @@
             <property name="margin-top">4</property>
             <property name="margin-bottom">4</property>
             <property name="spacing">4</property>
+            <property name="name">filter_box</property>
+            <style>
+              <class name="filter-box"/>
+            </style>
             <child>
               <object class="GtkLabel" id="filter_label">
                 <property name="visible">True</property>
@@ -157,7 +178,7 @@
                 <property name="can-focus">True</property>
                 <property name="margin-start">8</property>
                 <property name="margin-end">8</property>
-                <property name="shadow-type">in</property>
+                <property name="shadow-type">none</property>
                 <child>
                   <object class="GtkTreeView" id="service_treeview">
                     <property name="visible">True</property>
@@ -184,12 +205,11 @@
                       <object class="GtkTreeViewColumn" id="col_active">
                         <property name="title" translatable="yes">Durum</property>
                         <property name="resizable">True</property>
-                        <property name="fixed-width">80</property>
+                        <property name="fixed-width">120</property>
                         <child>
                           <object class="GtkCellRendererText" id="renderer_status"/>
                           <attributes>
-                            <attribute name="text">1</attribute>
-                            <attribute name="foreground">5</attribute>
+                            <attribute name="markup">1</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -251,6 +271,10 @@
                             <property name="can-focus">False</property>
                             <property name="orientation">vertical</property>
                             <property name="spacing">2</property>
+                            <property name="name">detail_box</property>
+                            <style>
+                              <class name="detail-box"/>
+                            </style>
                             <child>
                               <object class="GtkLabel" id="detail_name">
                                 <property name="visible">True</property>
@@ -314,6 +338,10 @@
                     <property name="margin-top">4</property>
                     <property name="margin-bottom">4</property>
                     <property name="spacing">6</property>
+                    <property name="name">action_box</property>
+                    <style>
+                      <class name="action-box"/>
+                    </style>
                     <child>
                       <object class="GtkButton" id="btn_refresh">
                         <property name="label" translatable="yes">Yenile</property>
@@ -406,8 +434,8 @@
                     <property name="margin-start">8</property>
                     <property name="margin-end">8</property>
                     <property name="margin-bottom">8</property>
-                    <property name="shadow-type">in</property>
-                    <property name="height-request">120</property>
+                    <property name="shadow-type">none</property>
+                    <property name="height-request">80</property>
                     <child>
                       <object class="GtkTextView" id="log_textview">
                         <property name="visible">True</property>
@@ -415,6 +443,10 @@
                         <property name="editable">False</property>
                         <property name="wrap-mode">word</property>
                         <property name="monospace">True</property>
+                        <property name="left-margin">6</property>
+                        <property name="right-margin">6</property>
+                        <property name="top-margin">4</property>
+                        <property name="bottom-margin">4</property>
                       </object>
                     </child>
                   </object>

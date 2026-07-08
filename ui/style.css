@@ -1,37 +1,9 @@
-/* Pardus Baslangic Yoneticisi - Tema bagimsiz stiller */
-/* Sistem temasindan etkilenmez, her ortamda ayni goruntulenir */
-
-treeview {
-    font-size: 11pt;
+window {
+    background-color: #f5f6f8;
 }
 
-treeview.view {
-    border-bottom: 1px solid alpha(currentColor, 0.08);
-}
-
-treeview.view:selected {
-    background-color: #3584e4;
-    color: white;
-}
-
-treeview.view:selected:focus {
-    background-color: #3584e4;
-    color: white;
-}
-
-entry {
-    min-height: 28px;
-}
-
-button {
-    min-height: 28px;
-    padding: 2px 10px;
-}
-
-label#boot_time_label {
-    font-weight: bold;
-    font-size: 11pt;
-    padding: 4px;
+box {
+    background-color: transparent;
 }
 
 frame {
@@ -42,17 +14,180 @@ frame > border {
     border: none;
 }
 
-textview {
-    font-size: 9pt;
+treeview {
+    background-color: #ffffff;
+    font-size: 11pt;
+    color: #202124;
+}
+
+treeview.view:selected {
+    background-color: #3584e4;
+    color: #ffffff;
+}
+
+treeview.view:selected:focus {
+    background-color: #3584e4;
+    color: #ffffff;
+}
+
+treeview.view:selected label {
+    color: #ffffff;
+}
+
+treeview.view:nth-child(even) {
+    background-color: #f8f9fb;
+}
+
+scrolledwindow {
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    background-color: #ffffff;
+}
+
+scrolledwindow > scrollbar {
+    background-color: #f1f3f4;
+}
+
+entry {
+    min-height: 32px;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    background-color: #ffffff;
+    padding: 4px 10px;
+    font-size: 11pt;
+    color: #202124;
+    caret-color: #3584e4;
+}
+
+entry:focus {
+    border-color: #3584e4;
+    box-shadow: 0 0 0 1px #3584e4;
+}
+
+entry:focus-within {
+    border-color: #3584e4;
+    box-shadow: 0 0 0 1px #3584e4;
+}
+
+button {
+    min-height: 30px;
+    padding: 4px 14px;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #202124;
+    font-size: 10.5pt;
+    transition: all 80ms linear;
+}
+
+button:hover {
+    background-color: #f1f3f4;
+    border-color: #c4c7cc;
+}
+
+button:active {
+    background-color: #e8eaed;
 }
 
 togglebutton {
-    padding: 2px 10px;
+    padding: 4px 14px;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #202124;
+    font-size: 10.5pt;
+    transition: all 80ms linear;
+}
+
+togglebutton:hover {
+    background-color: #f1f3f4;
 }
 
 togglebutton:checked {
-    background-color: #3584e4;
-    color: white;
+    background-color: #e8f0fe;
     border-color: #3584e4;
+    color: #1a73e8;
     font-weight: bold;
+}
+
+togglebutton:checked:hover {
+    background-color: #d2e3fc;
+}
+
+textview {
+    background-color: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    padding: 6px;
+    font-size: 9.5pt;
+    color: #202124;
+}
+
+textview text {
+    background-color: #ffffff;
+    color: #202124;
+}
+
+label#boot_time_label {
+    font-weight: bold;
+    font-size: 11pt;
+    color: #202124;
+    padding: 4px;
+}
+
+label#service_count_label {
+    font-size: 10pt;
+    color: #5f6368;
+    padding: 4px 8px;
+    background-color: #f1f3f4;
+    border-radius: 12px;
+}
+
+label#detail_name {
+    font-size: 11pt;
+}
+
+label#detail_desc {
+    font-size: 10.5pt;
+    color: #444746;
+}
+
+label#detail_suggestion {
+    font-size: 10pt;
+}
+
+paned {
+    background-color: transparent;
+}
+
+paned > separator {
+    background-color: #dadce0;
+    min-height: 2px;
+}
+
+paned > separator:hover {
+    background-color: #3584e4;
+}
+
+.header-box {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dadce0;
+    padding: 8px;
+}
+
+.filter-box {
+    background-color: #ffffff;
+    padding: 4px 8px;
+}
+
+.action-box {
+    background-color: #ffffff;
+    border-top: 1px solid #dadce0;
+    padding: 6px 8px;
+}
+
+.detail-box {
+    background-color: #ffffff;
+    border-radius: 0;
+    padding: 8px;
 }

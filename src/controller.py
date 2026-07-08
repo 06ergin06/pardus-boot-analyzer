@@ -16,6 +16,16 @@ STATUS_COLORS = {
     "deactivating": "#e65100",
 }
 
+STATUS_TR = {
+    "active": "Aktif",
+    "inactive": "Pasif",
+    "disabled": "Devre Disi",
+    "masked": "Maskeli",
+    "static": "Statik",
+    "activating": "Etkinlesiyor",
+    "deactivating": "Devre Disi",
+}
+
 
 def parse_blame_time(time_str):
     if not time_str:
@@ -57,12 +67,19 @@ def format_time(seconds):
         return f"{int(seconds * 1000)}ms"
 
 
+def make_status_markup(status):
+    tr = STATUS_TR.get(status, status)
+    color = STATUS_COLORS.get(status, "#000000")
+    return f'<span foreground="{color}">\u25cf</span> {tr}'
+
+
 class Controller:
     def __init__(self, builder):
         self.builder = builder
         self.manager = SystemManager()
 
         self._all_data = []
+        self._all_data_map = {}
         self._current_filter = "all"
         self._search_text = ""
         self._debounce_id = 0
@@ -71,6 +88,7 @@ class Controller:
         self.treeview = builder.get_object("service_treeview")
         self.selection = builder.get_object("service_selection")
         self.boot_time_label = builder.get_object("boot_time_label")
+        self.service_count_label = builder.get_object("service_count_label")
         self.search_entry = builder.get_object("search_entry")
         self.log_textview = builder.get_object("log_textview")
         self.detail_name = builder.get_object("detail_name")
@@ -123,9 +141,11 @@ class Controller:
 
     def load_all(self, *args):
         self.liststore.clear()
+        self._all_data_map = {}
         self.detail_name.set_text("Servis secilmedi")
         self.detail_desc.set_text("Detaylar icin bir servis secin.")
         self.detail_suggestion.set_text("")
+        self.service_count_label.set_text("0 servis")
         self.log_textview.get_buffer().set_text("Yukleniyor...")
 
         GLib.timeout_add(10, self._do_load)
@@ -142,6 +162,7 @@ class Controller:
             total_time, _ = self.manager.get_total_boot_time()
         except Exception as e:
             self.log_textview.get_buffer().set_text(f"Hata: {str(e)}")
+            self.service_count_label.set_text("Hata")
             return False
 
         self.boot_time_label.set_text(f"Toplam Acilis Suresi: {total_time}")
@@ -151,15 +172,13 @@ class Controller:
             name = svc["name"]
             if svc["load"] == "not-found":
                 continue
-            if not name.endswith(".service") and not name.endswith(".mount") \
-               and not name.endswith(".device") and not name.endswith(".swap") \
-               and not name.endswith(".socket") and not name.endswith(".target"):
+            if not any(name.endswith(s) for s in
+                       (".service", ".mount", ".device", ".swap", ".socket", ".target")):
                 continue
             blame_info = blame_data.get(name, {"time_str": "", "seconds": 0})
             desc, tip, oneri = get_description(name)
             if not desc:
                 desc = svc.get("description", "")
-            color = STATUS_COLORS.get(svc["active"], "#000000")
 
             self._all_data.append({
                 "name": name,
@@ -168,17 +187,22 @@ class Controller:
                 "time_str": blame_info["time_str"],
                 "seconds": blame_info["seconds"],
                 "desc": desc,
-                "color": color,
                 "tip": tip or "",
                 "oneri": oneri or "",
             })
 
         self._all_data.sort(key=lambda x: (-x["seconds"], x["name"]))
+        self._all_data_map = {d["name"]: d for d in self._all_data}
         self._apply_filters()
-        self.log_textview.get_buffer().set_text(
-            f"{len(self.liststore)} servis listelendi."
-        )
         return False
+
+    def _update_count_label(self):
+        count = len(self.liststore)
+        total = len(self._all_data)
+        if count == total:
+            self.service_count_label.set_text(f"{count} servis")
+        else:
+            self.service_count_label.set_text(f"{count}/{total} servis")
 
     def _apply_filters(self):
         self.liststore.clear()
@@ -189,20 +213,19 @@ class Controller:
                 continue
             if not self._matches_filter(d["active"], d["sub"]):
                 continue
+            markup = make_status_markup(d["active"])
             self.liststore.append([
                 d["name"],
-                d["active"],
+                markup,
                 d["sub"],
                 d["time_str"],
                 d["desc"],
-                d["color"],
                 d["tip"],
                 d["oneri"],
+                "",
             ])
 
-        self.log_textview.get_buffer().set_text(
-            f"{len(self.liststore)} servis listelendi."
-        )
+        self._update_count_label()
 
     def _matches_filter(self, active_state, sub_state):
         f = self._current_filter
@@ -254,30 +277,31 @@ class Controller:
             return
 
         name = row[0]
-        status = row[1]
-        tip = row[6]
-        oneri = row[7]
+        d = self._all_data_map.get(name)
+        active = d["active"] if d else ""
+        color = self._get_color(active)
 
-        color = self._get_color(status)
         self.detail_name.set_markup(
-            f"<b>{name}</b>  —  <span foreground='{color}'>{status}</span>"
+            f"<b>{name}</b>  \u2014  <span foreground='{color}'>{active}</span>"
         )
         self.detail_desc.set_text(row[4])
 
+        tip = row[5]
+        oneri = row[6]
         if oneri:
             if tip == "kritik":
                 self.detail_suggestion.set_markup(
                     "<span foreground='#c62828' weight='bold'>KRITIK: </span>"
-                    f"<span foreground='#555555'>{oneri}</span>"
+                    f"<span foreground='#444746'>{oneri}</span>"
                 )
             elif tip == "oneri":
                 self.detail_suggestion.set_markup(
                     "<span foreground='#2e7d32'>ONERI: </span>"
-                    f"<span foreground='#555555'>{oneri}</span>"
+                    f"<span foreground='#444746'>{oneri}</span>"
                 )
             else:
                 self.detail_suggestion.set_markup(
-                    f"<span foreground='#555555'>{oneri}</span>"
+                    f"<span foreground='#444746'>{oneri}</span>"
                 )
         else:
             self.detail_suggestion.set_text("")
@@ -330,8 +354,8 @@ class Controller:
             self.log_textview.get_buffer().set_text("Lutfen bir servis secin.")
             return
 
-        row = self._get_selected_row()
-        tip = row[6] if row is not None else ""
+        d = self._all_data_map.get(name)
+        tip = d["tip"] if d else ""
 
         warning = ("\n\nBu servis sistem icin KRITIK olarak isaretlenmistir. "
                    "Kapatmaniz sorunlara yol acabilir!") if tip == "kritik" else ""
