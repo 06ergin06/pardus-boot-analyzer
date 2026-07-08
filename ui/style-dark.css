@@ -177,3 +177,7 @@ window {
 .error-text {
     font-size: 9.5pt;
 }
+
+.dim-label {
+    opacity: 0.55;
+}
