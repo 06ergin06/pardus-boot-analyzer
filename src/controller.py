@@ -370,6 +370,23 @@ class Controller:
             return True
         return False
 
+    def _format_time(self, time_str):
+        if not time_str:
+            return "--"
+        match = re.match(r"([\d.]+)\s*([a-zA-Z]+)", time_str.strip())
+        if match:
+            try:
+                val = float(match.group(1))
+                unit = match.group(2)
+                if unit == "s":
+                    return f"{val:.1f}s"
+                elif unit == "ms":
+                    return f"{int(val)}ms"
+                return f"{val:.1f}{unit}"
+            except ValueError:
+                pass
+        return time_str
+
     def _build_ui(self):
         main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.window.add(main_box)
@@ -485,20 +502,27 @@ class Controller:
         lbl_boot_title.get_style_context().add_class("card-title")
         self.card_boot.pack_start(lbl_boot_title, False, False, 0)
         
-        vbox_circle = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        vbox_circle = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         vbox_circle.get_style_context().add_class("boot-circle-container")
         vbox_circle.set_valign(Gtk.Align.CENTER)
         vbox_circle.set_halign(Gtk.Align.CENTER)
         
+        vbox_inner = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        vbox_inner.set_valign(Gtk.Align.CENTER)
+        vbox_inner.set_halign(Gtk.Align.CENTER)
+        vbox_circle.pack_start(vbox_inner, True, False, 0)
+        
         self.lbl_boot_val = Gtk.Label()
         self.lbl_boot_val.get_style_context().add_class("boot-time-value")
         self.lbl_boot_val.set_text("--")
-        vbox_circle.pack_start(self.lbl_boot_val, True, False, 0)
+        self.lbl_boot_val.set_justify(Gtk.Justification.CENTER)
+        vbox_inner.pack_start(self.lbl_boot_val, False, False, 0)
         
         lbl_circle_sub = Gtk.Label()
         lbl_circle_sub.get_style_context().add_class("boot-time-label")
         lbl_circle_sub.set_text("Toplam Açılış Süresi")
-        vbox_circle.pack_start(lbl_circle_sub, False, False, 0)
+        lbl_circle_sub.set_justify(Gtk.Justification.CENTER)
+        vbox_inner.pack_start(lbl_circle_sub, False, False, 0)
         
         self.card_boot.pack_start(vbox_circle, False, False, 8)
         
@@ -576,7 +600,7 @@ class Controller:
             
         try:
             total_time, full_text = self.manager.get_total_boot_time()
-            self.lbl_boot_val.set_text(total_time)
+            self.lbl_boot_val.set_text(self._format_time(total_time))
             
             components = {
                 "firmware": "Donanım (Firmware)",
@@ -596,7 +620,7 @@ class Controller:
                     lbl_name.set_markup(f"<b>{name}:</b>")
                     self.breakdown_grid.attach(lbl_name, 0, row, 1, 1)
                     
-                    lbl_val = Gtk.Label(xalign=0, label=val)
+                    lbl_val = Gtk.Label(xalign=0, label=self._format_time(val))
                     self.breakdown_grid.attach(lbl_val, 1, row, 1, 1)
                     row += 1
             
