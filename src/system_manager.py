@@ -410,3 +410,93 @@ class SystemManager:
         )
         return result.stdout if result.returncode == 0 else result.stderr
 
+    def get_reverse_dependencies(self, name):
+        try:
+            result = subprocess.run(
+                ["systemctl", "list-dependencies", "--reverse", name, "--no-pager"],
+                capture_output=True, text=True
+            )
+            if result.returncode != 0:
+                return []
+            
+            deps = []
+            lines = result.stdout.strip().splitlines()
+            if len(lines) > 1:
+                for line in lines[1:]:
+                    cleaned = line.replace("●", "").replace("├─", "").replace("└─", "").replace("│", "").strip()
+                    if cleaned.endswith(".service"):
+                        deps.append(cleaned)
+            return deps
+        except Exception:
+            return []
+
+    def create_backup(self):
+        try:
+            states = self.get_unit_file_states()
+            backup_dir = os.path.expanduser("~/.config/pardus-boot-analyzer/backups")
+            os.makedirs(backup_dir, exist_ok=True)
+            
+            import datetime
+            now = datetime.datetime.now()
+            date_str = now.strftime("%Y-%m-%d_%H-%M-%S")
+            pretty_date = now.strftime("%d.%m.%Y %H:%M:%S")
+            
+            filepath = os.path.join(backup_dir, f"backup_{date_str}.json")
+            data = {
+                "timestamp": date_str,
+                "name": f"Geri Dönüş Noktası ({pretty_date})",
+                "services": states
+            }
+            
+            with open(filepath, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+            return True, filepath
+        except Exception as e:
+            return False, str(e)
+
+    def get_backups(self):
+        backup_dir = os.path.expanduser("~/.config/pardus-boot-analyzer/backups")
+        if not os.path.exists(backup_dir):
+            return []
+        
+        backups = []
+        for name in os.listdir(backup_dir):
+            if name.endswith(".json") and name.startswith("backup_"):
+                fpath = os.path.join(backup_dir, name)
+                try:
+                    with open(fpath, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                        data["filepath"] = fpath
+                        backups.append(data)
+                except Exception:
+                    pass
+        # Sort by timestamp descending
+        backups.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+        return backups
+
+    def restore_backup(self, filepath):
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            backup_states = data["services"]
+            current_states = self.get_unit_file_states()
+            
+            enable_list = []
+            disable_list = []
+            
+            for svc, state in backup_states.items():
+                if svc not in current_states:
+                    continue
+                curr = current_states[svc]
+                if state in ("enabled", "enabled-runtime") and curr not in ("enabled", "enabled-runtime"):
+                    enable_list.append(svc)
+                elif state in ("disabled", "static", "indirect", "masked") and curr in ("enabled", "enabled-runtime"):
+                    disable_list.append(svc)
+                    
+            if not enable_list and not disable_list:
+                return True, "Sistem zaten bu yedek durumuna uygun."
+                
+            return self.apply_profile_batch(enable_list, disable_list)
+        except Exception as e:
+            return False, str(e)
+
