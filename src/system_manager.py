@@ -10,7 +10,7 @@ class SystemManager:
     # --- Service & Device Management ---
     def get_services(self):
         output = subprocess.check_output(
-            ["systemctl", "list-units", "--type=service", "--all", "--no-pager", "--no-legend"],
+            ["systemctl", "list-units", "--all", "--no-pager", "--no-legend"],
             text=True
         )
         services = []
@@ -40,7 +40,9 @@ class SystemManager:
         return states
 
     def get_blame_data(self):
-        output = subprocess.check_output(["systemd-analyze", "blame"], text=True)
+        my_env = os.environ.copy()
+        my_env["LC_ALL"] = "C"
+        output = subprocess.check_output(["systemd-analyze", "blame"], text=True, env=my_env)
         data = []
         for line in output.strip().splitlines():
             parts = line.strip().split(None, 1)
@@ -50,9 +52,19 @@ class SystemManager:
         return data, output
 
     def get_total_boot_time(self):
-        output = subprocess.check_output(["systemd-analyze"], text=True)
-        match = re.search(r"[\d.]+(?:s|ms|min)", output)
-        return match.group(0) if match else output.strip(), output
+        my_env = os.environ.copy()
+        my_env["LC_ALL"] = "C"
+        output = subprocess.check_output(["systemd-analyze"], text=True, env=my_env)
+        
+        # If there is a "=", the total boot time is after "="
+        if "=" in output:
+            parts = output.split("=")
+            match = re.search(r"([\d.]+(?:s|ms|min))", parts[-1])
+            if match:
+                return match.group(1), output.strip()
+                
+        match = re.search(r"([\d.]+(?:s|ms|min))", output)
+        return match.group(1) if match else output.strip(), output.strip()
 
     def enable_service(self, name):
         return self._run_auth(["enable", name])

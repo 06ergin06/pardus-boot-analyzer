@@ -47,7 +47,7 @@ TIP_MAP = {
 
 VIEW_MAP = {
     0: "services",
-    1: "disabled",
+    1: "other",
     2: "devices",
 }
 
@@ -352,6 +352,7 @@ class Controller:
 
     def set_status(self, text):
         self.status_label.set_text(text)
+        self.status_label.set_tooltip_text(text)
 
     def _ensure_auth(self):
         if self.manager.password is not None:
@@ -426,6 +427,8 @@ class Controller:
         self.status_label.get_style_context().add_class("status-label")
         self.status_label.set_margin_start(12)
         self.status_label.set_margin_end(12)
+        self.status_label.set_ellipsize(Pango.EllipsizeMode.END)
+        self.status_label.set_max_width_chars(25)
         sidebar_box.pack_start(self.status_label, False, False, 8)
 
         sep = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
@@ -1191,9 +1194,9 @@ class Controller:
         box.pack_start(f_box, False, False, 0)
         
         self.view_combo = Gtk.ComboBoxText()
-        self.view_combo.append_text("Servisler")
-        self.view_combo.append_text("Kapalı Servisler")
-        self.view_combo.append_text("Aygıt Birimleri")
+        self.view_combo.append_text("Servisler (.service)")
+        self.view_combo.append_text("Diğerleri (Socket, Target, Mount)")
+        self.view_combo.append_text("Aygıt Birimleri (.device)")
         self.view_combo.set_active(0)
         f_box.pack_start(self.view_combo, False, False, 0)
         
@@ -1410,16 +1413,24 @@ class Controller:
         
         view = VIEW_MAP.get(self.view_combo.get_active(), "services")
 
-        if view == "devices":
-            self._do_load_devices()
-            self._updating_widgets = False
-            return
-
         q = self._search_text.lower()
         for d in self._all_data:
-            if q and q not in d["name"].lower() and q not in d["desc"].lower():
+            name = d["name"]
+            
+            # Filter by unit type
+            if view == "services":
+                if not name.endswith(".service"):
+                    continue
+            elif view == "devices":
+                if not name.endswith(".device"):
+                    continue
+            elif view == "other":
+                if name.endswith(".service") or name.endswith(".device"):
+                    continue
+            
+            if q and q not in name.lower() and q not in d["desc"].lower():
                 continue
-            if not self._matches_status(d["active"], d["sub"], d.get("enabled", ""), view):
+            if not self._matches_status(d["active"], d["sub"], d.get("enabled", "")):
                 continue
             if self._tip_filter != "all" and d["tip"] != self._tip_filter:
                 continue
@@ -1446,37 +1457,7 @@ class Controller:
         self._updating_widgets = False
         self._on_selection_changed()
 
-    def _do_load_devices(self):
-        try:
-            devs = self.manager.get_device_units()
-        except Exception as e:
-            self.set_status(f"Aygıt listeleme hatası: {e}")
-            self._update_count_label()
-            return
-            
-        for d in devs:
-            desc = d.get("description", "")
-            self.liststore.append([
-                d["name"],
-                make_status_markup(d["active"]),
-                d["sub"],
-                "",
-                desc,
-                "",
-                "",
-                d["active"]
-            ])
-            
-        self._update_count_label()
-        self.btn_enable.set_sensitive(False)
-        self.btn_run.set_sensitive(False)
-        self.btn_mask.set_sensitive(False)
-        self.btn_dep.set_sensitive(False)
-
-    def _matches_status(self, active, sub, enabled="", view="services"):
-        if view == "disabled":
-            return enabled == "disabled" or sub == "disabled"
-            
+    def _matches_status(self, active, sub, enabled=""):
         f = self._status_filter
         if f == "all":
             return True
@@ -1572,8 +1553,7 @@ class Controller:
             self.btn_dep.set_sensitive(False)
             return
 
-        view = VIEW_MAP.get(self.view_combo.get_active(), "services")
-        if view == "devices":
+        if name.endswith(".device"):
             self.btn_enable.set_sensitive(False)
             self.btn_run.set_sensitive(False)
             self.btn_mask.set_sensitive(False)
