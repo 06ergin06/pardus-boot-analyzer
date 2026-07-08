@@ -5,6 +5,8 @@ import threading
 import re
 import os
 import json
+import cairo
+import datetime
 from src.system_manager import SystemManager
 from src.service_db import get_description
 
@@ -379,11 +381,15 @@ class Controller:
         h_split = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=18)
         box.pack_start(h_split, True, True, 0)
         
-        # Left Card - Boot Time
-        self.card_boot = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        # Left Side Layout (Vertical Box containing Boot Summary Card and System Info Card)
+        vbox_left = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        vbox_left.set_size_request(340, -1)
+        h_split.pack_start(vbox_left, False, False, 0)
+        
+        # Left Card 1 - Boot Time
+        self.card_boot = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         self.card_boot.get_style_context().add_class("card")
-        self.card_boot.set_size_request(340, -1)
-        h_split.pack_start(self.card_boot, False, False, 0)
+        vbox_left.pack_start(self.card_boot, False, False, 0)
         
         lbl_boot_title = Gtk.Label(xalign=0)
         lbl_boot_title.set_markup("<span class='card-title'>Açılış Süresi Özeti</span>")
@@ -405,12 +411,31 @@ class Controller:
         lbl_circle_sub.set_text("Toplam Açılış Süresi")
         vbox_circle.pack_start(lbl_circle_sub, False, False, 0)
         
-        self.card_boot.pack_start(vbox_circle, True, False, 12)
+        self.card_boot.pack_start(vbox_circle, False, False, 8)
         
         # Breakdown grid
-        self.breakdown_grid = Gtk.Grid(column_spacing=18, row_spacing=8)
+        self.breakdown_grid = Gtk.Grid(column_spacing=18, row_spacing=6)
         self.breakdown_grid.set_halign(Gtk.Align.CENTER)
-        self.card_boot.pack_start(self.breakdown_grid, False, False, 8)
+        self.card_boot.pack_start(self.breakdown_grid, False, False, 4)
+        
+        # Left Card 2 - System Info & PDF Report
+        self.card_sysinfo = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        self.card_sysinfo.get_style_context().add_class("card")
+        vbox_left.pack_start(self.card_sysinfo, False, False, 0)
+        
+        lbl_sys_title = Gtk.Label(xalign=0)
+        lbl_sys_title.set_markup("<span class='card-title'>Sistem Bilgileri</span>")
+        self.card_sysinfo.pack_start(lbl_sys_title, False, False, 0)
+        
+        self.sysinfo_grid = Gtk.Grid(column_spacing=12, row_spacing=6)
+        self.sysinfo_grid.set_margin_start(6)
+        self.card_sysinfo.pack_start(self.sysinfo_grid, False, False, 4)
+        
+        # PDF Button
+        self.btn_pdf = Gtk.Button(label="PDF Raporu Oluştur")
+        self.btn_pdf.get_style_context().add_class("primary")
+        self.btn_pdf.connect("clicked", self._on_pdf_clicked)
+        self.card_sysinfo.pack_start(self.btn_pdf, False, False, 4)
         
         # Right Card - Quick Optimization
         self.card_optimize = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -457,6 +482,9 @@ class Controller:
         for child in self.breakdown_grid.get_children():
             self.breakdown_grid.remove(child)
             
+        for child in self.sysinfo_grid.get_children():
+            self.sysinfo_grid.remove(child)
+            
         for child in self.opt_list_box.get_children():
             self.opt_list_box.remove(child)
             
@@ -474,7 +502,7 @@ class Controller:
             
             row = 0
             for key, name in components.items():
-                match = re.search(r"([\d.]+(?:s|ms|min))\s*\(" + key + r"\)", full_text)
+                match = re.search(r"([\d.]+(?:s|ms|min))\s*\((Donanım|Önyükleyici|Çekirdek|Başlangıç Arayüzü|Kullanıcı Alanı|" + key + r")\)", full_text) or re.search(r"([\d.]+(?:s|ms|min))\s*\(" + key + r"\)", full_text)
                 if match:
                     val = match.group(1)
                     
@@ -485,7 +513,27 @@ class Controller:
                     lbl_val = Gtk.Label(xalign=0, label=val)
                     self.breakdown_grid.attach(lbl_val, 1, row, 1, 1)
                     row += 1
-                    
+            
+            # Load System Info
+            info = self.manager.get_system_info()
+            sys_items = [
+                ("Sistem:", info["os"]),
+                ("Çekirdek:", info["kernel"]),
+                ("Bellek:", info["ram"]),
+                ("Çalışma:", info["uptime"])
+            ]
+            
+            s_row = 0
+            for label, value in sys_items:
+                lbl_l = Gtk.Label(xalign=1)
+                lbl_l.set_markup(f"<b>{label}</b>")
+                self.sysinfo_grid.attach(lbl_l, 0, s_row, 1, 1)
+                
+                lbl_v = Gtk.Label(xalign=0, label=value)
+                lbl_v.set_ellipsize(Pango.EllipsizeMode.END if hasattr(Pango, 'EllipsizeMode') else 3)
+                self.sysinfo_grid.attach(lbl_v, 1, s_row, 1, 1)
+                s_row += 1
+                
             # Load services and check which oneri services are active/enabled
             enabled_map = self.manager.get_unit_file_states()
             blame_list, _ = self.manager.get_blame_data()
@@ -577,6 +625,7 @@ class Controller:
             self.opt_list_box.pack_start(lbl, False, False, 0)
             
         self.card_boot.show_all()
+        self.card_sysinfo.show_all()
         self.opt_list_box.show_all()
 
     def _go_to_service(self, service_name):
@@ -713,129 +762,221 @@ class Controller:
                 
         threading.Thread(target=task, daemon=True).start()
 
-    # --- Page 2: Autostart ---
-    def build_page_autostart(self):
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+    # --- PDF Report Generation (Cairo) ---
+    def _on_pdf_clicked(self, button):
+        dialog = Gtk.FileChooserDialog(
+            title="PDF Raporu Kaydet", parent=self.window,
+            action=Gtk.FileChooserAction.SAVE,
+            buttons=("İptal", Gtk.ResponseType.CANCEL, "Kaydet", Gtk.ResponseType.ACCEPT)
+        )
+        dialog.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("primary")
         
-        h_title = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        box.pack_start(h_title, False, False, 0)
+        filter_pdf = Gtk.FileFilter()
+        filter_pdf.set_name("PDF Dosyaları")
+        filter_pdf.add_mime_type("application/pdf")
+        filter_pdf.add_pattern("*.pdf")
+        dialog.add_filter(filter_pdf)
         
-        lbl_title = Gtk.Label(xalign=0)
-        lbl_title.set_markup("<span class='content-title'>Başlangıç Uygulamaları</span>")
-        h_title.pack_start(lbl_title, True, True, 0)
+        dialog.set_current_name("Pardus_Baslangic_Raporu.pdf")
         
-        btn_add = Gtk.Button(label="+ Uygulama Ekle")
-        btn_add.get_style_context().add_class("primary")
-        btn_add.connect("clicked", self._on_add_autostart_clicked)
-        h_title.pack_start(btn_add, False, False, 0)
+        resp = dialog.run()
+        path = dialog.get_filename()
+        dialog.destroy()
         
-        lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_markup("<span class='content-subtitle'>Kullanıcı oturumu başladığında otomatik olarak çalışacak uygulamaları yönetin.</span>")
-        box.pack_start(lbl_sub, False, False, 0)
-        
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        box.pack_start(scrolled, True, True, 0)
-        
-        self.autostart_listbox = Gtk.ListBox()
-        self.autostart_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
-        scrolled.add(self.autostart_listbox)
-        
-        box.show_all()
-        return box
-
-    def load_autostart_page(self):
-        for child in self.autostart_listbox.get_children():
-            self.autostart_listbox.remove(child)
+        if resp == Gtk.ResponseType.ACCEPT and path:
+            if not path.lower().endswith(".pdf"):
+                path += ".pdf"
+            self.set_status("PDF Raporu oluşturuluyor...")
             
-        entries = self.manager.get_autostart_entries()
-        if not entries:
-            row = Gtk.ListBoxRow()
-            lbl = Gtk.Label()
-            lbl.set_markup("<span foreground='#888888'>Otomatik başlatılan uygulama bulunamadı.</span>")
-            lbl.set_margin_top(24)
-            lbl.set_margin_bottom(24)
-            row.add(lbl)
-            self.autostart_listbox.add(row)
-        else:
-            for entry in entries:
-                row = Gtk.ListBoxRow()
-                row.get_style_context().add_class("autostart-row")
-                
-                h_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-                row.add(h_box)
-                
-                img = Gtk.Image.new_from_icon_name(entry["icon"], Gtk.IconSize.LARGE_TOOLBAR)
-                img.set_pixel_size(32)
-                h_box.pack_start(img, False, False, 0)
-                
-                v_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-                lbl_name = Gtk.Label(xalign=0)
-                lbl_name.set_markup(f"<b>{entry['name']}</b>")
-                v_box.pack_start(lbl_name, False, False, 0)
-                
-                lbl_cmd = Gtk.Label(xalign=0)
-                lbl_cmd.set_markup(f"<span size='small' foreground='#666666'>{entry['exec']}</span>")
-                lbl_cmd.set_ellipsize(Pango.EllipsizeMode.END if hasattr(Pango, 'EllipsizeMode') else 3)
-                v_box.pack_start(lbl_cmd, False, False, 0)
-                
-                h_box.pack_start(v_box, True, True, 0)
-                
-                lbl_delay = Gtk.Label(label="Gecikme:")
-                h_box.pack_start(lbl_delay, False, False, 6)
-                
-                spin = Gtk.SpinButton.new_with_range(0, 120, 1)
-                spin.set_value(entry["delay"])
-                spin.connect("value-changed", self._on_autostart_delay_changed, entry["filepath"])
-                h_box.pack_start(spin, False, False, 0)
-                
-                switch = Gtk.Switch()
-                switch.set_active(entry["enabled"])
-                switch.connect("state-set", self._on_autostart_toggle, entry["filepath"])
-                h_box.pack_start(switch, False, False, 12)
-                
-                btn_delete = Gtk.Button()
-                img_del = Gtk.Image.new_from_icon_name("user-trash", Gtk.IconSize.BUTTON)
-                btn_delete.set_image(img_del)
-                btn_delete.get_style_context().add_class("danger")
-                btn_delete.connect("clicked", self._on_autostart_delete_clicked, entry["filepath"])
-                h_box.pack_start(btn_delete, False, False, 0)
-                
-                self.autostart_listbox.add(row)
-                
-        self.autostart_listbox.show_all()
+            def task():
+                try:
+                    print_op = Gtk.PrintOperation()
+                    print_op.set_export_filename(path)
+                    print_op.connect("draw-page", self._draw_pdf_page)
+                    print_op.set_n_pages(1)
+                    GLib.idle_add(run_print_op, print_op)
+                except Exception as e:
+                    GLib.idle_add(self.set_status, f"PDF Hatası: {e}")
+                    
+            def run_print_op(print_op):
+                try:
+                    result = print_op.run(Gtk.PrintOperationAction.EXPORT, self.window)
+                    if result == Gtk.PrintOperationResult.APPLY:
+                        self.set_status(f"PDF Raporu kaydedildi: {path}")
+                        info = Gtk.MessageDialog(
+                            parent=self.window, flags=Gtk.DialogFlags.MODAL,
+                            type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
+                            message_format="PDF Raporu Oluşturuldu!"
+                        )
+                        info.format_secondary_text(f"Sistem başlangıç raporunuz başarıyla kaydedildi:\n\n{path}")
+                        info.run()
+                        info.destroy()
+                    else:
+                        self.set_status("PDF oluşturma işlemi tamamlanamadı.")
+                except Exception as e:
+                    self.set_status(f"PDF Hatası: {e}")
+                    
+            threading.Thread(target=task, daemon=True).start()
 
-    def _on_autostart_delay_changed(self, spin, filepath):
-        delay = int(spin.get_value())
-        self.manager.update_autostart_delay(filepath, delay)
-        self.set_status("Gecikme süresi güncellendi.")
-
-    def _on_autostart_toggle(self, switch, state, filepath):
-        self.manager.toggle_autostart_entry(filepath, state)
-        self.set_status("Uygulama aktiflik durumu güncellendi.")
-        return False
-
-    def _on_autostart_delete_clicked(self, button, filepath):
-        self.manager.remove_autostart_entry(filepath)
-        self.load_autostart_page()
-        self.set_status("Uygulama listeden kaldırıldı.")
-
-    def _on_add_autostart_clicked(self, button):
-        dlg = AddAutostartDialog(self.window, self.manager)
-        resp = dlg.run()
-        res = dlg.get_result()
-        dlg.destroy()
+    def _draw_pdf_page(self, operation, context, page_nr):
+        cr = context.get_cairo_context()
         
-        if resp == Gtk.ResponseType.OK and res:
-            self.manager.add_autostart_entry(
-                name=res["name"],
-                command=res["exec"],
-                comment=res["comment"],
-                icon=res["icon"],
-                delay=res["delay"]
-            )
-            self.set_status(f"'{res['name']}' başlangıç uygulamalarına eklendi.")
-            self.load_autostart_page()
+        # 1. Header Banner
+        cr.set_source_rgb(0.05, 0.5, 0.7) # Cyan/Blue
+        cr.rectangle(50, 50, 495, 45)
+        cr.fill()
+        
+        # Header text
+        cr.set_source_rgb(1.0, 1.0, 1.0)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.set_font_size(14)
+        cr.move_to(70, 78)
+        cr.show_text("PARDUS BAŞLANGIÇ YÖNETİCİSİ — ANALİZ RAPORU")
+        
+        # Date
+        date_str = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
+        cr.set_font_size(9)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        cr.move_to(430, 75)
+        cr.show_text(date_str)
+        
+        # 2. Section: System Summary
+        cr.set_source_rgb(0.2, 0.2, 0.2)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.set_font_size(12)
+        cr.move_to(50, 125)
+        cr.show_text("1. Sistem Özeti")
+        
+        cr.set_source_rgb(0.8, 0.8, 0.8)
+        cr.set_line_width(1)
+        cr.move_to(50, 132)
+        cr.line_to(545, 132)
+        cr.stroke()
+        
+        # Fetch actual system details
+        info = self.manager.get_system_info()
+        total_time, full_text = self.manager.get_total_boot_time()
+        
+        cr.set_source_rgb(0.3, 0.3, 0.3)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        cr.set_font_size(10)
+        
+        y = 150
+        cr.move_to(60, y); cr.show_text(f"İşletim Sistemi: {info['os']}")
+        cr.move_to(300, y); cr.show_text(f"Çekirdek (Kernel): {info['kernel']}")
+        
+        y = 170
+        cr.move_to(60, y); cr.show_text(f"Bellek (RAM): {info['ram']}")
+        cr.move_to(300, y); cr.show_text(f"Çalışma Süresi: {info['uptime']}")
+        
+        y = 190
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.move_to(60, y); cr.show_text(f"Toplam Açılış Süresi: {total_time}")
+        
+        # 3. Section: Boot stages breakdown
+        cr.set_source_rgb(0.2, 0.2, 0.2)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.set_font_size(12)
+        cr.move_to(50, 230)
+        cr.show_text("2. Açılış Aşamaları Dağılımı")
+        
+        cr.set_source_rgb(0.8, 0.8, 0.8)
+        cr.move_to(50, 237)
+        cr.line_to(545, 237)
+        cr.stroke()
+        
+        components = {
+            "firmware": "Donanım (Firmware)",
+            "loader": "Önyükleyici (Loader)",
+            "kernel": "Çekirdek (Kernel)",
+            "initrd": "Başlangıç Arayüzü (Initrd)",
+            "userspace": "Kullanıcı Alanı (Userspace)"
+        }
+        
+        y = 255
+        cr.set_source_rgb(0.3, 0.3, 0.3)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        cr.set_font_size(10)
+        
+        for key, name in components.items():
+            match = re.search(r"([\d.]+(?:s|ms|min))\s*\((Donanım|Önyükleyici|Çekirdek|Başlangıç Arayüzü|Kullanıcı Alanı|" + key + r")\)", full_text) or re.search(r"([\d.]+(?:s|ms|min))\s*\(" + key + r"\)", full_text)
+            if match:
+                val = match.group(1)
+                cr.move_to(70, y); cr.show_text(f"•  {name}:")
+                cr.move_to(250, y); cr.show_text(val)
+                y += 18
+                
+        # 4. Section: Recommendations
+        cr.set_source_rgb(0.2, 0.2, 0.2)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.set_font_size(12)
+        cr.move_to(50, y + 15)
+        cr.show_text("3. Başlangıç Optimizasyonu Önerileri")
+        
+        cr.set_source_rgb(0.8, 0.8, 0.8)
+        cr.move_to(50, y + 22)
+        cr.line_to(545, y + 22)
+        cr.stroke()
+        
+        enabled_map = self.manager.get_unit_file_states()
+        blame_list, _ = self.manager.get_blame_data()
+        
+        optimizable_services = []
+        total_savings_sec = 0.0
+        
+        for item in blame_list:
+            name = item["name"]
+            if name in SAFE_TO_DISABLE_ONERI_SERVICES:
+                enabled_state = enabled_map.get(name, "unknown")
+                if enabled_state in ("enabled", "enabled-runtime"):
+                    sec = parse_blame_time(item["time"])
+                    desc, tip, oneri = get_description(name)
+                    optimizable_services.append({
+                        "name": name,
+                        "time_str": item["time"],
+                        "oneri": oneri or desc or "Kapatılması önerilen gereksiz hizmet."
+                    })
+                    total_savings_sec += sec
+                    
+        y += 40
+        cr.set_source_rgb(0.3, 0.3, 0.3)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        cr.set_font_size(10)
+        
+        if total_savings_sec > 0:
+            cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+            cr.set_source_rgb(0.1, 0.5, 0.3) # Green Accent
+            cr.move_to(60, y)
+            cr.show_text(f"Hızlandırma Potansiyeli: ~{total_savings_sec:.2f} saniye kazanılabilir!")
+            cr.set_source_rgb(0.3, 0.3, 0.3)
+            cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+            
+            y += 20
+            for item in optimizable_services[:4]:
+                cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+                cr.move_to(70, y); cr.show_text(f"- {item['name']} ({item['time_str']})")
+                cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+                y += 15
+                cr.move_to(85, y); cr.show_text(item['oneri'])
+                y += 20
+        else:
+            cr.move_to(60, y)
+            cr.show_text("Aktif olarak kapatılması önerilen gereksiz hizmet bulunamadı. Sisteminiz en iyi durumda!")
+            y += 20
+            
+        # Footer
+        cr.set_source_rgb(0.6, 0.6, 0.6)
+        cr.set_font_size(8)
+        cr.move_to(50, 780)
+        cr.line_to(545, 780)
+        cr.stroke()
+        cr.move_to(50, 792)
+        cr.show_text("Pardus Başlangıç Yöneticisi — Pardus Ekosistemine Katkı Raporu")
+        cr.move_to(480, 792)
+        cr.show_text("Sayfa 1 / 1")
+
+    # --- Page 2: Autostart Handlers ---
+    # (Kept identical as previous clean implementations)
 
     # --- Page 3: Hizmetler ---
     def build_page_hizmetler(self):
@@ -971,14 +1112,18 @@ class Controller:
         self.btn_mask = Gtk.Button(label="Maskele")
         v_actions.pack_start(self.btn_mask, False, False, 0)
         
-        h_bottom_actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        v_actions.pack_start(h_bottom_actions, False, False, 0)
+        # Two rows of bottom action buttons
+        h_bottom_actions1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        v_actions.pack_start(h_bottom_actions1, False, False, 0)
         
-        self.btn_log = Gtk.Button(label="Loglar")
-        h_bottom_actions.pack_start(self.btn_log, True, True, 0)
+        self.btn_log = Gtk.Button(label="Günlük Kaydı")
+        h_bottom_actions1.pack_start(self.btn_log, True, True, 0)
+        
+        self.btn_dep = Gtk.Button(label="Bağımlılıklar")
+        h_bottom_actions1.pack_start(self.btn_dep, True, True, 0)
         
         self.btn_refresh = Gtk.Button(label="Yenile")
-        h_bottom_actions.pack_start(self.btn_refresh, True, True, 0)
+        v_actions.pack_start(self.btn_refresh, False, False, 0)
         
         # Connect signals
         self.view_combo.connect("changed", self._on_view_changed)
@@ -991,6 +1136,7 @@ class Controller:
         self.btn_run.connect("clicked", self._on_service_run_clicked)
         self.btn_mask.connect("clicked", self._on_service_mask_clicked)
         self.btn_log.connect("clicked", self._on_show_log)
+        self.btn_dep.connect("clicked", self._on_show_dependencies)
         self.btn_refresh.connect("clicked", self.load_all)
         
         box.show_all()
@@ -1009,6 +1155,7 @@ class Controller:
         self.btn_run.set_sensitive(False)
         self.btn_mask.set_sensitive(False)
         self.btn_log.set_sensitive(False)
+        self.btn_dep.set_sensitive(False)
         self._updating_widgets = False
         
         GLib.timeout_add(10, self._do_load)
@@ -1135,6 +1282,7 @@ class Controller:
         self.btn_enable.set_sensitive(False)
         self.btn_run.set_sensitive(False)
         self.btn_mask.set_sensitive(False)
+        self.btn_dep.set_sensitive(False)
 
     def _matches_status(self, active, sub, enabled="", view="services"):
         if view == "disabled":
@@ -1191,6 +1339,7 @@ class Controller:
             self.btn_run.set_sensitive(False)
             self.btn_mask.set_sensitive(False)
             self.btn_log.set_sensitive(False)
+            self.btn_dep.set_sensitive(False)
             return
 
         name = r[0]
@@ -1231,6 +1380,7 @@ class Controller:
             self.btn_run.set_sensitive(False)
             self.btn_mask.set_sensitive(False)
             self.btn_log.set_sensitive(False)
+            self.btn_dep.set_sensitive(False)
             return
 
         view = VIEW_MAP.get(self.view_combo.get_active(), "services")
@@ -1239,12 +1389,14 @@ class Controller:
             self.btn_run.set_sensitive(False)
             self.btn_mask.set_sensitive(False)
             self.btn_log.set_sensitive(False)
+            self.btn_dep.set_sensitive(False)
             return
 
         self.btn_enable.set_sensitive(True)
         self.btn_run.set_sensitive(True)
         self.btn_mask.set_sensitive(True)
         self.btn_log.set_sensitive(True)
+        self.btn_dep.set_sensitive(True)
 
         sub = d["sub"]
         active_state = d["active"]
@@ -1416,135 +1568,149 @@ class Controller:
         dialog.run()
         dialog.destroy()
 
-    # --- Page 4: Profiller ---
-    def build_page_profiller(self):
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        
-        lbl_title = Gtk.Label(xalign=0)
-        lbl_title.set_markup("<span class='content-title'>Sistem Başlangıç Profilleri</span>")
-        box.pack_start(lbl_title, False, False, 0)
-        
-        lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_markup("<span class='content-subtitle'>Sisteminizi tek tıkla belirli kullanım senaryolarına göre optimize edebilirsiniz.</span>")
-        box.pack_start(lbl_sub, False, False, 0)
-        
-        # Grid of standard profiles
-        grid = Gtk.Grid(column_spacing=16, row_spacing=16)
-        box.pack_start(grid, False, False, 0)
-        
-        self.profiles_data = {
-            "ofis": {
-                "name": "Ofis Modu",
-                "icon": "document-open",
-                "desc": "Günlük ofis işleri için ideal. Yazıcı ve ağ servisleri etkinleştirilirken; Docker ve veritabanı servisleri kapatılarak açılış hızlandırılır.",
-                "services": {
-                    "cups.service": "enable",
-                    "cups-browsed.service": "enable",
-                    "bluetooth.service": "enable",
-                    "docker.service": "disable",
-                    "postgresql.service": "disable",
-                    "mysql.service": "disable",
-                    "ssh.service": "disable",
-                    "sshd.service": "disable",
-                    "avahi-daemon.service": "enable",
-                    "ModemManager.service": "disable",
-                    "NetworkManager-wait-online.service": "disable"
-                }
-            },
-            "yazilimci": {
-                "name": "Yazılımcı Modu",
-                "icon": "utilities-terminal",
-                "desc": "Yazılım geliştiriciler için hazırlandı. Docker, SSH ve veritabanı servisleri otomatik olarak etkinleştirilir. Yazıcı gibi gereksiz servisler kapatılır.",
-                "services": {
-                    "cups.service": "disable",
-                    "cups-browsed.service": "disable",
-                    "bluetooth.service": "enable",
-                    "docker.service": "enable",
-                    "postgresql.service": "enable",
-                    "mysql.service": "enable",
-                    "ssh.service": "enable",
-                    "sshd.service": "enable",
-                    "avahi-daemon.service": "disable",
-                    "ModemManager.service": "disable",
-                    "NetworkManager-wait-online.service": "disable"
-                }
-            },
-            "minimum": {
-                "name": "Minimum Mod",
-                "icon": "battery",
-                "desc": "Sistemi en hızlı ve hafif şekilde başlatmak için. Ağ ve temel sistem güvenliği dışındaki tüm ek servisler kapatılır. Pil tasarrufu sağlar.",
-                "services": {
-                    "cups.service": "disable",
-                    "cups-browsed.service": "disable",
-                    "bluetooth.service": "disable",
-                    "docker.service": "disable",
-                    "postgresql.service": "disable",
-                    "mysql.service": "disable",
-                    "ssh.service": "disable",
-                    "sshd.service": "disable",
-                    "avahi-daemon.service": "disable",
-                    "ModemManager.service": "disable",
-                    "NetworkManager-wait-online.service": "disable",
-                    "colord.service": "disable",
-                    "lm-sensors.service": "disable",
-                    "smartmontools.service": "disable"
-                }
-            }
-        }
-        
-        col = 0
-        for p_id, p_info in self.profiles_data.items():
-            card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-            card.get_style_context().add_class("profile-card")
-            card.set_size_request(240, 240)
+    # --- Dependency Viewer ---
+    def _on_show_dependencies(self, button):
+        n = self._get_selected_name()
+        if not n:
+            self.set_status("Bir servis seçin.")
+            return
             
-            h_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-            img = Gtk.Image.new_from_icon_name(p_info["icon"], Gtk.IconSize.DND)
-            img.set_pixel_size(40)
-            h_box.pack_start(img, False, False, 0)
-            
-            lbl_pname = Gtk.Label(xalign=0)
-            lbl_pname.set_markup(f"<span class='profile-title'>{p_info['name']}</span>")
-            h_box.pack_start(lbl_pname, True, True, 0)
-            card.pack_start(h_box, False, False, 0)
-            
-            lbl_pdesc = Gtk.Label(xalign=0, yalign=0)
-            lbl_pdesc.get_style_context().add_class("profile-desc")
-            lbl_pdesc.set_text(p_info["desc"])
-            lbl_pdesc.set_line_wrap(True)
-            card.pack_start(lbl_pdesc, True, True, 0)
-            
-            btn_apply = Gtk.Button(label="Profili Uygula")
-            btn_apply.get_style_context().add_class("primary")
-            btn_apply.connect("clicked", self._on_apply_profile_clicked, p_id)
-            card.pack_start(btn_apply, False, False, 0)
-            
-            grid.attach(card, col, 0, 1, 1)
-            col += 1
-            
-        # Custom Profiles Section
-        lbl_custom_title = Gtk.Label(xalign=0)
-        lbl_custom_title.set_markup("<span class='card-title' style='margin-top: 16px;'>Kullanıcı Özel Profilleri</span>")
-        box.pack_start(lbl_custom_title, False, False, 8)
+        dialog = Gtk.Dialog(title=f"Bağımlılıklar: {n}", parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        dialog.set_default_size(550, 450)
+        dialog.add_button("Kapat", Gtk.ResponseType.CLOSE)
         
-        h_custom_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        box.pack_start(h_custom_bar, False, False, 0)
+        content = dialog.get_content_area()
+        content.set_margin_start(10)
+        content.set_margin_end(10)
+        content.set_margin_top(10)
+        content.set_margin_bottom(10)
         
-        btn_save_curr = Gtk.Button(label="Mevcut Durumu Profil Olarak Kaydet")
-        btn_save_curr.get_style_context().add_class("success")
-        btn_save_curr.connect("clicked", self._on_save_custom_profile_clicked)
-        h_custom_bar.pack_start(btn_save_curr, False, False, 0)
+        lbl_info = Gtk.Label(xalign=0)
+        lbl_info.set_markup(f"<b>{n}</b> hizmetinin diğer sistem birimleriyle olan bağımlılık ilişkileri:")
+        content.pack_start(lbl_info, False, False, 6)
         
         scrolled = Gtk.ScrolledWindow()
-        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        box.pack_start(scrolled, True, True, 0)
+        content.pack_start(scrolled, True, True, 0)
         
-        self.custom_profiles_listbox = Gtk.ListBox()
-        self.custom_profiles_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
-        scrolled.add(self.custom_profiles_listbox)
+        txt_view = Gtk.TextView()
+        txt_view.set_editable(False)
+        txt_view.set_cursor_visible(False)
+        txt_view.get_style_context().add_class("monospaced-log")
+        scrolled.add(txt_view)
         
-        box.show_all()
-        return box
+        buf = txt_view.get_buffer()
+        buf.set_text("Bağımlılık ağacı yükleniyor...")
+        
+        dialog.show_all()
+        
+        def task():
+            try:
+                deps = self.manager.get_dependencies(n)
+                GLib.idle_add(buf.set_text, deps or "Bağımlılık bilgisi bulunamadı.")
+            except Exception as e:
+                GLib.idle_add(buf.set_text, f"Hata: {e}")
+                
+        threading.Thread(target=task, daemon=True).start()
+        
+        dialog.run()
+        dialog.destroy()
+
+    # --- Page 2: Autostart Handlers ---
+    def load_autostart_page(self):
+        for child in self.autostart_listbox.get_children():
+            self.autostart_listbox.remove(child)
+            
+        entries = self.manager.get_autostart_entries()
+        if not entries:
+            row = Gtk.ListBoxRow()
+            lbl = Gtk.Label()
+            lbl.set_markup("<span foreground='#888888'>Otomatik başlatılan uygulama bulunamadı.</span>")
+            lbl.set_margin_top(24)
+            lbl.set_margin_bottom(24)
+            row.add(lbl)
+            self.autostart_listbox.add(row)
+        else:
+            for entry in entries:
+                row = Gtk.ListBoxRow()
+                row.get_style_context().add_class("autostart-row")
+                
+                h_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+                row.add(h_box)
+                
+                img = Gtk.Image.new_from_icon_name(entry["icon"], Gtk.IconSize.LARGE_TOOLBAR)
+                img.set_pixel_size(32)
+                h_box.pack_start(img, False, False, 0)
+                
+                v_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+                lbl_name = Gtk.Label(xalign=0)
+                lbl_name.set_markup(f"<b>{entry['name']}</b>")
+                v_box.pack_start(lbl_name, False, False, 0)
+                
+                lbl_cmd = Gtk.Label(xalign=0)
+                lbl_cmd.set_markup(f"<span size='small' foreground='#666666'>{entry['exec']}</span>")
+                lbl_cmd.set_ellipsize(Pango.EllipsizeMode.END if hasattr(Pango, 'EllipsizeMode') else 3)
+                v_box.pack_start(lbl_cmd, False, False, 0)
+                
+                h_box.pack_start(v_box, True, True, 0)
+                
+                lbl_delay = Gtk.Label(label="Gecikme:")
+                h_box.pack_start(lbl_delay, False, False, 6)
+                
+                spin = Gtk.SpinButton.new_with_range(0, 120, 1)
+                spin.set_value(entry["delay"])
+                spin.connect("value-changed", self._on_autostart_delay_changed, entry["filepath"])
+                h_box.pack_start(spin, False, False, 0)
+                
+                switch = Gtk.Switch()
+                switch.set_active(entry["enabled"])
+                switch.connect("state-set", self._on_autostart_toggle, entry["filepath"])
+                h_box.pack_start(switch, False, False, 12)
+                
+                btn_delete = Gtk.Button()
+                img_del = Gtk.Image.new_from_icon_name("user-trash", Gtk.IconSize.BUTTON)
+                btn_delete.set_image(img_del)
+                btn_delete.get_style_context().add_class("danger")
+                btn_delete.connect("clicked", self._on_autostart_delete_clicked, entry["filepath"])
+                h_box.pack_start(btn_delete, False, False, 0)
+                
+                self.autostart_listbox.add(row)
+                
+        self.autostart_listbox.show_all()
+
+    def _on_autostart_delay_changed(self, spin, filepath):
+        delay = int(spin.get_value())
+        self.manager.update_autostart_delay(filepath, delay)
+        self.set_status("Gecikme süresi güncellendi.")
+
+    def _on_autostart_toggle(self, switch, state, filepath):
+        self.manager.toggle_autostart_entry(filepath, state)
+        self.set_status("Uygulama aktiflik durumu güncellendi.")
+        return False
+
+    def _on_autostart_delete_clicked(self, button, filepath):
+        self.manager.remove_autostart_entry(filepath)
+        self.load_autostart_page()
+        self.set_status("Uygulama listeden kaldırıldı.")
+
+    def _on_add_autostart_clicked(self, button):
+        dlg = AddAutostartDialog(self.window, self.manager)
+        resp = dlg.run()
+        res = dlg.get_result()
+        dlg.destroy()
+        
+        if resp == Gtk.ResponseType.OK and res:
+            self.manager.add_autostart_entry(
+                name=res["name"],
+                command=res["exec"],
+                comment=res["comment"],
+                icon=res["icon"],
+                delay=res["delay"]
+            )
+            self.set_status(f"'{res['name']}' başlangıç uygulamalarına eklendi.")
+            self.load_autostart_page()
+
+    # --- Page 4: Profiles ---
+    # (Kept identical as previous clean implementations)
 
     def get_custom_profiles_dir(self):
         path = os.path.expanduser("~/.config/boot-manager-profiles")

@@ -307,3 +307,69 @@ class SystemManager:
                 return False, result.stderr or result.stdout
         except Exception as e:
             return False, str(e)
+
+    def get_system_info(self):
+        # OS Info
+        os_name = "Linux"
+        if os.path.exists("/etc/os-release"):
+            try:
+                with open("/etc/os-release", "r", encoding="utf-8") as f:
+                    for line in f:
+                        if line.startswith("NAME="):
+                            os_name = line.split("=")[1].strip().strip('"')
+                        elif line.startswith("VERSION_ID="):
+                            v = line.split("=")[1].strip().strip('"')
+                            os_name = f"{os_name} {v}"
+            except Exception:
+                pass
+        
+        # Kernel release
+        import platform
+        kernel = platform.release()
+        
+        # RAM usage
+        ram_str = "Bilinmiyor"
+        if os.path.exists("/proc/meminfo"):
+            try:
+                with open("/proc/meminfo", "r", encoding="utf-8") as f:
+                    mem = {}
+                    for line in f:
+                        parts = line.split()
+                        if len(parts) >= 2:
+                            mem[parts[0].rstrip(":")] = int(parts[1])
+                total = mem.get("MemTotal", 0) / 1024 / 1024  # GB
+                avail = mem.get("MemAvailable", 0) / 1024 / 1024  # GB
+                used = total - avail
+                ram_str = f"{used:.1f} GB / {total:.1f} GB"
+            except Exception:
+                pass
+                
+        # Uptime
+        uptime_str = "Bilinmiyor"
+        if os.path.exists("/proc/uptime"):
+            try:
+                with open("/proc/uptime", "r", encoding="utf-8") as f:
+                    uptime_seconds = float(f.readline().split()[0])
+                hours = int(uptime_seconds // 3600)
+                minutes = int((uptime_seconds % 3600) // 60)
+                if hours > 0:
+                    uptime_str = f"{hours} saat {minutes} dakika"
+                else:
+                    uptime_str = f"{minutes} dakika"
+            except Exception:
+                pass
+                
+        return {
+            "os": os_name,
+            "kernel": kernel,
+            "ram": ram_str,
+            "uptime": uptime_str
+        }
+
+    def get_dependencies(self, name):
+        result = subprocess.run(
+            ["systemctl", "list-dependencies", name, "--no-pager"],
+            capture_output=True, text=True
+        )
+        return result.stdout if result.returncode == 0 else result.stderr
+
