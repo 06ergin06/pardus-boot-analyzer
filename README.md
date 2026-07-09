@@ -1,8 +1,14 @@
-# Pardus Başlangıç Yöneticisi (Pardus Boot Analyzer)
+# Pardus Başlangıç Yöneticisi / Pardus Boot Analyzer
 
-Pardus Başlangıç Yöneticisi, sisteminizin açılış süresini analiz etmek, başlangıçta çalışan gereksiz servisleri ve uygulamaları optimize etmek amacıyla geliştirilmiş yerel bir GTK+3 masaüstü uygulamasıdır. GNOME İnsan Arayüz Yönergeleri (HIG) standartlarına tam uyumlu olarak tasarlanmıştır.
+Pardus Başlangıç Yöneticisi, sisteminizin açılış süresini analiz etmek, başlangıçta çalışan gereksiz servisleri ve uygulamaları optimize etmek amacıyla geliştirilmiş bir masaüstü uygulamasıdır.
 
-## Özellikler
+Pardus Boot Analyzer is a desktop application developed to analyze your system's boot time and optimize unnecessary services and applications running at startup.
+
+---
+
+## Türkçe
+
+### Özellikler
 
 *   **Açılış Süresi Analizi:** Sisteminizin açılışındaki donanım, önyükleyici (loader), çekirdek (kernel) ve kullanıcı alanı (userspace) yüklenme sürelerini grafiksel olarak görüntüler.
 *   **Hizmet Optimizasyonu (systemd):** Sistem servislerinin açılış sürelerini sıralar ve tek tıkla kapatılabilecek güvenli servisleri tespit ederek hızlandırma potansiyeli sunar.
@@ -12,7 +18,7 @@ Pardus Başlangıç Yöneticisi, sisteminizin açılış süresini analiz etmek,
 *   **PDF Raporlama:** Sistem açılış sürelerini, donanım bilgilerini, en yavaş çalışan 5 servisi ve önerilen optimizasyonları içeren profesyonel bir PDF raporu oluşturur.
 *   **Yerel Log İzleyici:** Yetki gerektiğinde otomatik olarak yönetici doğrulaması talep ederek servislerin systemd günlük kayıtlarını (journalctl) gösterir.
 
-## Gereksinimler
+### Gereksinimler
 
 Uygulamanın çalışması için aşağıdaki paketlerin sisteminizde kurulu olması gerekmektedir:
 
@@ -26,31 +32,78 @@ Pardus/Debian üzerinde yüklemek için:
 sudo apt install python3 python3-gi gir1.2-gtk-3.0 python3-cairo
 ```
 
-## Kurulum ve Çalıştırma
+### Kurulum ve Çalıştırma
 
-### Kaynak Koddan Çalıştırma
+#### Kaynak Koddan Çalıştırma
 
 Depoyu klonladıktan sonra proje dizininde şu komutla uygulamayı çalıştırabilirsiniz:
 ```bash
 python3 main.py
 ```
 
-### Debian Paketi (.deb) Kurulumu
+#### Debian Paketi (.deb) Kurulumu
 
 Hazır derlenmiş paketi yüklemek için:
 ```bash
 sudo dpkg -i pardus-boot-analyzer_1.0.0_all.deb
-sudo apt install -f  # Eksik bağımlılıklar varsa tamamlamak için
+sudo apt install -f
 ```
 
-## Debian Paketi Oluşturma
+#### Debian Paketi Oluşturma
 
 Projeyi yeniden derlemek ve paketlemek için dizindeki paketleme betiğini çalıştırabilirsiniz:
 ```bash
 ./build_deb.sh
 ```
-Bu betik temizleme, dosya kopyalama, masaüstü kısayolu (.desktop) oluşturma ve paketleme adımlarını otomatik olarak gerçekleştirir.
 
-## Geliştirici
+---
 
-*   **İbrahim Hakkı Ergin** (ibrahimh.ergin@gmail.com)
+## English
+
+### Features
+
+*   **Boot Time Analysis:** Graphically displays loading times for firmware, loader, kernel, and userspace.
+*   **Service Optimization (systemd):** Lists boot times of system services and highlights safe services that can be disabled for faster boot.
+*   **Boot & Current State Separation:** Allows managing service startup configuration (start at boot / do not start) and current runtime state (start now / stop now) independently. Offers dual-action prompt options.
+*   **Custom Profile Management:** Apply presets like Network, Server, Office, or add and backup your custom services.
+*   **Startup Applications:** List, add, or remove applications configured to auto-start when the user session begins.
+*   **PDF Reporting:** Generates a PDF report containing boot times, hardware info, top 5 slowest services, and optimization recommendations.
+*   **Native Log Viewer:** Displays systemd journal logs (journalctl) with automatic administrator privilege prompt when needed.
+
+### Requirements
+
+The following packages must be installed on your system:
+
+*   python3
+*   python3-gi (PyGObject)
+*   gir1.2-gtk-3.0
+*   python3-cairo
+
+To install them on Pardus/Debian:
+```bash
+sudo apt install python3 python3-gi gir1.2-gtk-3.0 python3-cairo
+```
+
+### Installation and Usage
+
+#### Running from Source Code
+
+After cloning the repository, run the application from the project directory:
+```bash
+python3 main.py
+```
+
+#### Debian Package (.deb) Installation
+
+To install the pre-compiled package:
+```bash
+sudo dpkg -i pardus-boot-analyzer_1.0.0_all.deb
+sudo apt install -f
+```
+
+#### Creating Debian Package
+
+To compile and package the project:
+```bash
+./build_deb.sh
+```
