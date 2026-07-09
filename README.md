@@ -4,6 +4,13 @@ Pardus Başlangıç Yöneticisi, sisteminizin açılış süresini analiz etmek,
 
 Pardus Boot Analyzer is a desktop application developed to analyze your system's boot time and optimize unnecessary services and applications running at startup.
 
+### Ekran Görüntüleri / Screenshots
+
+| Açık Tema (Light Mode) | Koyu Tema (Dark Mode) |
+| :---: | :---: |
+| ![Light Mode Entry](screenshots/light%20mode%20entry.png) | ![Dark Mode Entry](screenshots/dark%20mode%20entry.png) |
+| ![Light Mode Services](screenshots/light%20mode%20services.png) | ![Dark Mode Services](screenshots/dark%20mode%20services.png) |
+
 ---
 
 ## Türkçe
