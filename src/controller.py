@@ -178,7 +178,7 @@ class AddAutostartDialog(Gtk.Dialog):
         for app in self.apps:
             self.apps_liststore.append([app["name"], app["exec"], app["icon"] or "system-run", app])
             
-        notebook.append_page(tab1_box, Gtk.Label(label="Masaüstü Uygulamaları"))
+        notebook.append_page(tab1_box, Gtk.Label(label=tr("tab_desktop_apps")))
         
         # Tab 2: Custom Command
         tab2_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -187,27 +187,27 @@ class AddAutostartDialog(Gtk.Dialog):
         grid = Gtk.Grid(column_spacing=12, row_spacing=12)
         tab2_box.pack_start(grid, False, False, 0)
         
-        lbl_name = Gtk.Label(label="Uygulama Adı:", xalign=1)
+        lbl_name = Gtk.Label(label=tr("uygulama_adi") + ":", xalign=1)
         self.entry_name = Gtk.Entry()
         grid.attach(lbl_name, 0, 0, 1, 1)
         grid.attach(self.entry_name, 1, 0, 1, 1)
         
-        lbl_exec = Gtk.Label(label="Komut (Exec):", xalign=1)
+        lbl_exec = Gtk.Label(label=tr("komut") + " (Exec):", xalign=1)
         self.entry_exec = Gtk.Entry()
         grid.attach(lbl_exec, 0, 1, 1, 1)
         grid.attach(self.entry_exec, 1, 1, 1, 1)
         
-        lbl_comment = Gtk.Label(label="Açıklama:", xalign=1)
+        lbl_comment = Gtk.Label(label=tr("aciklama") + ":", xalign=1)
         self.entry_comment = Gtk.Entry()
         grid.attach(lbl_comment, 0, 2, 1, 1)
         grid.attach(self.entry_comment, 1, 2, 1, 1)
         
-        lbl_delay = Gtk.Label(label="Gecikme (Saniye):", xalign=1)
+        lbl_delay = Gtk.Label(label=tr("gecikme") + f" ({tr('sec_lbl')}):", xalign=1)
         self.spin_delay = Gtk.SpinButton.new_with_range(0, 120, 1)
         grid.attach(lbl_delay, 0, 3, 1, 1)
         grid.attach(self.spin_delay, 1, 3, 1, 1)
         
-        notebook.append_page(tab2_box, Gtk.Label(label="Özel Komut Ekle"))
+        notebook.append_page(tab2_box, Gtk.Label(label=tr("tab_custom_command")))
         
         self.notebook = notebook
         self.show_all()
@@ -263,10 +263,10 @@ class PasswordDialog(Gtk.Dialog):
         self.get_style_context().add_class("auth-dialog")
         
         # Vazgeç button closes dialog with CANCEL response
-        self.btn_cancel = self.add_button("Vazgeç", Gtk.ResponseType.CANCEL)
+        self.btn_cancel = self.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
         
         # Yetkilendir button triggers click handler directly (doesn't auto-close)
-        self.btn_auth = Gtk.Button(label="Yetkilendir")
+        self.btn_auth = Gtk.Button(label=tr("yetkilendir"))
         self.btn_auth.get_style_context().add_class("primary")
         self.btn_auth.connect("clicked", self._on_auth_clicked)
         self.get_action_area().pack_end(self.btn_auth, False, False, 0)
@@ -281,12 +281,12 @@ class PasswordDialog(Gtk.Dialog):
         content.pack_start(vbox, True, True, 0)
         
         lbl_head = Gtk.Label(xalign=0)
-        lbl_head.set_text("Yönetici Yetkisi Gerekiyor")
+        lbl_head.set_text(tr("yetki_gerekiyor"))
         lbl_head.get_style_context().add_class("auth-head")
         vbox.pack_start(lbl_head, False, False, 0)
         
         lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_text("Sistem hizmetlerini yönetmek için yönetici (sudo) şifrenizi girin.")
+        lbl_sub.set_text(tr("yetki_alt_bilgi"))
         lbl_sub.get_style_context().add_class("auth-sub")
         lbl_sub.set_line_wrap(True)
         vbox.pack_start(lbl_sub, False, False, 0)
@@ -296,11 +296,11 @@ class PasswordDialog(Gtk.Dialog):
         
         self.entry_pwd = Gtk.Entry()
         self.entry_pwd.set_visibility(False)
-        self.entry_pwd.set_placeholder_text("Yönetici şifresi")
+        self.entry_pwd.set_placeholder_text(tr("sifre_placeholder"))
         self.entry_pwd.connect("activate", lambda e: self._on_auth_clicked(None))
         h_row.pack_start(self.entry_pwd, True, True, 0)
         
-        self.chk_show = Gtk.CheckButton(label="Şifreyi Göster")
+        self.chk_show = Gtk.CheckButton(label=tr("sifreyi_goster"))
         self.chk_show.connect("toggled", self._on_show_toggled)
         vbox.pack_start(self.chk_show, False, False, 0)
         
@@ -835,7 +835,7 @@ class Controller:
         box.set_margin_bottom(18)
         loader.get_content_area().add(box)
         
-        lbl = Gtk.Label(label="Önerilen hizmetler kapatılıyor, lütfen bekleyin...")
+        lbl = Gtk.Label(label=tr("onerilenler_kapatiliyor_bekleyin"))
         box.pack_start(lbl, False, False, 0)
         
         spinner = Gtk.Spinner()
@@ -1094,17 +1094,17 @@ class Controller:
         box.pack_start(h_title, False, False, 0)
         
         lbl_title = Gtk.Label(xalign=0)
-        lbl_title.set_text("Başlangıç Uygulamaları")
+        lbl_title.set_text(tr("tab_uygulamalar"))
         lbl_title.get_style_context().add_class("content-title")
         h_title.pack_start(lbl_title, True, True, 0)
         
-        btn_add = Gtk.Button(label="+ Uygulama Ekle")
+        btn_add = Gtk.Button(label=tr("yeni_uygulama_ekle_btn"))
         btn_add.get_style_context().add_class("primary")
         btn_add.connect("clicked", self._on_add_autostart_clicked)
         h_title.pack_start(btn_add, False, False, 0)
         
         lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_text("Kullanıcı oturumu başladığında otomatik olarak çalışacak uygulamaları yönetin.")
+        lbl_sub.set_text(tr("autostart_subtitle"))
         lbl_sub.get_style_context().add_class("content-subtitle")
         box.pack_start(lbl_sub, False, False, 0)
         
@@ -1118,7 +1118,7 @@ class Controller:
         
         box.show_all()
         return box
-
+ 
     def load_autostart_page(self):
         for child in self.autostart_listbox.get_children():
             self.autostart_listbox.remove(child)
@@ -1127,7 +1127,7 @@ class Controller:
         if not entries:
             row = Gtk.ListBoxRow()
             lbl = Gtk.Label()
-            lbl.set_markup("<span foreground='#888888'>Otomatik başlatılan uygulama bulunamadı.</span>")
+            lbl.set_markup(f"<span foreground='#888888'>{tr('no_autostart_apps')}</span>")
             lbl.set_margin_top(24)
             lbl.set_margin_bottom(24)
             row.add(lbl)
@@ -1156,7 +1156,7 @@ class Controller:
                 
                 h_box.pack_start(v_box, True, True, 0)
                 
-                lbl_delay = Gtk.Label(label="Gecikme:")
+                lbl_delay = Gtk.Label(label=tr("gecikme") + ":")
                 h_box.pack_start(lbl_delay, False, False, 6)
                 
                 spin = Gtk.SpinButton.new_with_range(0, 120, 1)
@@ -1230,33 +1230,33 @@ class Controller:
         box.pack_start(f_box, False, False, 0)
         
         self.view_combo = Gtk.ComboBoxText()
-        self.view_combo.append_text("Servisler (.service)")
-        self.view_combo.append_text("Diğerleri (Socket, Target, Mount)")
-        self.view_combo.append_text("Aygıt Birimleri (.device)")
+        self.view_combo.append_text(tr("view_services"))
+        self.view_combo.append_text(tr("view_others"))
+        self.view_combo.append_text(tr("view_devices"))
         self.view_combo.set_active(0)
         f_box.pack_start(self.view_combo, False, False, 0)
         
         self.filter_combo = Gtk.ComboBoxText()
-        self.filter_combo.append_text("Tüm Durumlar")
-        self.filter_combo.append_text("Aktif")
-        self.filter_combo.append_text("Pasif")
-        self.filter_combo.append_text("Devre Dışı")
-        self.filter_combo.append_text("Maskeli")
+        self.filter_combo.append_text(tr("filter_all"))
+        self.filter_combo.append_text(tr("filter_active"))
+        self.filter_combo.append_text(tr("filter_inactive"))
+        self.filter_combo.append_text(tr("filter_disabled"))
+        self.filter_combo.append_text(tr("filter_masked"))
         self.filter_combo.set_active(0)
         f_box.pack_start(self.filter_combo, False, False, 0)
         
         self.tip_combo = Gtk.ComboBoxText()
-        self.tip_combo.append_text("Tüm Kategoriler")
-        self.tip_combo.append_text("Kapatılmamalı")
-        self.tip_combo.append_text("Kapatılabilir")
-        self.tip_combo.append_text("Gerekli")
+        self.tip_combo.append_text(tr("tip_all"))
+        self.tip_combo.append_text(tr("tip_critical"))
+        self.tip_combo.append_text(tr("tip_suggestion"))
+        self.tip_combo.append_text(tr("tip_required"))
         self.tip_combo.set_active(0)
         f_box.pack_start(self.tip_combo, False, False, 0)
         
-        self.search_entry = Gtk.SearchEntry(placeholder_text="Ara...")
+        self.search_entry = Gtk.SearchEntry(placeholder_text=tr("search_placeholder"))
         f_box.pack_start(self.search_entry, True, True, 0)
         
-        self.service_count_label = Gtk.Label(label="0 servis")
+        self.service_count_label = Gtk.Label(label=f"0 {tr('hizmet_sayisi')}")
         self.service_count_label.get_style_context().add_class("badge-slow")
         f_box.pack_start(self.service_count_label, False, False, 4)
         
@@ -2251,13 +2251,13 @@ class Controller:
             lbl_saving = Gtk.Label()
             lbl_saving.get_style_context().add_class("dim-label")
             if savings > 0.05:
-                lbl_saving.set_markup(f"<span foreground='#2ec27e'><b>Tahmini Kazanç: ~{savings:.1f}s</b></span>")
+                lbl_saving.set_markup(f"<span foreground='#2ec27e'><b>{tr('tahmini_kazanc')}: ~{savings:.1f}s</b></span>")
             else:
-                lbl_saving.set_markup(f"<span foreground='#888888'>Tahmini Kazanç: &lt; 0.1s</span>")
+                lbl_saving.set_markup(f"<span foreground='#888888'>{tr('tahmini_kazanc')}: &lt; 0.1s</span>")
             lbl_saving.set_margin_bottom(4)
             card.pack_start(lbl_saving, False, False, 0)
             
-            btn_apply = Gtk.Button(label="Profili Uygula")
+            btn_apply = Gtk.Button(label=tr("profili_uygula"))
             btn_apply.get_style_context().add_class("primary")
             btn_apply.connect("clicked", self._on_apply_profile_clicked, p_id)
             card.pack_start(btn_apply, False, False, 0)
@@ -2266,7 +2266,7 @@ class Controller:
             col += 1
             
         lbl_custom_title = Gtk.Label(xalign=0)
-        lbl_custom_title.set_text("Kullanıcı Özel Profilleri")
+        lbl_custom_title.set_text(tr("kullanici_ozel_profilleri"))
         lbl_custom_title.get_style_context().add_class("card-title")
         lbl_custom_title.set_margin_top(16)
         box.pack_start(lbl_custom_title, False, False, 8)
@@ -2274,12 +2274,12 @@ class Controller:
         h_custom_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         box.pack_start(h_custom_bar, False, False, 0)
         
-        btn_save_curr = Gtk.Button(label="Mevcut Durumu Profil Olarak Kaydet")
+        btn_save_curr = Gtk.Button(label=tr("mevcut_durumu_kaydet"))
         btn_save_curr.get_style_context().add_class("success")
         btn_save_curr.connect("clicked", self._on_save_custom_profile_clicked)
         h_custom_bar.pack_start(btn_save_curr, False, False, 0)
         
-        btn_create_custom = Gtk.Button(label="Yeni Özel Profil Oluştur")
+        btn_create_custom = Gtk.Button(label=tr("yeni_ozel_profil_btn"))
         btn_create_custom.get_style_context().add_class("primary")
         btn_create_custom.connect("clicked", self._on_create_custom_profile_clicked)
         h_custom_bar.pack_start(btn_create_custom, False, False, 0)
@@ -2290,7 +2290,7 @@ class Controller:
         
         # Geri Yükleme Noktaları (Yedekler)
         lbl_backup_title = Gtk.Label(xalign=0)
-        lbl_backup_title.set_text("Sistem Geri Yükleme Noktaları")
+        lbl_backup_title.set_text(tr("sistem_geri_yukleme_noktalari"))
         lbl_backup_title.get_style_context().add_class("card-title")
         lbl_backup_title.set_margin_top(24)
         box.pack_start(lbl_backup_title, False, False, 8)
@@ -2298,7 +2298,7 @@ class Controller:
         h_backup_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         box.pack_start(h_backup_bar, False, False, 0)
         
-        btn_create_backup = Gtk.Button(label="Yeni Geri Yükleme Noktası Oluştur")
+        btn_create_backup = Gtk.Button(label=tr("yeni_yedek_noktasi_btn"))
         btn_create_backup.get_style_context().add_class("warning")
         btn_create_backup.connect("clicked", self._on_create_backup_clicked)
         h_backup_bar.pack_start(btn_create_backup, False, False, 0)
@@ -2452,7 +2452,7 @@ class Controller:
             self.set_status(tr("yetki_iptal"))
             return
             
-        loader = Gtk.Dialog(title="Yedek Geri Yükleniyor", parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        loader = Gtk.Dialog(title=tr("yedek_geri_yukleniyor"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
         loader.set_default_size(320, 140)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         box.set_margin_start(18)
@@ -2461,7 +2461,7 @@ class Controller:
         box.set_margin_bottom(18)
         loader.get_content_area().add(box)
         
-        lbl = Gtk.Label(label="Sistem yedeği geri yükleniyor, lütfen bekleyin...")
+        lbl = Gtk.Label(label=tr("yedek_yukleniyor_bekleyin"))
         box.pack_start(lbl, False, False, 0)
         
         spinner = Gtk.Spinner()
@@ -2650,7 +2650,7 @@ class Controller:
         self._run_profile_batch(enable_list, disable_list)
 
     def _run_profile_batch(self, enable_list, disable_list):
-        loader = Gtk.Dialog(title="Profil Uygulanıyor", parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        loader = Gtk.Dialog(title=tr("profil_uygulaniyor"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
         loader.set_default_size(320, 140)
         
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -2660,7 +2660,7 @@ class Controller:
         box.set_margin_bottom(18)
         loader.get_content_area().add(box)
         
-        lbl = Gtk.Label(label="Hizmet profili uygulanıyor, lütfen bekleyin...")
+        lbl = Gtk.Label(label=tr("profil_uygulaniyor_bekleyin"))
         box.pack_start(lbl, False, False, 0)
         
         spinner = Gtk.Spinner()
@@ -2714,11 +2714,11 @@ class Controller:
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         content.pack_start(vbox, True, True, 0)
         
-        lbl = Gtk.Label(label="Yeni profil adı girin:", xalign=0)
+        lbl = Gtk.Label(label=tr("yeni_profil_adi_girin"), xalign=0)
         vbox.pack_start(lbl, False, False, 0)
         
         entry = Gtk.Entry()
-        entry.set_text("Özel Profilim")
+        entry.set_text(tr("ozel_profilim"))
         vbox.pack_start(entry, False, False, 0)
         
         dialog.show_all()
