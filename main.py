@@ -2,21 +2,19 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
 from src.controller import Controller
+from src.locale_mgr import tr
 
 class PardusAboutDialog(Gtk.AboutDialog):
     def __init__(self, parent):
         super().__init__(parent=parent, flags=Gtk.DialogFlags.MODAL)
-        self.set_program_name("Pardus Başlangıç Yöneticisi")
+        self.set_program_name(tr("title"))
         self.set_version("1.0.0")
-        self.set_comments("Sistem açılışını analiz et ve başlangıç hizmetlerini yönet.")
+        self.set_comments(tr("about_comments"))
         self.set_copyright("© 2026 TÜBİTAK BİLGEM")
         self.set_website("https://github.com/06ergin06/pardus-boot-analyzer")
-        self.set_website_label("Web sitesi")
+        self.set_website_label("Website")
         
-        self.set_license(
-            "Bu program kesinlikle hiçbir garanti vermiyor.\n"
-            "Ayrıntılar için GNU Genel Kamu Lisansı, sürüm 3 ya da sonrası bağlantısına bakın."
-        )
+        self.set_license(tr("lisans"))
         self.set_wrap_license(True)
         
         icon_theme = Gtk.IconTheme.get_default()
@@ -33,15 +31,15 @@ class PardusAboutDialog(Gtk.AboutDialog):
 class PardusBootManager:
     def __init__(self):
         # We construct the Window programmatically to enable a modern layout
-        self.window = Gtk.Window(title="Pardus Başlangıç Yöneticisi")
+        self.window = Gtk.Window(title=tr("title"))
         self.window.set_default_size(1050, 720)
         self.window.set_position(Gtk.WindowPosition.CENTER)
         
         # Construct HeaderBar matching native Pardus design
         hb = Gtk.HeaderBar()
         hb.set_show_close_button(True)
-        hb.set_title("Pardus Başlangıç Yöneticisi")
-        hb.set_subtitle("Sistem Açılış Analiz ve Optimizasyon Aracı")
+        hb.set_title(tr("title"))
+        hb.set_subtitle(tr("subtitle"))
         self.window.set_titlebar(hb)
         
         # Sol üst köşede Pardus logosu
@@ -59,7 +57,7 @@ class PardusBootManager:
         # Add About button to HeaderBar
         btn_about = Gtk.Button()
         btn_about.set_image(Gtk.Image.new_from_icon_name("help-about-symbolic", Gtk.IconSize.BUTTON))
-        btn_about.set_tooltip_text("Hakkında")
+        btn_about.set_tooltip_text(tr("about"))
         btn_about.connect("clicked", self._on_about_clicked)
         hb.pack_end(btn_about)
         

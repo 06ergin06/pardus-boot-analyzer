@@ -9,6 +9,10 @@ import cairo
 import datetime
 from src.system_manager import SystemManager
 from src.service_db import get_description
+try:
+    from locale_mgr import tr
+except ImportError:
+    from src.locale_mgr import tr
 
 STATUS_COLORS = {
     "active": "#198754",      # Green
@@ -21,13 +25,13 @@ STATUS_COLORS = {
 }
 
 STATUS_TR = {
-    "active": "Aktif / Çalışıyor",
-    "inactive": "Pasif / Durmuş",
-    "disabled": "Devre Dışı",
-    "masked": "Maskeli",
-    "static": "Statik",
-    "activating": "Etkinleşiyor...",
-    "deactivating": "Devre Dışı Bırakılıyor...",
+    "active": tr("su_an_calisiyor"),
+    "inactive": tr("su_an_durduruldu"),
+    "disabled": tr("acilis_calismayacak"),
+    "masked": tr("maskelenmis_kapali"),
+    "static": tr("statik_sabit"),
+    "activating": tr("gecis_yapiyor") + "...",
+    "deactivating": tr("gecis_yapiyor") + "...",
 }
 
 FILTER_MAP = {
@@ -124,7 +128,7 @@ class AddAutostartDialog(Gtk.Dialog):
         self.set_default_size(520, 420)
         self.manager = manager
         
-        self.add_button("İptal", Gtk.ResponseType.CANCEL)
+        self.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
         self.btn_ok = self.add_button("Ekle", Gtk.ResponseType.OK)
         self.btn_ok.get_style_context().add_class("primary")
         
@@ -528,7 +532,7 @@ class Controller:
         
         lbl_circle_sub = Gtk.Label()
         lbl_circle_sub.get_style_context().add_class("boot-time-label")
-        lbl_circle_sub.set_text("Toplam Açılış Süresi")
+        lbl_circle_sub.set_text(tr("toplam_acilis"))
         lbl_circle_sub.set_justify(Gtk.Justification.CENTER)
         vbox_inner.pack_start(lbl_circle_sub, False, False, 0)
         
@@ -552,7 +556,7 @@ class Controller:
         self.sysinfo_grid.set_margin_start(6)
         self.card_sysinfo.pack_start(self.sysinfo_grid, False, False, 4)
         
-        self.btn_pdf = Gtk.Button(label="PDF Raporu Oluştur")
+        self.btn_pdf = Gtk.Button(label=tr("pdf_olustur"))
         self.btn_pdf.get_style_context().add_class("primary")
         self.btn_pdf.connect("clicked", self._on_pdf_clicked)
         self.card_sysinfo.pack_start(self.btn_pdf, False, False, 4)
@@ -578,10 +582,10 @@ class Controller:
         self.card_optimize.pack_start(self.opt_savings_box, False, False, 0)
         
         self.lbl_savings_val = Gtk.Label(xalign=0)
-        self.lbl_savings_val.set_markup("Hızlandırma Potansiyeli: <b>-- saniye</b>")
+        self.lbl_savings_val.set_markup(f"{tr('hizlandirma_potansiyeli')}: <b>-- {tr('sec_lbl')}</b>")
         self.opt_savings_box.pack_start(self.lbl_savings_val, True, True, 0)
         
-        self.btn_quick_optimize = Gtk.Button(label="Tüm Önerilenleri Kapat")
+        self.btn_quick_optimize = Gtk.Button(label=tr("tum_onerilenleri_kapat"))
         self.btn_quick_optimize.get_style_context().add_class("success")
         self.btn_quick_optimize.connect("clicked", self._on_quick_optimize_clicked)
         self.card_optimize.pack_start(self.btn_quick_optimize, False, False, 4)
@@ -682,13 +686,13 @@ class Controller:
             
             if total_savings_sec > 0:
                 self.lbl_savings_val.set_markup(
-                    f"Hızlandırma Potansiyeli: <span foreground='#198754' weight='bold'>~{total_savings_sec:.2f} saniye</span>"
+                    f"{tr('hizlandirma_potansiyeli')}: <span foreground='#198754' weight='bold'>~{total_savings_sec:.2f} {tr('sec_lbl')}</span>"
                 )
-                self.btn_quick_optimize.set_label(f"Tüm Önerilenleri Kapat (+{total_savings_sec:.1f} sn Kazan)")
+                self.btn_quick_optimize.set_label(f"{tr('tum_onerilenleri_kapat')} (+{total_savings_sec:.1f} {tr('saniye_kazan')})")
                 self.btn_quick_optimize.set_sensitive(True)
             else:
-                self.lbl_savings_val.set_markup("Hızlandırma Potansiyeli: <span color='#6c757d'><b>0.00 saniye</b></span>")
-                self.btn_quick_optimize.set_label("Sisteminiz Zaten Optimize Edilmiş")
+                self.lbl_savings_val.set_markup(f"{tr('hizlandirma_potansiyeli')}: <span color='#6c757d'><b>0.00 {tr('sec_lbl')}</b></span>")
+                self.btn_quick_optimize.set_label(tr("sistem_optimize_edilmis"))
                 self.btn_quick_optimize.set_sensitive(False)
                 
             if optimizable_services:
@@ -772,7 +776,7 @@ class Controller:
         
         if resp == Gtk.ResponseType.YES:
             if not self._ensure_auth():
-                self.set_status("Yetkilendirme iptal edildi.")
+                self.set_status(tr("yetki_iptal"))
                 return
             self.set_status(f"'{name}' hizmeti kapatılıyor...")
             def task():
@@ -792,7 +796,7 @@ class Controller:
         services_to_disable = [s["name"] for s in opt_svcs]
                     
         if not services_to_disable:
-            self.set_status("Kapatılacak hizmet bulunamadı.")
+            self.set_status(tr("kap_hizmet_yok"))
             return
             
         dlg = Gtk.MessageDialog(
@@ -815,7 +819,7 @@ class Controller:
             return
             
         if not self._ensure_auth():
-            self.set_status("Yetkilendirme iptal edildi.")
+            self.set_status(tr("yetki_iptal"))
             return
             
         self._run_quick_optimize_batch(services_to_disable)
@@ -877,7 +881,7 @@ class Controller:
         dialog = Gtk.FileChooserDialog(
             title="PDF Raporu Kaydet", parent=self.window,
             action=Gtk.FileChooserAction.SAVE,
-            buttons=("İptal", Gtk.ResponseType.CANCEL, "Kaydet", Gtk.ResponseType.ACCEPT)
+            buttons=(tr("iptal"), Gtk.ResponseType.CANCEL, tr("kaydet"), Gtk.ResponseType.ACCEPT)
         )
         dialog.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("primary")
         
@@ -1014,7 +1018,7 @@ class Controller:
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(12)
         cr.move_to(50, y + 15)
-        cr.show_text("3. En Yavaş Başlayan 5 Hizmet")
+        cr.show_text(tr("pdf_yavas_hizmetler"))
         
         cr.set_source_rgb(0.8, 0.8, 0.8)
         cr.move_to(50, y + 22)
@@ -1038,7 +1042,7 @@ class Controller:
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(12)
         cr.move_to(50, y + 15)
-        cr.show_text("4. Başlangıç Optimizasyonu Önerileri")
+        cr.show_text(tr("pdf_opt_onerileri"))
         
         cr.set_source_rgb(0.8, 0.8, 0.8)
         cr.move_to(50, y + 22)
@@ -1055,7 +1059,7 @@ class Controller:
             cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
             cr.set_source_rgb(0.1, 0.5, 0.3)
             cr.move_to(60, y)
-            cr.show_text(f"Hızlandırma Potansiyeli: ~{total_savings_sec:.2f} saniye kazanılabilir!")
+            cr.show_text(f"{tr('hizlandirma_potansiyeli')}: ~{total_savings_sec:.2f} {tr('sec_gained_lbl')}")
             cr.set_source_rgb(0.3, 0.3, 0.3)
             cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
             
@@ -1069,7 +1073,7 @@ class Controller:
                 y += 20
         else:
             cr.move_to(60, y)
-            cr.show_text("Aktif olarak kapatılması önerilen gereksiz hizmet bulunamadı. Sisteminiz en iyi durumda!")
+            cr.show_text(tr("pdf_no_opt"))
             y += 20
             
         cr.set_source_rgb(0.6, 0.6, 0.6)
@@ -1078,7 +1082,7 @@ class Controller:
         cr.line_to(545, 780)
         cr.stroke()
         cr.move_to(50, 792)
-        cr.show_text("Pardus Başlangıç Yöneticisi — Pardus Ekosistemine Katkı Raporu")
+        cr.show_text(tr("pdf_footer"))
         cr.move_to(480, 792)
         cr.show_text("Sayfa 1 / 1")
 
@@ -1317,7 +1321,7 @@ class Controller:
         v_detail_text.pack_start(self.detail_name, False, False, 0)
         
         self.detail_desc = Gtk.Label(xalign=0)
-        self.detail_desc.set_text("Detayları görmek için listeden bir hizmet seçin.")
+        self.detail_desc.set_text(tr("hizmet_secilmedi_desc"))
         self.detail_desc.set_line_wrap(True)
         v_detail_text.pack_start(self.detail_desc, False, False, 0)
         
@@ -1339,7 +1343,7 @@ class Controller:
         lbl_boot_title.set_markup("<span weight='bold' size='medium'>Açılış Ayarı</span>")
         v_boot_group.pack_start(lbl_boot_title, False, False, 0)
         
-        self.btn_enable = Gtk.Button(label="Açılışta Çalıştır")
+        self.btn_enable = Gtk.Button(label=tr("acilis_calistir"))
         v_boot_group.pack_start(self.btn_enable, False, False, 0)
         
         self.lbl_boot_state_status = Gtk.Label()
@@ -1359,7 +1363,7 @@ class Controller:
         lbl_current_title.set_markup("<span weight='bold' size='medium'>Şimdiki Durum</span>")
         v_current_group.pack_start(lbl_current_title, False, False, 0)
         
-        self.btn_run = Gtk.Button(label="Şimdi Başlat")
+        self.btn_run = Gtk.Button(label=tr("simdi_baslat"))
         v_current_group.pack_start(self.btn_run, False, False, 0)
         
         self.lbl_current_state_status = Gtk.Label()
@@ -1379,19 +1383,19 @@ class Controller:
         lbl_utility_title.set_markup("<span weight='bold' size='medium'>Diğer İşlemler</span>")
         v_utility_group.pack_start(lbl_utility_title, False, False, 0)
         
-        self.btn_mask = Gtk.Button(label="Maskele")
+        self.btn_mask = Gtk.Button(label=tr("maskele"))
         v_utility_group.pack_start(self.btn_mask, False, False, 0)
         
         h_bottom_actions1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         v_utility_group.pack_start(h_bottom_actions1, False, False, 0)
         
-        self.btn_log = Gtk.Button(label="Günlük Kaydı")
+        self.btn_log = Gtk.Button(label=tr("gunluk_kaydi"))
         h_bottom_actions1.pack_start(self.btn_log, True, True, 0)
         
-        self.btn_dep = Gtk.Button(label="Bağımlılıklar")
+        self.btn_dep = Gtk.Button(label=tr("bagimliliklar"))
         h_bottom_actions1.pack_start(self.btn_dep, True, True, 0)
         
-        self.btn_refresh = Gtk.Button(label="Yenile")
+        self.btn_refresh = Gtk.Button(label=tr("yenile"))
         v_utility_group.pack_start(self.btn_refresh, False, False, 0)
 
         # En alta açıklayıcı İpucu/Bilgi Notu eklenmesi
@@ -1438,7 +1442,7 @@ class Controller:
         self.liststore.clear()
         self._all_data_map = {}
         self.detail_name.set_markup("<b>Servis seçilmedi</b>")
-        self.detail_desc.set_text("Detayları görmek için listeden bir hizmet seçin.")
+        self.detail_desc.set_text(tr("hizmet_secilmedi_desc"))
         self.detail_suggestion.set_text("")
         self.service_count_label.set_text("0 servis")
         self.set_status("Hizmetler yükleniyor...")
@@ -1604,7 +1608,7 @@ class Controller:
         r = self._get_selected_row()
         if r is None:
             self.detail_name.set_markup("<b>Servis seçilmedi</b>")
-            self.detail_desc.set_text("Detayları görmek için listeden bir hizmet seçin.")
+            self.detail_desc.set_text(tr("hizmet_secilmedi_desc"))
             self.detail_suggestion.set_text("")
             self.btn_enable.set_sensitive(False)
             self.btn_run.set_sensitive(False)
@@ -1678,35 +1682,35 @@ class Controller:
 
         if enabled_state == "static":
             self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>● <b>Statik (Sabit Ayar)</b></span>")
-            self.btn_enable.set_label("Değiştirilemez")
+            self.btn_enable.set_label(tr("degistirilemez"))
             self.btn_enable.set_sensitive(False)
         elif enabled_state == "indirect":
             self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>● <b>Dolaylı (İndirekt)</b></span>")
-            self.btn_enable.set_label("Değiştirilemez")
+            self.btn_enable.set_label(tr("degistirilemez"))
             self.btn_enable.set_sensitive(False)
         elif enabled_state == "masked":
             self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>🔒 <b>Maskelenmiş (Kapalı)</b></span>")
-            self.btn_enable.set_label("Değiştirilemez")
+            self.btn_enable.set_label(tr("degistirilemez"))
             self.btn_enable.set_sensitive(False)
         else:
             if is_enabled:
-                self.btn_enable.set_label("Açılışta Çalıştırma")
+                self.btn_enable.set_label(tr("acilis_calistirma"))
                 self.btn_enable.get_style_context().remove_class("success")
                 self.btn_enable.get_style_context().add_class("danger")
                 self.lbl_boot_state_status.set_markup("<span size='small' color='#198754'>● <b>Açılışta Çalışacak</b></span>")
             else:
-                self.btn_enable.set_label("Açılışta Çalıştır")
+                self.btn_enable.set_label(tr("acilis_calistir"))
                 self.btn_enable.get_style_context().remove_class("danger")
                 self.btn_enable.get_style_context().add_class("success")
                 self.lbl_boot_state_status.set_markup("<span size='small' color='#dc3545'>○ <b>Açılışta Çalışmayacak</b></span>")
 
         if is_running:
-            self.btn_run.set_label("Şimdi Durdur")
+            self.btn_run.set_label(tr("simdi_durdur"))
             self.btn_run.get_style_context().remove_class("primary")
             self.btn_run.get_style_context().add_class("danger")
             self.lbl_current_state_status.set_markup("<span size='small' color='#198754'>● <b>Şu An Çalışıyor</b></span>")
         else:
-            self.btn_run.set_label("Şimdi Başlat")
+            self.btn_run.set_label(tr("simdi_baslat"))
             self.btn_run.get_style_context().remove_class("danger")
             self.btn_run.get_style_context().add_class("primary")
             self.lbl_current_state_status.set_markup("<span size='small' color='#dc3545'>○ <b>Şu An Durduruldu</b></span>")
@@ -1716,11 +1720,11 @@ class Controller:
             self.btn_run.set_sensitive(False)
 
         if is_masked:
-            self.btn_mask.set_label("Maskeyi Kaldır")
+            self.btn_mask.set_label(tr("maskeyi_kaldir"))
             self.btn_mask.get_style_context().remove_class("danger")
             self.btn_mask.get_style_context().add_class("warning")
         else:
-            self.btn_mask.set_label("Maskele")
+            self.btn_mask.set_label(tr("maskele"))
             self.btn_mask.get_style_context().remove_class("warning")
             self.btn_mask.get_style_context().add_class("danger")
 
@@ -1749,11 +1753,11 @@ class Controller:
                 dlg = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-                    message_format="Çift Yönlü İşlem Önerisi (Kapatma)"
+                    message_format=tr("cift_yon_kapatma")
                 )
-                dlg.add_button("İkisini de Kapat (Önerilen)", 2)
-                dlg.add_button("Sadece Başlangıç Ayarını Değiştir", 1)
-                dlg.add_button("İptal", Gtk.ResponseType.CANCEL)
+                dlg.add_button(tr("ikisini_de_kapat"), 2)
+                dlg.add_button(tr("sadece_baslangic_degistir"), 1)
+                dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
                 
                 sec_text = (
                     f"'{name}' hizmetinin açılışta otomatik başlamasını kapatıyorsunuz.\n"
@@ -1799,11 +1803,11 @@ class Controller:
                 dlg = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-                    message_format="Çift Yönlü İşlem Önerisi (Etkinleştirme)"
+                    message_format=tr("cift_yon_etkinlestirme")
                 )
-                dlg.add_button("Şimdi Başlat ve Açılışta Etkinleştir", 2)
-                dlg.add_button("Sadece Başlangıçta Etkinleştir", 1)
-                dlg.add_button("İptal", Gtk.ResponseType.CANCEL)
+                dlg.add_button(tr("simdi_baslat_ve_etkinlestir"), 2)
+                dlg.add_button(tr("sadece_acilis_etkinlestir"), 1)
+                dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
                 
                 dlg.format_secondary_text(
                     f"'{name}' hizmetinin açılışta otomatik başlamasını etkinleştiriyorsunuz.\n"
@@ -1839,11 +1843,11 @@ class Controller:
                 dlg = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-                    message_format="Çift Yönlü İşlem Önerisi (Durdurma)"
+                    message_format=tr("cift_yon_durdurma")
                 )
-                dlg.add_button("İkisini de Kapat (Önerilen)", 2)
-                dlg.add_button("Sadece Şimdiki Süreci Durdur", 1)
-                dlg.add_button("İptal", Gtk.ResponseType.CANCEL)
+                dlg.add_button(tr("ikisini_de_kapat"), 2)
+                dlg.add_button(tr("sadece_simdi_durdur"), 1)
+                dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
                 
                 dlg.format_secondary_text(
                     f"'{name}' hizmetini şu anki oturumda durduruyorsunuz.\n"
@@ -1868,11 +1872,11 @@ class Controller:
                 dlg = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-                    message_format="Çift Yönlü İşlem Önerisi (Başlatma)"
+                    message_format=tr("cift_yon_baslatma")
                 )
-                dlg.add_button("Şimdi Başlat ve Açılışta Etkinleştir", 2)
-                dlg.add_button("Sadece Şimdi Başlat", 1)
-                dlg.add_button("İptal", Gtk.ResponseType.CANCEL)
+                dlg.add_button(tr("simdi_baslat_ve_etkinlestir"), 2)
+                dlg.add_button(tr("sadece_simdi_baslat"), 1)
+                dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
                 
                 dlg.format_secondary_text(
                     f"'{name}' hizmetini şu anki oturumda başlatıyorsunuz.\n"
@@ -1910,7 +1914,7 @@ class Controller:
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
                 type=Gtk.MessageType.WARNING if tip == "kritik" else Gtk.MessageType.QUESTION,
                 buttons=Gtk.ButtonsType.YES_NO,
-                message_format=f"'{name}' hizmetini maskelemek istiyor musunuz?"
+                message_format=f"'{name}' " + tr("maske_sorusu")
             )
             if warn:
                 dlg.format_secondary_text(warn)
@@ -1927,7 +1931,7 @@ class Controller:
                      "mask": "Maskeleme", "unmask": "Maske kaldırma"}.get(action, action)
                      
         if not self._ensure_auth():
-            self.set_status("Yetkilendirme iptal edildi.")
+            self.set_status(tr("yetki_iptal"))
             return
             
         self.set_status(f"'{name}' için {action_tr} eylemi başlatıldı...")
@@ -1961,7 +1965,7 @@ class Controller:
         }
         
         if not self._ensure_auth():
-            self.set_status("Yetkilendirme iptal edildi.")
+            self.set_status(tr("yetki_iptal"))
             return
             
         actions_str = " ve ".join(action_names_tr.get(a, a) for a in actions)
@@ -2039,15 +2043,15 @@ class Controller:
                         GLib.idle_add(prompt_auth)
                         return
                     else:
-                        log = "Bu hizmet için herhangi bir log kaydı bulunamadı."
+                        log = tr("log_bulunamadi")
                 GLib.idle_add(buf.set_text, log)
             except Exception as e:
                 GLib.idle_add(buf.set_text, f"Hata: {e}")
                 
         def prompt_auth():
-            buf.set_text("Logları görüntülemek için yetkilendirme gerekiyor...")
+            buf.set_text(tr("hata_log_yetki"))
             if self._ensure_auth():
-                buf.set_text("Yetkilendirildi, loglar yükleniyor...")
+                buf.set_text(tr("yetkilendirildi"))
                 threading.Thread(target=task, daemon=True).start()
             else:
                 buf.set_text(
@@ -2445,7 +2449,7 @@ class Controller:
             return
             
         if not self._ensure_auth():
-            self.set_status("Yetkilendirme iptal edildi.")
+            self.set_status(tr("yetki_iptal"))
             return
             
         loader = Gtk.Dialog(title="Yedek Geri Yükleniyor", parent=self.window, flags=Gtk.DialogFlags.MODAL)
@@ -2568,7 +2572,7 @@ class Controller:
                 return
             
         if not self._ensure_auth():
-            self.set_status("Yetkilendirme iptal edildi.")
+            self.set_status(tr("yetki_iptal"))
             return
             
         self._run_profile_batch(enable_list, disable_list)
@@ -2640,7 +2644,7 @@ class Controller:
                 return
             
         if not self._ensure_auth():
-            self.set_status("Yetkilendirme iptal edildi.")
+            self.set_status(tr("yetki_iptal"))
             return
             
         self._run_profile_batch(enable_list, disable_list)
@@ -2697,8 +2701,8 @@ class Controller:
 
     def _on_save_custom_profile_clicked(self, button):
         dialog = Gtk.Dialog(title="Profili Kaydet", parent=self.window, flags=Gtk.DialogFlags.MODAL)
-        dialog.add_button("İptal", Gtk.ResponseType.CANCEL)
-        btn_save = dialog.add_button("Kaydet", Gtk.ResponseType.OK)
+        dialog.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
+        btn_save = dialog.add_button(tr("kaydet"), Gtk.ResponseType.OK)
         btn_save.get_style_context().add_class("primary")
         
         content = dialog.get_content_area()
@@ -2832,8 +2836,8 @@ class ProfileCreatorDialog(Gtk.Dialog):
         self.set_default_size(420, 480)
         
         # Add buttons
-        self.add_button("İptal", Gtk.ResponseType.CANCEL)
-        btn_save = self.add_button("Kaydet", Gtk.ResponseType.OK)
+        self.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
+        btn_save = self.add_button(tr("kaydet"), Gtk.ResponseType.OK)
         btn_save.get_style_context().add_class("primary")
         
         # Main layout
