@@ -1782,19 +1782,27 @@ class Controller:
         def task():
             try:
                 log = self.manager.get_journal_log(n)
-                if not log or "-- no entries --" in log.lower() or not log.strip():
+                out = log.strip() if log else ""
+                if not out or "-- no entries --" in out.lower() or "permission" in out.lower():
                     if self.manager.password is None:
-                        log = (
-                            "Log kaydı bulunamadı veya yetkiniz yok.\n\n"
-                            "İpucu: Eğer Pardus üzerinde standart kullanıcı ile çalışıyorsanız, logları görüntülemek için:\n"
-                            "1. Uygulamada şifre gerektiren bir işlem (örn. bir servisi kapatıp açma) yaparak şifrenizi doğrulayabilir ve bu sayede uygulamanın arka planda sudo ile log çekmesini sağlayabilir,\n"
-                            "2. Veya 'sudo usermod -aG systemd-journal $USER' komutu ile kullanıcınızı log grubuna ekleyerek oturumu kapatıp açabilirsiniz."
-                        )
+                        GLib.idle_add(prompt_auth)
+                        return
                     else:
                         log = "Bu hizmet için herhangi bir log kaydı bulunamadı."
                 GLib.idle_add(buf.set_text, log)
             except Exception as e:
                 GLib.idle_add(buf.set_text, f"Hata: {e}")
+                
+        def prompt_auth():
+            buf.set_text("Logları görüntülemek için yetkilendirme gerekiyor...")
+            if self._ensure_auth():
+                buf.set_text("Yetkilendirildi, loglar yükleniyor...")
+                threading.Thread(target=task, daemon=True).start()
+            else:
+                buf.set_text(
+                    "Logları okuma yetkiniz bulunmuyor.\n\n"
+                    "Logları görüntülemek için yönetici şifrenizi girmeniz gerekmektedir."
+                )
                 
         threading.Thread(target=task, daemon=True).start()
         
