@@ -54,7 +54,7 @@ Section: utils
 Priority: optional
 Architecture: all
 Depends: python3, python3-gi, gir1.2-gtk-3.0, python3-cairo
-Maintainer: Ergin <ergin@pardus.org.tr>
+Maintainer: İbrahim Hakkı Ergin <ibrahimh.ergin@gmail.com>
 Description: Pardus Boot Analyzer and Optimizer
  A system tool to analyze boot times, manage autostart programs, and optimize systemd services for faster boot.
 EOF
