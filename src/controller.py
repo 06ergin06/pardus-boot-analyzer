@@ -419,7 +419,7 @@ class Controller:
         vbox_logo.pack_start(lbl_p, False, False, 0)
         
         lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_text("Başlangıç Yöneticisi")
+        lbl_sub.set_text(tr("side_title_sub"))
         lbl_sub.get_style_context().add_class("sidebar-subtitle")
         vbox_logo.pack_start(lbl_sub, False, False, 0)
         
@@ -431,10 +431,10 @@ class Controller:
         sidebar_box.pack_start(self.sidebar_listbox, False, False, 0)
 
         items = [
-            ("📊  Başlangıç Analizi", "analiz"),
-            ("🚀  Otomatik Uygulamalar", "autostart"),
-            ("⚙️  Sistem Hizmetleri", "hizmetler"),
-            ("👤  Hizmet Profilleri", "profiller")
+            ("📊  " + tr("side_analiz"), "analiz"),
+            ("🚀  " + tr("side_autostart"), "autostart"),
+            ("⚙️  " + tr("side_hizmetler"), "hizmetler"),
+            ("👤  " + tr("side_profiller"), "profiller")
         ]
         
         for text, name in items:
@@ -488,12 +488,12 @@ class Controller:
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         
         lbl_title = Gtk.Label(xalign=0)
-        lbl_title.set_text("Sistem Başlangıç Analizi")
+        lbl_title.set_text(tr("sistem_baslangic_analizi"))
         lbl_title.get_style_context().add_class("content-title")
         box.pack_start(lbl_title, False, False, 0)
         
         lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_text("Sisteminizin açılış süresini ve kapatılması güvenli olan önerilen hizmetleri yönetin.")
+        lbl_sub.set_text(tr("analiz_alt_bilgi"))
         lbl_sub.get_style_context().add_class("content-subtitle")
         box.pack_start(lbl_sub, False, False, 0)
         
@@ -567,12 +567,12 @@ class Controller:
         h_split.pack_start(self.card_optimize, True, True, 0)
         
         lbl_opt_title = Gtk.Label(xalign=0)
-        lbl_opt_title.set_text("Başlangıç Optimizasyonu")
+        lbl_opt_title.set_text(tr("baslangic_optimizasyonu"))
         lbl_opt_title.get_style_context().add_class("card-title")
         self.card_optimize.pack_start(lbl_opt_title, False, False, 0)
         
         lbl_opt_desc = Gtk.Label(xalign=0)
-        lbl_opt_desc.set_markup("<span size='small' foreground='#565f89'>Açılışı geciktiren ve kapatılması güvenli olan hizmetleri tek tıkla kapatarak hız kazanın.</span>")
+        lbl_opt_desc.set_markup(f"<span size='small' foreground='#565f89'>{tr('opt_alt_bilgi')}</span>")
         lbl_opt_desc.set_line_wrap(True)
         self.card_optimize.pack_start(lbl_opt_desc, False, False, 0)
         
@@ -642,11 +642,11 @@ class Controller:
             self.lbl_boot_val.set_text(self._format_time(total_time))
             
             components = {
-                "firmware": "Donanım (Firmware)",
-                "loader": "Önyükleyici (Loader)",
-                "kernel": "Çekirdek (Kernel)",
-                "initrd": "Başlangıç Arayüzü (Initrd)",
-                "userspace": "Kullanıcı Alanı (Userspace)"
+                "firmware": tr("comp_firmware"),
+                "loader": tr("comp_loader"),
+                "kernel": tr("comp_kernel"),
+                "initrd": tr("comp_initrd"),
+                "userspace": tr("comp_userspace")
             }
             
             row = 0
@@ -665,10 +665,10 @@ class Controller:
             
             info = self.manager.get_system_info()
             sys_items = [
-                ("Sistem:", info["os"]),
-                ("Çekirdek:", info["kernel"]),
-                ("Bellek:", info["ram"]),
-                ("Çalışma:", info["uptime"])
+                (tr("sys_os"), info["os"]),
+                (tr("sys_kernel"), info["kernel"]),
+                (tr("sys_ram"), info["ram"]),
+                (tr("sys_uptime"), info["uptime"])
             ]
             
             s_row = 0

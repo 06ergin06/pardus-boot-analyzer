@@ -435,23 +435,31 @@ DESCRIPTIONS = {
     },
     "libvirtd.service": {
         "desc": "Sanal makine yonetimi (libvirt/virt-manager).",
+        "desc_en": "Virtual machine management (libvirt/virt-manager). Runs guest machines.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if you run virtual machines, otherwise safe to disable."
     },
     "libvirt-guests.service": {
         "desc": "Sanal makinelerin durumunu kaydeder ve geri yükler.",
+        "desc_en": "Saves and restores the state of virtual machines on shutdown/boot.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if you want VMs to resume state automatically."
     },
     "virtlogd.service": {
         "desc": "Sanal makine loglarini yönetir.",
+        "desc_en": "Manages virtual machine log files.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if virtual machine manager is used."
     },
     "virtlockd.service": {
         "desc": "Sanal makine kilitlerini yönetir.",
+        "desc_en": "Manages virtual machine locks to prevent disk conflict.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if virtual machine manager is used."
     },
     "grub-common.service": {
         "desc": "GRUB başlangıç yöneticisi ayarlarını başlangıçta kontrol eder.",
@@ -476,99 +484,137 @@ DESCRIPTIONS = {
     },
     "modprobe.service": {
         "desc": "Kernel modullerini yükler/module yukleme.",
+        "desc_en": "Loads kernel modules.",
         "tip": "kritik",
-        "oneri": "Kapatmayın."
+        "oneri": "Kapatmayın.",
+        "oneri_en": "Do not disable. Essential for driver and kernel module loading."
     },
     "e2scrub_reap.service": {
         "desc": "ext4 dosya sistemi saglik kontrolu sonuclarini temizler.",
+        "desc_en": "Cleans up ext4 filesystem check results.",
         "tip": "oneri",
-        "oneri": "Kapatılabilir."
+        "oneri": "Kapatılabilir.",
+        "oneri_en": "Keep enabled for ext4 disk health monitoring."
     },
     "e2scrub_all.service": {
         "desc": "Tum ext4 dosya sistemlerinde saglik kontrolu baslatir.",
+        "desc_en": "Starts filesystem check on all ext4 volumes.",
         "tip": "oneri",
-        "oneri": "Kapatılabilir. Periyodik disk kontrolu onemli degilse."
+        "oneri": "Kapatılabilir. Periyodik disk kontrolu onemli degilse.",
+        "oneri_en": "Keep enabled for ext4 disk health monitoring."
     },
     "nvidia-resume.service": {
         "desc": "NVIDIA ekran karti sürücüsünü uyku/uyanma durumunda yönetir.",
+        "desc_en": "Manages NVIDIA GPU driver state on system resume.",
         "tip": "gerekli",
-        "oneri": "NVIDIA kart kullaniyorsaniz kapatmayın."
+        "oneri": "NVIDIA kart kullaniyorsaniz kapatmayın.",
+        "oneri_en": "Required for systems using NVIDIA graphics cards."
     },
     "nvidia-suspend.service": {
         "desc": "NVIDIA ekran karti sürücüsünü uyku modunda yönetir.",
+        "desc_en": "Manages NVIDIA GPU driver state on system suspend.",
         "tip": "gerekli",
-        "oneri": "NVIDIA kart kullaniyorsaniz kapatmayın."
+        "oneri": "NVIDIA kart kullaniyorsaniz kapatmayın.",
+        "oneri_en": "Required for systems using NVIDIA graphics cards."
     },
     "apt-daily.service": {
         "desc": "Gunluk paket güncelleme kontrolu yapar (APT).",
+        "desc_en": "APT package manager daily update check.",
         "tip": "oneri",
-        "oneri": "Kapatılabilir. Paketleri elle güncelliyorsanız gereksiz."
+        "oneri": "Kapatılabilir. Paketleri elle güncelliyorsanız gereksiz.",
+        "oneri_en": "Can be disabled if you do updates manually."
     },
     "apt-daily-upgrade.service": {
         "desc": "Bekleyen paket guncellemelerini otomatik yükler.",
+        "desc_en": "Automatically downloads and installs package upgrades.",
         "tip": "oneri",
-        "oneri": "Kapatılabilir. Otomatik güncelleme istemiyorsaniz gereksiz."
+        "oneri": "Kapatılabilir. Otomatik güncelleme istemiyorsaniz gereksiz.",
+        "oneri_en": "Can be disabled if you upgrade packages manually."
     },
     "snapd.service": {
         "desc": "Snap paket yoneticisi arka plan servisi.",
+        "desc_en": "Snap packages daemon.",
         "tip": "oneri",
-        "oneri": "Snap kullanmıyorsanız kapatılabilir."
+        "oneri": "Snap kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Can be disabled if you do not use Snap packages."
     },
     "snapd.seeded.service": {
         "desc": "Snap paketlerinin ilk kurulumunu tamamlar.",
+        "desc_en": "Completes initial installation of Snap packages.",
         "tip": "oneri",
-        "oneri": "Snap kullanmıyorsanız kapatılabilir."
+        "oneri": "Snap kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Can be disabled if snapd is disabled."
     },
     "snapd.apparmor.service": {
         "desc": "Snap uygulamalari için AppArmor profillerini yükler.",
+        "desc_en": "Loads AppArmor security profiles for Snap packages.",
         "tip": "oneri",
-        "oneri": "Snap kullanmıyorsanız kapatılabilir."
+        "oneri": "Snap kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Can be disabled if snapd is disabled."
     },
     "user@.service": {
         "desc": "Kullaniciya ait systemd servislerini baslatir (user manager).",
+        "desc_en": "Runs systemd user manager instance.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Kullanıcı servisleri için gereklidir."
+        "oneri": "Kapatmayın. Kullanıcı servisleri için gereklidir.",
+        "oneri_en": "Do not disable. Crucial for managing user session processes."
     },
     "user-runtime-dir.service": {
         "desc": "Kullaniciya ait gecici dosya dizinini (runtime dir) olusturur.",
+        "desc_en": "Creates temporary runtime directories for users.",
         "tip": "kritik",
-        "oneri": "Kapatmayın."
+        "oneri": "Kapatmayın.",
+        "oneri_en": "Do not disable. Required for user desktop runtime files."
     },
     "wtmpdb-update-boot.service": {
         "desc": "Baslangic kaydini wtmp veritabanina ekler (oturum kayitlari).",
+        "desc_en": "Adds boot record to wtmp database.",
         "tip": "oneri",
-        "oneri": "Kapatılabilir. Oturum kaydi onemli degilse gereksiz."
+        "oneri": "Kapatılabilir. Oturum kaydi onemli degilse gereksiz.",
+        "oneri_en": "Keep enabled to preserve user session and boot logs."
     },
 
     "getty@.service": {
         "desc": "Sanal konsolda (TTY) oturum acmayi sağlar. Ctrl+Alt+F1-F6 ile gecilen ekranlar.",
+        "desc_en": "Enables local virtual console TTY login screens.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Konsol oturumu için gereklidir."
+        "oneri": "Kapatmayın. Konsol oturumu için gereklidir.",
+        "oneri_en": "Do not disable. Essential for emergency terminal login (TTY)."
     },
     "user@.service": {
         "desc": "Kullaniciya ait systemd servislerini baslatir (user manager).",
+        "desc_en": "Runs systemd user manager instance.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Kullanıcı servisleri için gereklidir."
+        "oneri": "Kapatmayın. Kullanıcı servisleri için gereklidir.",
+        "oneri_en": "Do not disable. Crucial for managing user session processes."
     },
     "user-runtime-dir@.service": {
         "desc": "Kullaniciya ait gecici dosya dizinini (runtime dir) olusturur.",
+        "desc_en": "Creates temporary runtime directories for users.",
         "tip": "kritik",
-        "oneri": "Kapatmayın."
+        "oneri": "Kapatmayın.",
+        "oneri_en": "Do not disable. Required for user desktop runtime files."
     },
     "systemd-backlight@.service": {
         "desc": "Ekran ve klavye arka ışığı parlaklık ayarlarini hatirlar ve geri yükler.",
+        "desc_en": "Restores keyboard and screen brightness settings at boot.",
         "tip": "oneri",
-        "oneri": "Kapatılabilir. Parlaklik ayari onemli degilse gereksiz."
+        "oneri": "Kapatılabilir. Parlaklik ayari onemli degilse gereksiz.",
+        "oneri_en": "Can be disabled if brightness settings do not need to be saved."
     },
     "systemd-cryptsetup@.service": {
         "desc": "Sifrelenmis disk bölümlerini (LUKS) başlangıçta acmak için şifre sorar.",
+        "desc_en": "Manages encrypted block devices (LUKS volumes).",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Sifrelenmis diskinizin acilmasi için gereklidir."
+        "oneri": "Kapatmayın. Sifrelenmis diskinizin acilmasi için gereklidir.",
+        "oneri_en": "Do not disable if you use full disk encryption."
     },
     "systemd-fsck@.service": {
         "desc": "Başlangıçta disk dosya sistemi sağlığını kontrol eder (fsck).",
+        "desc_en": "Checks filesystem integrity during boot.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Disk hatalarini onlemek için gereklidir."
+        "oneri": "Kapatmayın. Disk hatalarini onlemek için gereklidir.",
+        "oneri_en": "Do not disable. Crucial for repairing disk errors."
     },
     "systemd-modules-load.service": {
         "desc": "Sistem başlangıcında çekirdek (kernel) modüllerini otomatik yükler.",
@@ -579,109 +625,151 @@ DESCRIPTIONS = {
     },
     "modprobe@.service": {
         "desc": "Belirli kernel modullerini başlangıçta yükler.",
+        "desc_en": "Loads kernel modules.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Donanim sürücüleri için gereklidir."
+        "oneri": "Kapatmayın. Donanim sürücüleri için gereklidir.",
+        "oneri_en": "Do not disable. Essential for hardware driver loading."
     },
     "systemd-zram-setup@.service": {
         "desc": "ZRAM (sikistirilmis sanal bellek) aygiti olusturur. RAM'i sikistirarak daha fazla bellek gibi kullanir.",
+        "desc_en": "Sets up zram swap devices automatically.",
         "tip": "oneri",
-        "oneri": "ZRAM kullanmıyorsanız kapatılabilir."
+        "oneri": "ZRAM kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if you use zram swap compression."
     },
     "systemd-pcrphase@.service": {
         "desc": "TPM 2.0 olcum kayitlarini (PCR) baslangic asamalarinda günceller.",
+        "desc_en": "Registers boot phases into TPM PCRs.",
         "tip": "gerekli",
-        "oneri": "TPM kullaniyorsaniz kapatmayın."
+        "oneri": "TPM kullaniyorsaniz kapatmayın.",
+        "oneri_en": "Keep enabled if TPM/Secure Boot security is used."
     },
     "dirmngr@.service": {
         "desc": "GPG anahtar sunucusu ile iletisimi yönetir. Paket imzalari dogrulamasi için.",
+        "desc_en": "Manages GnuPG certificate revocation list updates.",
         "tip": "gerekli",
-        "oneri": "Pacman/kurulum için genelde gerekli."
+        "oneri": "Pacman/kurulum için genelde gerekli.",
+        "oneri_en": "Can be disabled if not using GpgAgent keys."
     },
     "gpg-agent@.service": {
         "desc": "GPG sifreleme anahtarlarını bellekte tutar. Paket imzalaması ve sifreleme için.",
+        "desc_en": "GnuPG private key daemon.",
         "tip": "gerekli",
-        "oneri": "Pacman ve paket yonetimi için genelde gerekli."
+        "oneri": "Pacman ve paket yonetimi için genelde gerekli.",
+        "oneri_en": "Can be disabled if GpgAgent is not needed."
     },
     "keyboxd@.service": {
         "desc": "GPG anahtar deposu yoneticisi. GPG anahtarlarını guvenli sekilde saklar.",
+        "desc_en": "Keyboxd background service for GnuPG key management.",
         "tip": "gerekli",
-        "oneri": "Pacman için genelde gerekli."
+        "oneri": "Pacman için genelde gerekli.",
+        "oneri_en": "Can be disabled if GpgAgent is not needed."
     },
 
     "ananicy-cpp.service": {
         "desc": "IO ve CPU onceliklerini otomatik ayarlayarak sistem yanit verebilirligini artırır.",
+        "desc_en": "Ananicy C++ implementation for auto-renicing processes to speed up desktop.",
         "tip": "oneri",
-        "oneri": "Kapatılabilir. Oyun/masaüstü performansi için faydali olabilir."
+        "oneri": "Kapatılabilir. Oyun/masaüstü performansi için faydali olabilir.",
+        "oneri_en": "Keep enabled to improve active desktop performance."
     },
     "archlinux-keyring-wkd-sync.service": {
         "desc": "Arch Linux paket imzalama anahtarlarını Web Key Directory uzerinden günceller.",
+        "desc_en": "Synchronizes Arch Linux PGP keys via Web Key Directory.",
         "tip": "gerekli",
-        "oneri": "Pacman paket dogrulamasi için gereklidir."
+        "oneri": "Pacman paket dogrulamasi için gereklidir.",
+        "oneri_en": "Can be disabled if you run keyring updates manually."
     },
     "asusd.service": {
         "desc": "ASUS donanim yonetimi (klavye ışığı, performans modu, fan profilleri).",
+        "desc_en": "ASUS laptop control daemon (ROG/TUF power profiles, keyboard lights).",
         "tip": "oneri",
-        "oneri": "ASUS laptop kullaniyorsaniz açık birakin."
+        "oneri": "ASUS laptop kullaniyorsaniz açık birakin.",
+        "oneri_en": "Keep enabled on ASUS laptops. Can be disabled on other devices."
     },
     "asus-shutdown.service": {
         "desc": "ASUS donanimini bilgisayar kapanirken guvenli sekilde kapatir.",
+        "desc_en": "ASUS laptop configuration shutdown helper.",
         "tip": "oneri",
-        "oneri": "ASUS laptop kullaniyorsaniz kapatmayın."
+        "oneri": "ASUS laptop kullaniyorsaniz kapatmayın.",
+        "oneri_en": "Keep enabled on ASUS laptops."
     },
     "auditd.service": {
         "desc": "Sistem güvenlik denetim loglarini (audit) toplar ve kaydeder.",
+        "desc_en": "Linux Audit framework daemon. Logs security audit events.",
         "tip": "oneri",
-        "oneri": "Guvenlik denetimi istemiyorsaniz kapatılabilir."
+        "oneri": "Guvenlik denetimi istemiyorsaniz kapatılabilir.",
+        "oneri_en": "Can be disabled on standard desktop systems to save resources."
     },
     "audit-rules.service": {
         "desc": "Sistem güvenlik denetim kurallarini yükler.",
+        "desc_en": "Loads security audit configuration rules.",
         "tip": "oneri",
-        "oneri": "auditd kapaliysa gereksiz."
+        "oneri": "auditd kapaliysa gereksiz.",
+        "oneri_en": "Can be disabled if auditd is disabled."
     },
     "bpftune.service": {
         "desc": "BPF (Berkeley Packet Filter) ile ag performansını otomatik ayarlar.",
+        "desc_en": "Automatic BPF-based kernel network tuning daemon.",
         "tip": "oneri",
-        "oneri": "Kapatılabilir. Gelismis ag optimizasyonu için."
+        "oneri": "Kapatılabilir. Gelismis ag optimizasyonu için.",
+        "oneri_en": "Can be disabled on desktops, recommended for servers."
     },
     "containerd.service": {
         "desc": "Konteyner çalıştırma ortami (containerd). Docker ve diger konteynerlerin temeli.",
+        "desc_en": "Container runtime daemon (Docker/Kubernetes core).",
         "tip": "oneri",
-        "oneri": "Docker/konteyner kullanmıyorsanız kapatılabilir."
+        "oneri": "Docker/konteyner kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Can be disabled if you do not run containers."
     },
     "dbus-broker.service": {
         "desc": "Hizli ve guvenilir D-Bus mesaji brokeri. Uygulamalar arasi iletisimi sağlar.",
+        "desc_en": "High performance D-Bus message broker implementation.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Masaüstü ortami için gereklidir."
+        "oneri": "Kapatmayın. Masaüstü ortami için gereklidir.",
+        "oneri_en": "Do not disable. Essential for application communication."
     },
     "dm-event.service": {
         "desc": "Device Mapper olaylarini izler ve LVM işlemlerini tetikler.",
+        "desc_en": "Device mapper event daemon (LVM monitoring).",
         "tip": "gerekli",
-        "oneri": "LVM kullaniyorsaniz kapatmayın."
+        "oneri": "LVM kullaniyorsaniz kapatmayın.",
+        "oneri_en": "Keep enabled if using LVM storage layouts."
     },
     "docker.service": {
         "desc": "Docker konteyner platformu. Konteynerleri calistirir ve yönetir.",
+        "desc_en": "Docker container manager daemon.",
         "tip": "oneri",
-        "oneri": "Docker kullanmıyorsanız kapatılabilir."
+        "oneri": "Docker kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Can be disabled if you do not develop or run Docker containers."
     },
     "emergency.service": {
         "desc": "Acil durum modu. Sistem baslamazsa komut satiri için kullanilir.",
+        "desc_en": "Emergency shell login prompt.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Kurtarma modu için gereklidir."
+        "oneri": "Kapatmayın. Kurtarma modu için gereklidir.",
+        "oneri_en": "Do not disable. Needed for system rescue access."
     },
     "ldconfig.service": {
         "desc": "Paylasilan kutuphane (shared library) önbelleğini günceller.",
+        "desc_en": "Updates shared library cache dynamically.",
         "tip": "gerekli",
-        "oneri": "Kapatmayın. Yeni kütüphanelerin taninmasi için gereklidir."
+        "oneri": "Kapatmayın. Yeni kütüphanelerin taninmasi için gereklidir.",
+        "oneri_en": "Do not disable. Crucial for correct library loading."
     },
     "libvirtd.service": {
         "desc": "Sanal makine yonetimi (libvirt/virt-manager). Konuk makineleri calistirir.",
+        "desc_en": "Virtual machine management (libvirt/virt-manager). Runs guest machines.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if you run virtual machines, otherwise safe to disable."
     },
     "lvm2-lvmpolld.service": {
         "desc": "LVM hacim yonetimi işlemlerini arka planda izler ve yönetir.",
+        "desc_en": "LVM monitoring poll daemon.",
         "tip": "oneri",
-        "oneri": "LVM kullanmıyorsanız kapatılabilir."
+        "oneri": "LVM kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if LVM partitions are used."
     },
     "lvm2-monitor.service": {
         "desc": "LVM (Mantıksal Hacim Yönetimi) disk bölümlerinin durumunu izler.",
@@ -692,93 +780,129 @@ DESCRIPTIONS = {
     },
     "mkinitcpio-generate-shutdown-ramfs.service": {
         "desc": "Kapanis için gerekli initramfs (ilk RAM dosya sistemi) imajini olusturur.",
+        "desc_en": "Generates shutdown ramfs to unmount partitions cleanly.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Sistemin guvenli kapanmasi için gereklidir."
+        "oneri": "Kapatmayın. Sistemin guvenli kapanmasi için gereklidir.",
+        "oneri_en": "Do not disable. Crucial for preventing filesystem corruption on shutdown."
     },
     "plocate-updatedb.service": {
         "desc": "Dosya arama veritabanını (plocate/mlocate) günceller. 'locate' komutu için.",
+        "desc_en": "Updates the file index database for rapid searching.",
         "tip": "oneri",
-        "oneri": "'locate' komutunu kullanmıyorsanız kapatılabilir."
+        "oneri": "'locate' komutunu kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Can be disabled if you do not use plocate/locate search commands."
     },
     "powertop.service": {
         "desc": "Guc tuketimini analiz eder ve enerji tasarrufu onerileri sunar.",
+        "desc_en": "PowerTop power consumption optimizer.",
         "tip": "oneri",
-        "oneri": "Dizüstü bilgisayarda faydali. Masaustunde gereksiz."
+        "oneri": "Dizüstü bilgisayarda faydali. Masaustunde gereksiz.",
+        "oneri_en": "Highly recommended for laptops to extend battery life."
     },
     "rescue.service": {
         "desc": "Kurtarma modu. Tek kullanıcı modunda sistem kurtarma için.",
+        "desc_en": "Rescue shell environment prompt.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Acil durum kurtarma için gereklidir."
+        "oneri": "Kapatmayın. Acil durum kurtarma için gereklidir.",
+        "oneri_en": "Do not disable. Needed for system rescue access."
     },
     "sddm.service": {
         "desc": "Basit masaüstü yoneticisi (SDDM). Grafiksel giriş ekranı.",
+        "desc_en": "Simple Desktop Display Manager. Login screen manager.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Grafik arayüz için gereklidir."
+        "oneri": "Kapatmayın. Grafik arayüz için gereklidir.",
+        "oneri_en": "Do not disable if you use SDDM as your display manager."
     },
     "shadow.service": {
         "desc": "Golge parola ve kullanıcı hesabı bilgilerini günceller.",
+        "desc_en": "Checks shadow password file integrity.",
         "tip": "gerekli",
-        "oneri": "Kapatmayın. Kullanıcı yonetimi için gereklidir."
+        "oneri": "Kapatmayın. Kullanıcı yonetimi için gereklidir.",
+        "oneri_en": "Keep enabled to secure user authentication databases."
     },
     "snapper-cleanup.service": {
         "desc": "Snapper anlık goruntu (snapshot) temizliğini otomatik yapar.",
+        "desc_en": "Cleans up old snapper system backup snapshots automatically.",
         "tip": "oneri",
-        "oneri": "Snapper kullanmıyorsanız kapatılabilir."
+        "oneri": "Snapper kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if Snapper Btrfs backups are used."
     },
     "systemd-battery-check.service": {
         "desc": "Başlangıçta pil sağlığını kontrol eder ve dusuk seviyede uyarir.",
+        "desc_en": "Checks battery levels before booting.",
         "tip": "oneri",
-        "oneri": "Dizüstü kullaniyorsaniz açık birakabilirsiniz."
+        "oneri": "Dizüstü kullaniyorsaniz açık birakabilirsiniz.",
+        "oneri_en": "Recommended for laptops."
     },
     "systemd-boot-random-seed.service": {
         "desc": "Başlangıçta rastgele sayi uretecini TPM ile guvenli sekilde yükler.",
+        "desc_en": "Feeds random seed data to the system boot loader.",
         "tip": "gerekli",
-        "oneri": "TPM kullaniyorsaniz kapatmayın."
+        "oneri": "TPM kullaniyorsaniz kapatmayın.",
+        "oneri_en": "Recommended to keep enabled for boot security."
     },
     "systemd-bsod.service": {
         "desc": "Kritik sistem hatalarinda mavi ekran (BSOD) gosterir.",
+        "desc_en": "Displays Blue Screen of Death on critical boot failures.",
         "tip": "oneri",
-        "oneri": "Kapatılabilir. Sadece hata durumunda devreye girer."
+        "oneri": "Kapatılabilir. Sadece hata durumunda devreye girer.",
+        "oneri_en": "Can be disabled, only shows crash details."
     },
     "systemd-confext.service": {
         "desc": "Sistem yapilandirma dosyasi uzantılarını (/etc/extensions) yükler.",
+        "desc_en": "Mounts configuration extension images.",
         "tip": "oneri",
-        "oneri": "Kullanmiyorsaniz kapatılabilir."
+        "oneri": "Kullanmiyorsaniz kapatılabilir.",
+        "oneri_en": "Can be disabled if confext is not used."
     },
     "systemd-firstboot.service": {
         "desc": "Sistem ilk baslatildiginda temel yapilandirma (dil, saat, klavye) sorar.",
+        "desc_en": "Checks and prompts user settings on first system boot.",
         "tip": "oneri",
-        "oneri": "Sistem zaten kuruluysa calismaz, kapatmaya gerek yok."
+        "oneri": "Sistem zaten kuruluysa calismaz, kapatmaya gerek yok.",
+        "oneri_en": "Can be disabled after initial setup."
     },
     "systemd-hibernate-resume.service": {
         "desc": "Hazirda bekletme (hibernate) modundan donuste sistem durumunu geri yükler.",
+        "desc_en": "Resumes system state from hibernation image.",
         "tip": "kritik",
-        "oneri": "Hazirda bekletme kullaniyorsaniz kapatmayın."
+        "oneri": "Hazirda bekletme kullaniyorsaniz kapatmayın.",
+        "oneri_en": "Keep enabled if you use hibernation features."
     },
     "systemd-importd.service": {
         "desc": "Konteyner/sanal makine imajlarini iceri aktarmayi yönetir.",
+        "desc_en": "Systemd VM and container image import/export manager.",
         "tip": "oneri",
-        "oneri": "Konteyner kullanmıyorsanız kapatılabilir."
+        "oneri": "Konteyner kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Can be disabled if not using systemd-nspawn."
     },
     "systemd-machine-id-commit.service": {
         "desc": "Gecici makine kimligini (machine-id) kalici hale getirir.",
+        "desc_en": "Commits system machine ID to persistent disk.",
         "tip": "kritik",
-        "oneri": "Kapatmayın."
+        "oneri": "Kapatmayın.",
+        "oneri_en": "Do not disable. Crucial for system configuration."
     },
     "systemd-oomd.service": {
         "desc": "Bellek yetersizliginde (OOM) hangi uygulamanin sonlandirilacagina akilli sekilde karar verir.",
+        "desc_en": "Out-Of-Memory daemon. Kills processes before RAM freezes system.",
         "tip": "gerekli",
-        "oneri": "Bellek yetersizligi yasiyorsaniz açık birakin."
+        "oneri": "Bellek yetersizligi yasiyorsaniz açık birakin.",
+        "oneri_en": "Keep enabled to prevent system freezes under high RAM load."
     },
     "systemd-quotacheck-root.service": {
         "desc": "Kok dosya sistemi için disk kullanim sinirlamalarini (quota) kontrol eder.",
+        "desc_en": "Checks disk quota limits for root filesystem.",
         "tip": "oneri",
-        "oneri": "Disk kotasi kullanmıyorsanız gereksiz."
+        "oneri": "Disk kotasi kullanmıyorsanız gereksiz.",
+        "oneri_en": "Can be disabled if disk quota limits are not configured."
     },
     "systemd-repart.service": {
         "desc": "Disk bölümlerini otomatik olarak yeniden boyutlandirir ve olusturur.",
+        "desc_en": "Automatically resizes partitions during boot.",
         "tip": "oneri",
-        "oneri": "Genelde calismaz. Otomatik bölümleme gerekiyorsa kullanilir."
+        "oneri": "Genelde calismaz. Otomatik bölümleme gerekiyorsa kullanilir.",
+        "oneri_en": "Keep enabled for automatic partition adjustments."
     },
     "systemd-resolved.service": {
         "desc": "Ağ DNS çözümleme işlemlerini yönetir.",
@@ -789,108 +913,150 @@ DESCRIPTIONS = {
     },
     "systemd-soft-reboot.service": {
         "desc": "Yeniden baslatmadan sadece kullanıcı alanini (user space) yeniden baslatir.",
+        "desc_en": "Handles software-only reboot sequence.",
         "tip": "oneri",
-        "oneri": "Genelde kullanilmaz. Elle tetiklenir."
+        "oneri": "Genelde kullanilmaz. Elle tetiklenir.",
+        "oneri_en": "Can be disabled."
     },
     "systemd-sysext.service": {
         "desc": "Sistem goruntu uzantılarını (sysroot /var/lib/extensions) yükler.",
+        "desc_en": "Mounts system extension images dynamically.",
         "tip": "oneri",
-        "oneri": "Kullanmiyorsaniz kapatılabilir."
+        "oneri": "Kullanmiyorsaniz kapatılabilir.",
+        "oneri_en": "Can be disabled if sysext is not used."
     },
     "systemd-sysusers.service": {
         "desc": "Sistem kullanicilarini ve gruplarini başlangıçta olusturur.",
+        "desc_en": "Creates system users and groups during boot.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Kullanıcı hesapları için gereklidir."
+        "oneri": "Kapatmayın. Kullanıcı hesapları için gereklidir.",
+        "oneri_en": "Do not disable. Essential for system service user accounts."
     },
     "systemd-tpm2-setup.service": {
         "desc": "TPM 2.0 güvenlik yongasını başlangıçta yapılandırır.",
+        "desc_en": "Initializes TPM2 security chips during boot.",
         "tip": "gerekli",
-        "oneri": "TPM kullaniyorsaniz kapatmayın."
+        "oneri": "TPM kullaniyorsaniz kapatmayın.",
+        "oneri_en": "Keep enabled if using TPM security features."
     },
     "systemd-udev-load-credentials.service": {
         "desc": "Udev kurallari için gerekli yetki bilgilerini yükler.",
+        "desc_en": "Loads credentials for udev hardware manager.",
         "tip": "kritik",
-        "oneri": "Kapatmayın."
+        "oneri": "Kapatmayın.",
+        "oneri_en": "Do not disable. Essential for udev device setup."
     },
     "systemd-udev-settle.service": {
         "desc": "Tum cihazlarin algilanmasini bekler. Acilisi gereksiz yere uzatabilir.",
+        "desc_en": "Waits for udev device initialization to finish during boot.",
         "tip": "oneri",
-        "oneri": "Gereksiz yere bekletiyorsa maskelenebilir. Genelde gereksizdir."
+        "oneri": "Gereksiz yere bekletiyorsa maskelenebilir. Genelde gereksizdir.",
+        "oneri_en": "Can be disabled to speed up boot. Recommended to test for compatibility."
     },
     "systemd-update-done.service": {
         "desc": "Sistem guncellemesinden sonra yapılması gereken islemleri işaretler.",
+        "desc_en": "Updates system package manager and boot timestamps.",
         "tip": "gerekli",
-        "oneri": "Kapatmayın."
+        "oneri": "Kapatmayın.",
+        "oneri_en": "Do not disable. Essential for update triggers."
     },
     "systemd-userdbd.service": {
         "desc": "Kullanıcı veritabanı servisi. Kullanicilari JSON uzerinden dinamik sorgular.",
+        "desc_en": "Systemd user database manager daemon.",
         "tip": "gerekli",
-        "oneri": "Genelde açık birakilir."
+        "oneri": "Genelde açık birakilir.",
+        "oneri_en": "Do not disable. Essential for user session lookup."
     },
     "systemd-vconsole-setup.service": {
         "desc": "Klavye düzeni ve konsol yazı tipini başlangıçta ayarlar.",
+        "desc_en": "Configures font and keyboard layout for virtual terminal console (TTY).",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Klavye düzeni için gereklidir."
+        "oneri": "Kapatmayın. Klavye düzeni için gereklidir.",
+        "oneri_en": "Keep enabled to use correct keyboard mappings in TTY consoles."
     },
     "tlp.service": {
         "desc": "Guc yonetimi aracı. Dizüstü bilgisayarlarda pil ömrünü uzatır.",
+        "desc_en": "TLP advanced power management daemon.",
         "tip": "oneri",
-        "oneri": "Dizüstü kullaniyorsaniz açık birakin. Masaustunde gereksiz."
+        "oneri": "Dizüstü kullaniyorsaniz açık birakin. Masaustunde gereksiz.",
+        "oneri_en": "Highly recommended for laptops to save battery. Can be disabled on desktops."
     },
     "ufw.service": {
         "desc": "Basit güvenlik duvari (Uncomplicated Firewall). Ag trafigini kontrol eder.",
+        "desc_en": "Uncomplicated Firewall service. Manages system firewall.",
         "tip": "gerekli",
-        "oneri": "Guvenlik duvari istiyorsaniz açık birakin."
+        "oneri": "Guvenlik duvari istiyorsaniz açık birakin.",
+        "oneri_en": "Keep enabled to secure network traffic. Can be disabled if firewall is not used."
     },
     "virtsecretd.service": {
         "desc": "Sanal makine sirlarini (parola, anahtar) yönetir.",
+        "desc_en": "Libvirt secret management daemon for secure VM data.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if VM secret storage is used."
     },
     "virtlogd.service": {
         "desc": "Sanal makine loglarini yönetir.",
+        "desc_en": "Manages virtual machine log files.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if virtual machine manager is used."
     },
     "virtlockd.service": {
         "desc": "Sanal makine kilitlerini yönetir. Kaynak catismasini onler.",
+        "desc_en": "Manages virtual machine locks to prevent disk conflict.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Keep enabled if virtual machine manager is used."
     },
     "warp-svc.service": {
         "desc": "Cloudflare WARP VPN servisi. İnternet baglantinizi guvenli hale getirir.",
+        "desc_en": "Cloudflare WARP VPN background service daemon.",
         "tip": "oneri",
-        "oneri": "WARP kullanmıyorsanız kapatılabilir."
+        "oneri": "WARP kullanmıyorsanız kapatılabilir.",
+        "oneri_en": "Can be disabled if you do not use Cloudflare WARP."
     },
     "zapret.service": {
         "desc": "DPI (Derin Paket Inceleme) engellemesini asmak için ag trafigini düzenler.",
+        "desc_en": "Deep Packet Inspection (DPI) bypass service.",
         "tip": "oneri",
-        "oneri": "Kullanmiyorsaniz kapatılabilir."
+        "oneri": "Kullanmiyorsaniz kapatılabilir.",
+        "oneri_en": "Can be disabled if DPI bypass is not used."
     },
     "cachyos-iw-set-regdomain.service": {
         "desc": "Kablosuz ag bölge kodunu (regdomain) ayarlar. Wi-Fi kanal uyumlulugu için.",
+        "desc_en": "Configures wireless regulatory domain settings for CachyOS.",
         "tip": "oneri",
-        "oneri": "Wi-Fi calismiyorsa gerekli olabilir."
+        "oneri": "Wi-Fi calismiyorsa gerekli olabilir.",
+        "oneri_en": "Keep enabled for correct Wi-Fi compliance."
     },
     "initrd-cleanup.service": {
         "desc": "Initrd (ilk RAM disk) aşamasından sonra gecici dosyalari temizler.",
+        "desc_en": "Cleans up early boot initrd files.",
         "tip": "kritik",
-        "oneri": "Kapatmayın. Sistem baslangici için gereklidir."
+        "oneri": "Kapatmayın. Sistem baslangici için gereklidir.",
+        "oneri_en": "Do not disable. Essential for initrd cleanup."
     },
     "initrd-parse-etc.service": {
         "desc": "Initrd aşamasında /etc dosyalarini okur ve yapilandirmayi yükler.",
+        "desc_en": "Parses configuration files inside initrd.",
         "tip": "kritik",
-        "oneri": "Kapatmayın."
+        "oneri": "Kapatmayın.",
+        "oneri_en": "Do not disable. Crucial for boot configuration."
     },
     "initrd-switch-root.service": {
         "desc": "Initrd'den gerçek kök dosya sistemine geçişi yönetir.",
+        "desc_en": "Switches system root from initrd to actual disk.",
         "tip": "kritik",
-        "oneri": "Kapatmayın."
+        "oneri": "Kapatmayın.",
+        "oneri_en": "Do not disable. Required to boot system."
     },
     "initrd-udevadm-cleanup-db.service": {
         "desc": "Initrd asamasindaki cihaz veritabanını temizler.",
+        "desc_en": "Cleans up early boot udev database.",
         "tip": "kritik",
-        "oneri": "Kapatmayın."
+        "oneri": "Kapatmayın.",
+        "oneri_en": "Do not disable. Essential for udev transition."
     },
 }
 
