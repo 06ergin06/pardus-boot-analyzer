@@ -68,11 +68,11 @@ SAFE_TO_DISABLE_ONERI_SERVICES = {
 }
 
 PROFILE_SERVICE_LABELS = {
-    "cups.service": "Yazıcı Servisi (CUPS)",
-    "bluetooth.service": "Bluetooth Desteği",
+    "cups.service": tr("cups_service_desc"),
+    "bluetooth.service": tr("bluetooth_desc"),
     "docker.service": "Docker Konteyner",
     "postgresql.service": "PostgreSQL Servisi",
-    "ssh.service": "SSH Uzaktan Erişim",
+    "ssh.service": tr("ssh_desc"),
 }
 
 def parse_blame_time(time_str):
@@ -510,7 +510,7 @@ class Controller:
         vbox_left.pack_start(self.card_boot, False, False, 0)
         
         lbl_boot_title = Gtk.Label(xalign=0)
-        lbl_boot_title.set_text("Açılış Süresi Özeti")
+        lbl_boot_title.set_text(tr("acilis_suresi_ozeti"))
         lbl_boot_title.get_style_context().add_class("card-title")
         self.card_boot.pack_start(lbl_boot_title, False, False, 0)
         
@@ -900,7 +900,7 @@ class Controller:
         if resp == Gtk.ResponseType.ACCEPT and path:
             if not path.lower().endswith(".pdf"):
                 path += ".pdf"
-            self.set_status("PDF Raporu oluşturuluyor...")
+            self.set_status(tr("pdf_olusturuluyor"))
             
             def task():
                 try:
@@ -910,7 +910,7 @@ class Controller:
                     print_op.set_n_pages(1)
                     GLib.idle_add(run_print_op, print_op)
                 except Exception as e:
-                    GLib.idle_add(self.set_status, f"PDF Hatası: {e}")
+                    GLib.idle_add(self.set_status, f"{tr('pdf_hatasi')}{e}")
                     
             def run_print_op(print_op):
                 try:
@@ -926,9 +926,9 @@ class Controller:
                         info.run()
                         info.destroy()
                     else:
-                        self.set_status("PDF oluşturma işlemi tamamlanamadı.")
+                        self.set_status(tr("pdf_tamamlanamadi"))
                 except Exception as e:
-                    self.set_status(f"PDF Hatası: {e}")
+                    self.set_status(f"{tr('pdf_hatasi')}{e}")
                     
             threading.Thread(target=task, daemon=True).start()
 
@@ -955,7 +955,7 @@ class Controller:
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(12)
         cr.move_to(50, 125)
-        cr.show_text("1. Sistem Özeti")
+        cr.show_text(tr("pdf_sistem_ozeti"))
         
         cr.set_source_rgb(0.8, 0.8, 0.8)
         cr.set_line_width(1)
@@ -1084,7 +1084,7 @@ class Controller:
         cr.move_to(50, 792)
         cr.show_text(tr("pdf_footer"))
         cr.move_to(480, 792)
-        cr.show_text("Sayfa 1 / 1")
+        cr.show_text(tr("pdf_sayfa_1_1"))
 
     # --- Page 2: Autostart ---
     def build_page_autostart(self):
@@ -1183,17 +1183,17 @@ class Controller:
     def _on_autostart_delay_changed(self, spin, filepath):
         delay = int(spin.get_value())
         self.manager.update_autostart_delay(filepath, delay)
-        self.set_status("Gecikme süresi güncellendi.")
+        self.set_status(tr("gecikme_guncellendi"))
 
     def _on_autostart_toggle(self, switch, state, filepath):
         self.manager.toggle_autostart_entry(filepath, state)
-        self.set_status("Uygulama aktiflik durumu güncellendi.")
+        self.set_status(tr("uygulama_aktiflik_guncellendi"))
         return False
 
     def _on_autostart_delete_clicked(self, button, filepath):
         self.manager.remove_autostart_entry(filepath)
         self.load_autostart_page()
-        self.set_status("Uygulama listeden kaldırıldı.")
+        self.set_status(tr("uygulama_kaldirildi"))
 
     def _on_add_autostart_clicked(self, button):
         dlg = AddAutostartDialog(self.window, self.manager)
@@ -1209,7 +1209,7 @@ class Controller:
                 icon=res["icon"],
                 delay=res["delay"]
             )
-            self.set_status(f"'{res['name']}' başlangıç uygulamalarına eklendi.")
+            self.set_status(f"'{res['name']}' " + tr("baslangica_eklendi"))
             self.load_autostart_page()
 
     # --- Page 3: Hizmetler ---
@@ -2154,7 +2154,7 @@ class Controller:
         
         self.profiles_data = {
             "ofis": {
-                "name": "Ofis Modu",
+                "name": tr("prof_office_name"),
                 "icon": "document-open",
                 "desc": "Günlük ofis işleri için ideal. Yazıcı ve ağ servisleri etkinleştirilirken; Docker ve veritabanı servisleri kapatılarak açılış hızlandırılır.",
                 "services": {
@@ -2172,9 +2172,9 @@ class Controller:
                 }
             },
             "yazilimci": {
-                "name": "Yazılımcı Modu",
+                "name": tr("prof_dev_name"),
                 "icon": "utilities-terminal",
-                "desc": "Yazılım geliştiriciler için hazırlandı. Docker, SSH ve veritabanı servisleri otomatik olarak etkinleştirilir. Yazıcı gibi gereksiz servisler kapatılır.",
+                "desc": tr("prof_dev_desc"),
                 "services": {
                     "cups.service": "disable",
                     "cups-browsed.service": "disable",
@@ -2192,7 +2192,7 @@ class Controller:
             "minimum": {
                 "name": "Minimum Mod",
                 "icon": "battery",
-                "desc": "Sistemi en hızlı ve hafif şekilde başlatmak için. Ağ ve temel sistem güvenliği dışındaki tüm ek servisler kapatılır. Pil tasarrufu sağlar.",
+                "desc": tr("prof_min_desc"),
                 "services": {
                     "cups.service": "disable",
                     "cups-browsed.service": "disable",
@@ -2326,7 +2326,7 @@ class Controller:
         if not files:
             row = Gtk.ListBoxRow()
             lbl = Gtk.Label()
-            lbl.set_markup("<span foreground='#888888'>Kayıtlı özel profil bulunamadı.</span>")
+            lbl.set_markup(f"<span foreground='#888888'>{tr('no_custom_profiles')}</span>")
             lbl.set_margin_top(16)
             lbl.set_margin_bottom(16)
             row.add(lbl)
@@ -2354,7 +2354,7 @@ class Controller:
                     
                     count = len(p_info["services"])
                     lbl_desc = Gtk.Label(xalign=0)
-                    lbl_desc.set_markup(f"<span size='small' foreground='#666666'>{count} hizmet kuralı</span>")
+                    lbl_desc.set_markup(f"<span size='small' foreground='#666666'>{count} {tr('hizmet_kurali')}</span>")
                     v_box.pack_start(lbl_desc, False, False, 0)
                     
                     h_box.pack_start(v_box, True, True, 0)
@@ -2384,7 +2384,7 @@ class Controller:
         if not backups:
             row = Gtk.ListBoxRow()
             lbl = Gtk.Label()
-            lbl.set_markup("<span foreground='#888888'>Oluşturulmuş geri yükleme noktası bulunamadı.</span>")
+            lbl.set_markup(f"<span foreground='#888888'>{tr('no_backups_found')}</span>")
             lbl.set_margin_top(16)
             lbl.set_margin_bottom(16)
             row.add(lbl)
@@ -2408,12 +2408,12 @@ class Controller:
                 
                 count = len(b["services"])
                 lbl_desc = Gtk.Label(xalign=0)
-                lbl_desc.set_markup(f"<span size='small' foreground='#666666'>{count} hizmetin yedeği</span>")
+                lbl_desc.set_markup(f"<span size='small' foreground='#666666'>{count} {tr('hizmetin_yedegi')}</span>")
                 v_box.pack_start(lbl_desc, False, False, 0)
                 
                 h_box.pack_start(v_box, True, True, 0)
                 
-                btn_restore = Gtk.Button(label="Geri Yükle")
+                btn_restore = Gtk.Button(label=tr("geri_yukle"))
                 btn_restore.get_style_context().add_class("warning")
                 btn_restore.connect("clicked", self._on_restore_backup_clicked, fpath)
                 h_box.pack_start(btn_restore, False, False, 6)
@@ -2431,18 +2431,18 @@ class Controller:
     def _on_create_backup_clicked(self, button):
         ok, msg = self.manager.create_backup()
         if ok:
-            self.set_status("Geri yükleme noktası oluşturuldu.")
+            self.set_status(tr("yedek_olusturuldu"))
             self.load_profiles_page()
         else:
-            self.set_status(f"Hata: {msg}")
+            self.set_status(f"{tr('hata')}: {msg}")
 
     def _on_restore_backup_clicked(self, button, fpath):
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
-            message_format="Yedek Noktasına Dönmek İstiyor musunuz?"
+            message_format=tr("yedek_don_soru")
         )
-        dlg.format_secondary_text("Bu işlem sistem servislerinin başlangıç durumlarını yedeğin alındığı tarihteki durumuna geri yükleyecektir.")
+        dlg.format_secondary_text(tr("yedek_don_aciklama"))
         resp = dlg.run()
         dlg.destroy()
         if resp != Gtk.ResponseType.YES:
@@ -2487,14 +2487,14 @@ class Controller:
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
-            message_format="Yedek Noktasını Silmek İstiyor musunuz?"
+            message_format=tr("yedek_sil_soru")
         )
         resp = dlg.run()
         dlg.destroy()
         if resp == Gtk.ResponseType.YES:
             try:
                 os.remove(fpath)
-                self.set_status("Yedek noktası silindi.")
+                self.set_status(tr("yedek_noktasi_silindi"))
                 self.load_profiles_page()
             except Exception as e:
                 self.set_status(f"Hata: {e}")
@@ -2508,9 +2508,9 @@ class Controller:
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION,
             buttons=Gtk.ButtonsType.YES_NO,
-            message_format=f"'{p_info['name']}' profilini uygulamak istiyor musunuz?"
+            message_format=f"'{p_info['name']}' " + tr("profil_uygula_soru")
         )
-        dlg.format_secondary_text("Bu işlem sistem servislerinin başlangıç durumlarını toplu olarak düzenleyecektir.")
+        dlg.format_secondary_text(tr("profil_uygula_aciklama"))
         resp = dlg.run()
         dlg.destroy()
         if resp != Gtk.ResponseType.YES:
@@ -2535,13 +2535,13 @@ class Controller:
                 disable_list.append(svc)
                 
         if not enable_list and not disable_list:
-            self.set_status("Sistem zaten bu profile uygun durumda.")
+            self.set_status(tr("sistem_uygun_durumda"))
             info = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
                 type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
-                message_format="Profil Zaten Uygulanmış"
+                message_format=tr("profil_zaten_uygulanmis")
             )
-            info.format_secondary_text("Hizmetlerin başlangıç durumları zaten bu profile uygun.")
+            info.format_secondary_text(tr("hizmetler_uygun_detay"))
             info.run()
             info.destroy()
             return
@@ -2554,16 +2554,16 @@ class Controller:
                 all_deps[svc] = filtered_deps
 
         if all_deps:
-            dep_msg = "Bu profili uygulamak aşağıdaki aktif hizmetleri ve onlara bağlı servisleri etkileyebilir:\n\n"
+            dep_msg = tr("profil_uygula_bagimlilik_mesaji")
             for parent, kids in list(all_deps.items())[:5]:
                 dep_msg += f"• {parent} ➔ {', '.join(kids[:3])}\n"
             if len(all_deps) > 5:
-                dep_msg += f"• ve {len(all_deps) - 5} hizmet daha...\n"
+                dep_msg += tr("ve_daha_fazla_hizmet").format(len(all_deps) - 5)
                 
             dep_dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
                 type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.YES_NO,
-                message_format="Profil Uygulama Bağımlılık Uyarısı"
+                message_format=tr("profil_bagimlilik_uyarisi")
             )
             dep_dlg.format_secondary_text(dep_msg + "\nDevam etmek istiyor musunuz?")
             dep_resp = dep_dlg.run()
@@ -2582,14 +2582,14 @@ class Controller:
             with open(fpath, "r", encoding="utf-8") as f:
                 p_info = json.load(f)
         except Exception as e:
-            self.set_status(f"Profil okuma hatası: {e}")
+            self.set_status(f"{tr('profil_okuma_hatasi')}{e}")
             return
             
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION,
             buttons=Gtk.ButtonsType.YES_NO,
-            message_format=f"'{p_info['name']}' özel profilini uygulamak istiyor musunuz?"
+            message_format=f"'{p_info['name']}' " + tr("profil_uygula_soru")
         )
         resp = dlg.run()
         dlg.destroy()
@@ -2615,7 +2615,7 @@ class Controller:
                 disable_list.append(svc)
                 
         if not enable_list and not disable_list:
-            self.set_status("Sistem zaten bu profile uygun durumda.")
+            self.set_status(tr("sistem_uygun_durumda"))
             return
             
         all_deps = {}
@@ -2626,16 +2626,16 @@ class Controller:
                 all_deps[svc] = filtered_deps
 
         if all_deps:
-            dep_msg = "Bu profili uygulamak aşağıdaki aktif hizmetleri ve onlara bağlı servisleri etkileyebilir:\n\n"
+            dep_msg = tr("profil_uygula_bagimlilik_mesaji")
             for parent, kids in list(all_deps.items())[:5]:
                 dep_msg += f"• {parent} ➔ {', '.join(kids[:3])}\n"
             if len(all_deps) > 5:
-                dep_msg += f"• ve {len(all_deps) - 5} hizmet daha...\n"
+                dep_msg += tr("ve_daha_fazla_hizmet").format(len(all_deps) - 5)
                 
             dep_dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
                 type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.YES_NO,
-                message_format="Profil Uygulama Bağımlılık Uyarısı"
+                message_format=tr("profil_bagimlilik_uyarisi")
             )
             dep_dlg.format_secondary_text(dep_msg + "\nDevam etmek istiyor musunuz?")
             dep_resp = dep_dlg.run()
@@ -2682,7 +2682,7 @@ class Controller:
                 info = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
-                    message_format="Profil Başarıyla Uygulandı!"
+                    message_format=tr("profil_basariyla_uygulandi")
                 )
                 info.run()
                 info.destroy()
@@ -2691,7 +2691,7 @@ class Controller:
                 err = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
-                    message_format="Profil Uygulanırken Hata Oluştu",
+                    message_format=tr("profil_uygulama_hatasi"),
                 )
                 err.format_secondary_text(msg)
                 err.run()
@@ -2700,7 +2700,7 @@ class Controller:
         threading.Thread(target=task, daemon=True).start()
 
     def _on_save_custom_profile_clicked(self, button):
-        dialog = Gtk.Dialog(title="Profili Kaydet", parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        dialog = Gtk.Dialog(title=tr("profili_kaydet_title"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
         dialog.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
         btn_save = dialog.add_button(tr("kaydet"), Gtk.ResponseType.OK)
         btn_save.get_style_context().add_class("primary")
@@ -2763,19 +2763,19 @@ class Controller:
         try:
             with open(fpath, "w", encoding="utf-8") as f:
                 json.dump(profile_data, f, ensure_ascii=False, indent=2)
-            self.set_status(f"'{p_name}' profili kaydedildi.")
+            self.set_status(f"'{p_name}' " + tr("profili_kaydedildi"))
             self.load_profiles_page()
         except Exception as e:
-            self.set_status(f"Kaydetme hatası: {e}")
+            self.set_status(f"{tr('kaydetme_hatasi')}{e}")
 
     def _on_delete_custom_profile_clicked(self, button, fpath):
         try:
             if os.path.exists(fpath):
                 os.remove(fpath)
-                self.set_status("Özel profil silindi.")
+                self.set_status(tr("ozel_profil_silindi"))
                 self.load_profiles_page()
         except Exception as e:
-            self.set_status(f"Silme hatası: {e}")
+            self.set_status(f"{tr('silme_hatasi')}{e}")
 
     def _on_create_custom_profile_clicked(self, button):
         dlg = ProfileCreatorDialog(self.window)
@@ -2787,7 +2787,7 @@ class Controller:
             GLib.idle_add(dlg.destroy)
             
             if err:
-                self.set_status(f"Hata: {err}")
+                self.set_status(f"{tr('hata')}: {err}")
                 return
                 
             p_dir = self.get_custom_profiles_dir()
@@ -2798,7 +2798,7 @@ class Controller:
             try:
                 with open(fpath, "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=4, ensure_ascii=False)
-                self.set_status(f"Özel profil '{data['name']}' başarıyla oluşturuldu.")
+                self.set_status(f"{tr('ozel_profil_olusturuldu')}".format(data['name']))
                 self.load_profiles_page()
             except Exception as e:
                 self.set_status(f"Hata: {e}")
@@ -2832,7 +2832,7 @@ except ImportError:
 
 class ProfileCreatorDialog(Gtk.Dialog):
     def __init__(self, parent):
-        super().__init__(title="Yeni Özel Profil Oluştur", parent=parent, flags=Gtk.DialogFlags.MODAL)
+        super().__init__(title=tr("yeni_ozel_profil_btn"), parent=parent, flags=Gtk.DialogFlags.MODAL)
         self.set_default_size(420, 480)
         
         # Add buttons
@@ -2850,16 +2850,16 @@ class ProfileCreatorDialog(Gtk.Dialog):
         
         # Name Entry
         lbl_name = Gtk.Label(xalign=0)
-        lbl_name.set_markup("<b>Profil Adı:</b>")
+        lbl_name.set_markup(f"<b>{tr('profil_adi_lbl')}</b>")
         box.pack_start(lbl_name, False, False, 0)
         
         self.entry_name = Gtk.Entry()
-        self.entry_name.set_placeholder_text("Örn: Yazılım & Ofis Karışık")
+        self.entry_name.set_placeholder_text(tr("profil_adi_placeholder"))
         box.pack_start(self.entry_name, False, False, 0)
         
         # Services label
         lbl_services = Gtk.Label(xalign=0)
-        lbl_services.set_markup("<b>Hizmet Kuralları:</b>\n<span size='small' foreground='#666666'>Açık = Etkinleştirilir, Kapalı = Devre dışı bırakılır</span>")
+        lbl_services.set_markup(f"<b>{tr('hizmet_kurallari_lbl')}</b>\n<span size='small' foreground='#666666'>{tr('hizmet_kurallari_sub')}</span>")
         lbl_services.set_margin_top(8)
         box.pack_start(lbl_services, False, False, 0)
         
@@ -2875,15 +2875,15 @@ class ProfileCreatorDialog(Gtk.Dialog):
         
         # List of candidate services to configure
         self.candidate_services = {
-            "cups.service": "Yazıcı Servisi (CUPS)",
-            "cups-browsed.service": "Ağ Yazıcısı Bulucu",
-            "bluetooth.service": "Bluetooth Desteği",
+            "cups.service": tr("cups_service_desc"),
+            "cups-browsed.service": tr("cups_browsed_desc"),
+            "bluetooth.service": tr("bluetooth_desc"),
             "docker.service": "Docker Konteyner",
-            "postgresql.service": "PostgreSQL Veritabanı",
-            "mysql.service": "MySQL / MariaDB Veritabanı",
-            "ssh.service": "SSH Uzaktan Erişim",
-            "avahi-daemon.service": "Yerel Ağ Keşfi (Avahi)",
-            "ModemManager.service": "Hücresel Modem Kontrolü",
+            "postgresql.service": tr("postgresql_desc"),
+            "mysql.service": tr("mysql_desc"),
+            "ssh.service": tr("ssh_desc"),
+            "avahi-daemon.service": tr("avahi_desc"),
+            "ModemManager.service": tr("modem_desc"),
         }
         
         self.switches = {}
@@ -2913,7 +2913,7 @@ class ProfileCreatorDialog(Gtk.Dialog):
     def get_profile_data(self):
         name = self.entry_name.get_text().strip()
         if not name:
-            return None, "Lütfen profil adı girin."
+            return None, tr("profil_adi_girin_hata")
             
         services = {}
         for svc, switch in self.switches.items():
