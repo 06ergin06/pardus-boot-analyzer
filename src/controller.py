@@ -124,12 +124,12 @@ def _is_dark_theme():
 # --- Add Autostart Application Dialog ---
 class AddAutostartDialog(Gtk.Dialog):
     def __init__(self, parent, manager):
-        super().__init__(title="Başlangıç Uygulaması Ekle", parent=parent, flags=Gtk.DialogFlags.MODAL)
+        super().__init__(title=tr("baslangic_uygulamasi_ekle"), parent=parent, flags=Gtk.DialogFlags.MODAL)
         self.set_default_size(520, 420)
         self.manager = manager
         
         self.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
-        self.btn_ok = self.add_button("Ekle", Gtk.ResponseType.OK)
+        self.btn_ok = self.add_button(tr("ekle"), Gtk.ResponseType.OK)
         self.btn_ok.get_style_context().add_class("primary")
         
         content = self.get_content_area()
@@ -144,7 +144,7 @@ class AddAutostartDialog(Gtk.Dialog):
         # Tab 1: Installed Apps
         tab1_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         
-        search_entry = Gtk.SearchEntry(placeholder_text="Uygulama ara...")
+        search_entry = Gtk.SearchEntry(placeholder_text=tr("uygulama_ara_placeholder"))
         tab1_box.pack_start(search_entry, False, False, 0)
         
         scrolled = Gtk.ScrolledWindow()
@@ -161,7 +161,7 @@ class AddAutostartDialog(Gtk.Dialog):
         col_icon.add_attribute(renderer_icon, "icon_name", 2)
         self.apps_treeview.append_column(col_icon)
         
-        col_name = Gtk.TreeViewColumn("Uygulama Adı")
+        col_name = Gtk.TreeViewColumn(tr("uygulama_adi"))
         renderer_name = Gtk.CellRendererText()
         col_name.pack_start(renderer_name, True)
         col_name.add_attribute(renderer_name, "text", 0)
@@ -548,7 +548,7 @@ class Controller:
         vbox_left.pack_start(self.card_sysinfo, False, False, 0)
         
         lbl_sys_title = Gtk.Label(xalign=0)
-        lbl_sys_title.set_text("Sistem Bilgileri")
+        lbl_sys_title.set_text(tr("sistem_bilgileri"))
         lbl_sys_title.get_style_context().add_class("card-title")
         self.card_sysinfo.pack_start(lbl_sys_title, False, False, 0)
         
@@ -1316,7 +1316,7 @@ class Controller:
         h_detail.pack_start(v_detail_text, True, True, 0)
         
         self.detail_name = Gtk.Label(xalign=0)
-        self.detail_name.set_markup("<b>Servis seçilmedi</b>")
+        self.detail_name.set_markup(f"<b>{tr('hizmet_secilmedi')}</b>")
         self.detail_name.set_ellipsize(Pango.EllipsizeMode.END)
         v_detail_text.pack_start(self.detail_name, False, False, 0)
         
@@ -1340,14 +1340,14 @@ class Controller:
         h_detail.pack_start(v_boot_group, False, False, 0)
         
         lbl_boot_title = Gtk.Label()
-        lbl_boot_title.set_markup("<span weight='bold' size='medium'>Açılış Ayarı</span>")
+        lbl_boot_title.set_markup(f"<span weight='bold' size='medium'>{tr('acilis_ayari')}</span>")
         v_boot_group.pack_start(lbl_boot_title, False, False, 0)
         
         self.btn_enable = Gtk.Button(label=tr("acilis_calistir"))
         v_boot_group.pack_start(self.btn_enable, False, False, 0)
         
         self.lbl_boot_state_status = Gtk.Label()
-        self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>Durum bilinmiyor</span>")
+        self.lbl_boot_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('durum_bilinmiyor')}</span>")
         v_boot_group.pack_start(self.lbl_boot_state_status, False, False, 0)
         
         # Ayırıcı
@@ -1360,14 +1360,14 @@ class Controller:
         h_detail.pack_start(v_current_group, False, False, 0)
         
         lbl_current_title = Gtk.Label()
-        lbl_current_title.set_markup("<span weight='bold' size='medium'>Şimdiki Durum</span>")
+        lbl_current_title.set_markup(f"<span weight='bold' size='medium'>{tr('simdiki_durum')}</span>")
         v_current_group.pack_start(lbl_current_title, False, False, 0)
         
         self.btn_run = Gtk.Button(label=tr("simdi_baslat"))
         v_current_group.pack_start(self.btn_run, False, False, 0)
         
         self.lbl_current_state_status = Gtk.Label()
-        self.lbl_current_state_status.set_markup("<span size='small' color='#6c757d'>Durum bilinmiyor</span>")
+        self.lbl_current_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('durum_bilinmiyor')}</span>")
         v_current_group.pack_start(self.lbl_current_state_status, False, False, 0)
         
         # Ayırıcı
@@ -1380,7 +1380,7 @@ class Controller:
         h_detail.pack_start(v_utility_group, False, False, 0)
         
         lbl_utility_title = Gtk.Label()
-        lbl_utility_title.set_markup("<span weight='bold' size='medium'>Diğer İşlemler</span>")
+        lbl_utility_title.set_markup(f"<span weight='bold' size='medium'>{tr('diger_islemler')}</span>")
         v_utility_group.pack_start(lbl_utility_title, False, False, 0)
         
         self.btn_mask = Gtk.Button(label=tr("maskele"))
@@ -1412,10 +1412,7 @@ class Controller:
         
         lbl_help = Gtk.Label(xalign=0)
         lbl_help.set_markup(
-            "<span size='small' style='italic' color='#555555'>"
-            "<b>💡 Bilgi:</b> <i>Açılış Ayarı</i> servisin bilgisayar açılırken otomatik çalışıp çalışmayacağını; "
-            "<i>Şimdiki Durum</i> ise servisin şu saniyede arka planda aktif (RAM/İşlemci tüketiyor) olup olmadığını belirler."
-            "</span>"
+            f"<span size='small' style='italic' color='#555555'>{tr('bilgi_ipucu')}</span>"
         )
         lbl_help.set_line_wrap(True)
         h_help_note.pack_start(lbl_help, True, True, 0)
@@ -1441,18 +1438,18 @@ class Controller:
         self._updating_widgets = True
         self.liststore.clear()
         self._all_data_map = {}
-        self.detail_name.set_markup("<b>Servis seçilmedi</b>")
+        self.detail_name.set_markup(f"<b>{tr('hizmet_secilmedi')}</b>")
         self.detail_desc.set_text(tr("hizmet_secilmedi_desc"))
         self.detail_suggestion.set_text("")
-        self.service_count_label.set_text("0 servis")
-        self.set_status("Hizmetler yükleniyor...")
+        self.service_count_label.set_text("0 " + tr("hizmet_sayisi"))
+        self.set_status(tr("hizmetler_yukleniyor"))
         self.btn_enable.set_sensitive(False)
         self.btn_run.set_sensitive(False)
         self.btn_mask.set_sensitive(False)
         self.btn_log.set_sensitive(False)
         self.btn_dep.set_sensitive(False)
-        self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>Açılış durumu bilinmiyor</span>")
-        self.lbl_current_state_status.set_markup("<span size='small' color='#6c757d'>Çalışma durumu bilinmiyor</span>")
+        self.lbl_boot_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('durum_bilinmiyor')}</span>")
+        self.lbl_current_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('durum_bilinmiyor')}</span>")
         self._updating_widgets = False
         
         GLib.timeout_add(10, self._do_load)
@@ -1502,14 +1499,14 @@ class Controller:
         self._all_data.sort(key=lambda x: (-x["seconds"], x["name"]))
         self._all_data_map = {d["name"]: d for d in self._all_data}
         self._apply_filters()
-        self.set_status("Hizmet listesi güncellendi.")
+        self.set_status(tr("hizmet_listesi_guncellendi"))
         return False
 
     def _update_count_label(self):
         view = VIEW_MAP.get(self.view_combo.get_active(), "services")
         n = len(self.liststore)
         t = len(self._all_data)
-        self.service_count_label.set_text(f"{n} servis" if n == t else f"{n}/{t} servis")
+        self.service_count_label.set_text(f"{n} {tr('hizmet_sayisi')}" if n == t else f"{n}/{t} {tr('hizmet_sayisi')}")
 
     def _apply_filters(self):
         old_selection = self._get_selected_name()
@@ -1607,7 +1604,7 @@ class Controller:
             
         r = self._get_selected_row()
         if r is None:
-            self.detail_name.set_markup("<b>Servis seçilmedi</b>")
+            self.detail_name.set_markup(f"<b>{tr('hizmet_secilmedi')}</b>")
             self.detail_desc.set_text(tr("hizmet_secilmedi_desc"))
             self.detail_suggestion.set_text("")
             self.btn_enable.set_sensitive(False)
@@ -1625,23 +1622,23 @@ class Controller:
         self.detail_name.set_markup(
             f"<b>{name}</b>  \u2014  <span foreground='{color}'><b>{STATUS_TR.get(active, active)}</b></span>"
         )
-        self.detail_desc.set_text(r[4] or "Açıklama mevcut değil.")
+        self.detail_desc.set_text(r[4] or tr("aciklama_yok"))
         
         tip = r[5]
         oneri = r[6]
         if oneri:
             if tip == "kritik":
                 self.detail_suggestion.set_markup(
-                    "<span foreground='#dc3545' weight='bold'>⚠ KRİTİK HİZMET: </span>"
+                    f"<span foreground='#dc3545' weight='bold'>⚠ {tr('kritik_hizmet')}: </span>"
                     f"<span>{oneri}</span>"
                 )
             elif tip == "oneri":
                 self.detail_suggestion.set_markup(
-                    "<span foreground='#198754' weight='bold'>💡 KULLANICI ÖNERİSİ: </span>"
+                    f"<span foreground='#198754' weight='bold'>💡 {tr('kullanici_onerisi')}: </span>"
                     f"<span>{oneri}</span>"
                 )
             else:
-                self.detail_suggestion.set_markup(f"<b>Öneri:</b> {oneri}")
+                self.detail_suggestion.set_markup(f"<b>{tr('oneri')}:</b> {oneri}")
         else:
             self.detail_suggestion.set_text("")
 
@@ -1681,15 +1678,15 @@ class Controller:
         is_masked = sub == "masked" or enabled_state == "masked"
 
         if enabled_state == "static":
-            self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>● <b>Statik (Sabit Ayar)</b></span>")
+            self.lbl_boot_state_status.set_markup(f"<span size='small' color='#6c757d'>● <b>{tr('statik_sabit')}</b></span>")
             self.btn_enable.set_label(tr("degistirilemez"))
             self.btn_enable.set_sensitive(False)
         elif enabled_state == "indirect":
-            self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>● <b>Dolaylı (İndirekt)</b></span>")
+            self.lbl_boot_state_status.set_markup(f"<span size='small' color='#6c757d'>● <b>{tr('dolayli_indirekt')}</b></span>")
             self.btn_enable.set_label(tr("degistirilemez"))
             self.btn_enable.set_sensitive(False)
         elif enabled_state == "masked":
-            self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>🔒 <b>Maskelenmiş (Kapalı)</b></span>")
+            self.lbl_boot_state_status.set_markup(f"<span size='small' color='#6c757d'>🔒 <b>{tr('maskelenmis_kapali')}</b></span>")
             self.btn_enable.set_label(tr("degistirilemez"))
             self.btn_enable.set_sensitive(False)
         else:
@@ -1697,26 +1694,26 @@ class Controller:
                 self.btn_enable.set_label(tr("acilis_calistirma"))
                 self.btn_enable.get_style_context().remove_class("success")
                 self.btn_enable.get_style_context().add_class("danger")
-                self.lbl_boot_state_status.set_markup("<span size='small' color='#198754'>● <b>Açılışta Çalışacak</b></span>")
+                self.lbl_boot_state_status.set_markup(f"<span size='small' color='#198754'>● <b>{tr('acilis_calisacak')}</b></span>")
             else:
                 self.btn_enable.set_label(tr("acilis_calistir"))
                 self.btn_enable.get_style_context().remove_class("danger")
                 self.btn_enable.get_style_context().add_class("success")
-                self.lbl_boot_state_status.set_markup("<span size='small' color='#dc3545'>○ <b>Açılışta Çalışmayacak</b></span>")
+                self.lbl_boot_state_status.set_markup(f"<span size='small' color='#dc3545'>○ <b>{tr('acilis_calismayacak')}</b></span>")
 
         if is_running:
             self.btn_run.set_label(tr("simdi_durdur"))
             self.btn_run.get_style_context().remove_class("primary")
             self.btn_run.get_style_context().add_class("danger")
-            self.lbl_current_state_status.set_markup("<span size='small' color='#198754'>● <b>Şu An Çalışıyor</b></span>")
+            self.lbl_current_state_status.set_markup(f"<span size='small' color='#198754'>● <b>{tr('su_an_calisiyor')}</b></span>")
         else:
             self.btn_run.set_label(tr("simdi_baslat"))
             self.btn_run.get_style_context().remove_class("danger")
             self.btn_run.get_style_context().add_class("primary")
-            self.lbl_current_state_status.set_markup("<span size='small' color='#dc3545'>○ <b>Şu An Durduruldu</b></span>")
+            self.lbl_current_state_status.set_markup(f"<span size='small' color='#dc3545'>○ <b>{tr('su_an_durduruldu')}</b></span>")
 
         if active_state in ("activating", "deactivating"):
-            self.lbl_current_state_status.set_markup(f"<span size='small' color='#ffc107'>⏳ <b>Geçiş Yapıyor ({active_state})</b></span>")
+            self.lbl_current_state_status.set_markup(f"<span size='small' color='#ffc107'>⏳ <b>{tr('gecis_yapiyor')} ({active_state})</b></span>")
             self.btn_run.set_sensitive(False)
 
         if is_masked:
@@ -1907,8 +1904,7 @@ class Controller:
 
         if action == "mask":
             tip = d["tip"]
-            warn = ("\n\nBu hizmet sistem için KRİTİK olarak işaretlenmiştir. "
-                    "Maskelemeniz sistemin kararsız çalışmasına veya açılmamasına yol açabilir!") if tip == "kritik" else ""
+            warn = tr("kritik_maske_uyarisi") if tip == "kritik" else ""
             
             dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,

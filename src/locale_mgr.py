@@ -75,7 +75,7 @@ TRANSLATIONS = {
         "su_an_calisiyor": "Şu An Çalışıyor",
         "su_an_durduruldu": "Şu An Durduruldu",
         "gecis_yapiyor": "Geçiş Yapıyor",
-        "bilgi_ipucu": "<b>💡 Bilgi:</b> <i>Açılış Ayarı</i> servisin bilgisayar açılırken otomatik çalışıp çalışmayacağını; <i>Şimdiki Durum</i> ise servisin şu saniyede arka planda aktif (RAM/İşlemci tüketiyor) olup olmadığını belirler.",
+        "bilgi_ipucu": "<b>Bilgi:</b> <i>Açılış Ayarı</i> servisin bilgisayar açılırken otomatik çalışıp çalışmayacağını; <i>Şimdiki Durum</i> ise servisin şu saniyede arka planda aktif (RAM/İşlemci tüketiyor) olup olmadığını belirler.",
         "tab_analiz": "Başlangıç Analizi",
         "tab_hizmetler": "Hizmet Yönetimi",
         "tab_uygulamalar": "Uygulama Başlangıcı",
@@ -275,6 +275,12 @@ TRANSLATIONS = {
         "sys_kernel": "Çekirdek:",
         "sys_ram": "Bellek:",
         "sys_uptime": "Çalışma:",
+        "hizmet_listesi_guncellendi": "Hizmet listesi güncellendi.",
+        "durum_bilinmiyor": "Durum bilinmiyor",
+        "aciklama_yok": "Açıklama mevcut değil.",
+        "kritik_hizmet": "KRİTİK HİZMET",
+        "kullanici_onerisi": "KULLANICI ÖNERİSİ",
+        "kritik_maske_uyarisi": "\n\nBu hizmet sistem için KRİTİK olarak işaretlenmiştir. Maskelemeniz sistemin kararsız çalışmasına veya açılmamasına yol açabilir!",
     },
     "en": {
         "title": "Pardus Boot Manager",
@@ -314,7 +320,7 @@ TRANSLATIONS = {
         "su_an_calisiyor": "Running",
         "su_an_durduruldu": "Stopped",
         "gecis_yapiyor": "Transitioning",
-        "bilgi_ipucu": "<b>💡 Info:</b> <i>Boot Setup</i> determines if the service runs automatically when the computer starts; <i>Current State</i> indicates if it is currently active in the background.",
+        "bilgi_ipucu": "<b>Info:</b> <i>Boot Setup</i> determines if the service runs automatically when the computer starts; <i>Current State</i> indicates if it is currently active in the background.",
         "tab_analiz": "Boot Analysis",
         "tab_hizmetler": "Service Management",
         "tab_uygulamalar": "Startup Applications",
@@ -514,6 +520,12 @@ TRANSLATIONS = {
         "sys_kernel": "Kernel:",
         "sys_ram": "RAM:",
         "sys_uptime": "Uptime:",
+        "hizmet_listesi_guncellendi": "Service list updated.",
+        "durum_bilinmiyor": "Unknown state",
+        "aciklama_yok": "No description available.",
+        "kritik_hizmet": "CRITICAL SERVICE",
+        "kullanici_onerisi": "USER SUGGESTION",
+        "kritik_maske_uyarisi": "\n\nThis service is marked as CRITICAL for the system. Masking it might lead to system instability or boot failure!",
     }
 }
 
