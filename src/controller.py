@@ -1782,7 +1782,17 @@ class Controller:
         def task():
             try:
                 log = self.manager.get_journal_log(n)
-                GLib.idle_add(buf.set_text, log or "Log kaydı bulunamadı.")
+                if not log or "-- no entries --" in log.lower() or not log.strip():
+                    if self.manager.password is None:
+                        log = (
+                            "Log kaydı bulunamadı veya yetkiniz yok.\n\n"
+                            "İpucu: Eğer Pardus üzerinde standart kullanıcı ile çalışıyorsanız, logları görüntülemek için:\n"
+                            "1. Uygulamada şifre gerektiren bir işlem (örn. bir servisi kapatıp açma) yaparak şifrenizi doğrulayabilir ve bu sayede uygulamanın arka planda sudo ile log çekmesini sağlayabilir,\n"
+                            "2. Veya 'sudo usermod -aG systemd-journal $USER' komutu ile kullanıcınızı log grubuna ekleyerek oturumu kapatıp açabilirsiniz."
+                        )
+                    else:
+                        log = "Bu hizmet için herhangi bir log kaydı bulunamadı."
+                GLib.idle_add(buf.set_text, log)
             except Exception as e:
                 GLib.idle_add(buf.set_text, f"Hata: {e}")
                 
