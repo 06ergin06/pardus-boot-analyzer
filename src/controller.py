@@ -1157,20 +1157,25 @@ class Controller:
                 h_box.pack_start(v_box, True, True, 0)
                 
                 lbl_delay = Gtk.Label(label=tr("gecikme") + ":")
+                lbl_delay.set_valign(Gtk.Align.CENTER)
                 h_box.pack_start(lbl_delay, False, False, 6)
                 
                 spin = Gtk.SpinButton.new_with_range(0, 120, 1)
                 spin.set_value(entry["delay"])
+                spin.set_valign(Gtk.Align.CENTER)
                 spin.connect("value-changed", self._on_autostart_delay_changed, entry["filepath"])
                 h_box.pack_start(spin, False, False, 0)
                 
                 switch = Gtk.Switch()
                 switch.set_active(entry["enabled"])
+                switch.set_valign(Gtk.Align.CENTER)
+                switch.set_halign(Gtk.Align.CENTER)
                 switch.connect("state-set", self._on_autostart_toggle, entry["filepath"])
                 h_box.pack_start(switch, False, False, 12)
                 
                 btn_delete = Gtk.Button()
-                img_del = Gtk.Image.new_from_icon_name("user-trash", Gtk.IconSize.BUTTON)
+                btn_delete.set_valign(Gtk.Align.CENTER)
+                img_del = Gtk.Image.new_from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON)
                 btn_delete.set_image(img_del)
                 btn_delete.get_style_context().add_class("danger")
                 btn_delete.connect("clicked", self._on_autostart_delete_clicked, entry["filepath"])
@@ -2355,13 +2360,15 @@ class Controller:
                     
                     h_box.pack_start(v_box, True, True, 0)
                     
-                    btn_apply = Gtk.Button(label="Uygula")
+                    btn_apply = Gtk.Button(label=tr("uygula"))
+                    btn_apply.set_valign(Gtk.Align.CENTER)
                     btn_apply.get_style_context().add_class("primary")
                     btn_apply.connect("clicked", self._on_apply_custom_profile_clicked, fpath)
                     h_box.pack_start(btn_apply, False, False, 6)
                     
                     btn_del = Gtk.Button()
-                    img_del = Gtk.Image.new_from_icon_name("user-trash", Gtk.IconSize.BUTTON)
+                    btn_del.set_valign(Gtk.Align.CENTER)
+                    img_del = Gtk.Image.new_from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON)
                     btn_del.set_image(img_del)
                     btn_del.get_style_context().add_class("danger")
                     btn_del.connect("clicked", self._on_delete_custom_profile_clicked, fpath)
@@ -2410,12 +2417,14 @@ class Controller:
                 h_box.pack_start(v_box, True, True, 0)
                 
                 btn_restore = Gtk.Button(label=tr("geri_yukle"))
+                btn_restore.set_valign(Gtk.Align.CENTER)
                 btn_restore.get_style_context().add_class("warning")
                 btn_restore.connect("clicked", self._on_restore_backup_clicked, fpath)
                 h_box.pack_start(btn_restore, False, False, 6)
                 
                 btn_del = Gtk.Button()
-                img_del = Gtk.Image.new_from_icon_name("user-trash", Gtk.IconSize.BUTTON)
+                btn_del.set_valign(Gtk.Align.CENTER)
+                img_del = Gtk.Image.new_from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON)
                 btn_del.set_image(img_del)
                 btn_del.get_style_context().add_class("danger")
                 btn_del.connect("clicked", self._on_delete_backup_clicked, fpath)
