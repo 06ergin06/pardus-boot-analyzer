@@ -43,17 +43,27 @@ python3 main.py
 
 #### Debian Paketi (.deb) Kurulumu
 
-Hazır derlenmiş paketi yüklemek için:
+*   **Arayüz ile Kurulum (Pardus):** `.deb` paketine çift tıklayarak **Pardus Paket Kurucu** ile kolayca yükleyebilirsiniz.
+*   **Terminal ile Kurulum:**
+    ```bash
+    sudo dpkg -i pardus-boot-analyzer_1.0.0_all.deb
+    sudo apt install -f
+    ```
+
+#### AppImage Taşınabilir Paket Kurulumu
+
+Uygulamayı herhangi bir kuruluma gerek kalmadan taşınabilir AppImage olarak çalıştırmak için:
 ```bash
-sudo dpkg -i pardus-boot-analyzer_1.0.0_all.deb
-sudo apt install -f
+chmod +x Pardus_Boot_Analyzer-x86_64.AppImage
+./Pardus_Boot_Analyzer-x86_64.AppImage
 ```
 
-#### Debian Paketi Oluşturma
+#### Debian ve AppImage Paketi Oluşturma
 
-Projeyi yeniden derlemek ve paketlemek için dizindeki paketleme betiğini çalıştırabilirsiniz:
+Projeyi yeniden derlemek ve paketlemek için dizindeki paketleme betiklerini çalıştırabilirsiniz:
 ```bash
 ./build_deb.sh
+./build_appimage.sh
 ```
 
 ---
@@ -95,15 +105,25 @@ python3 main.py
 
 #### Debian Package (.deb) Installation
 
-To install the pre-compiled package:
+*   **GUI Installation (Pardus):** You can double-click the `.deb` file to easily install it via the **Pardus Package Installer** GUI.
+*   **Terminal Installation:**
+    ```bash
+    sudo dpkg -i pardus-boot-analyzer_1.0.0_all.deb
+    sudo apt install -f
+    ```
+
+#### AppImage Portable Package Installation
+
+To run the application as a standalone portable AppImage without installation:
 ```bash
-sudo dpkg -i pardus-boot-analyzer_1.0.0_all.deb
-sudo apt install -f
+chmod +x Pardus_Boot_Analyzer-x86_64.AppImage
+./Pardus_Boot_Analyzer-x86_64.AppImage
 ```
 
-#### Creating Debian Package
+#### Creating Debian and AppImage Packages
 
 To compile and package the project:
 ```bash
 ./build_deb.sh
+./build_appimage.sh
 ```
