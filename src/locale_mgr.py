@@ -1,7 +1,12 @@
 import os
 import locale
 
-# Auto-detect language from system environment variables
+import json
+
+CONFIG_DIR = os.path.expanduser("~/.config/pardus-boot-analyzer")
+CONFIG_PATH = os.path.join(CONFIG_DIR, "config.json")
+
+# Default: auto-detect language from system environment variables
 LANG = "tr"
 try:
     sys_lang = os.environ.get("LANG", "tr").split(".")[0].split("_")[0].lower()
@@ -9,6 +14,27 @@ try:
         LANG = sys_lang
 except Exception:
     pass
+
+# Load saved language preference if exists
+if os.path.exists(CONFIG_PATH):
+    try:
+        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+            if cfg.get("lang") in ("en", "tr"):
+                LANG = cfg["lang"]
+    except Exception:
+        pass
+
+def save_lang_pref(lang):
+    global LANG
+    LANG = lang
+    try:
+        if not os.path.exists(CONFIG_DIR):
+            os.makedirs(CONFIG_DIR, exist_ok=True)
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump({"lang": lang}, f)
+    except Exception:
+        pass
 
 TRANSLATIONS = {
     "tr": {

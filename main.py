@@ -61,6 +61,13 @@ class PardusBootManager:
         btn_about.connect("clicked", self._on_about_clicked)
         hb.pack_end(btn_about)
         
+        # Add Language button to HeaderBar
+        from src.locale_mgr import LANG
+        btn_lang = Gtk.Button(label="EN" if LANG == "tr" else "TR")
+        btn_lang.set_tooltip_text("Dil Değiştir / Switch Language")
+        btn_lang.connect("clicked", self._on_lang_clicked)
+        hb.pack_end(btn_lang)
+        
         # Load Controller which will construct the layout dynamically
         self.controller = Controller(self.window)
         
@@ -72,6 +79,17 @@ class PardusBootManager:
         dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
+
+    def _on_lang_clicked(self, button):
+        from src.locale_mgr import LANG, save_lang_pref
+        import sys
+        import os
+        
+        new_lang = "en" if LANG == "tr" else "tr"
+        save_lang_pref(new_lang)
+        
+        # Restart process instantly to apply language settings
+        os.execv(sys.executable, [sys.executable] + sys.argv)
 
 if __name__ == "__main__":
     app = PardusBootManager()
