@@ -46,17 +46,19 @@ class PardusBootManager:
         
         # Sol üst köşede Pardus logosu
         icon_theme = Gtk.IconTheme.get_default()
-        if icon_theme.has_icon("pardus"):
+        if icon_theme.has_icon("pardus-symbolic"):
+            img_logo = Gtk.Image.new_from_icon_name("pardus-symbolic", Gtk.IconSize.MENU)
+        elif icon_theme.has_icon("pardus"):
             img_logo = Gtk.Image.new_from_icon_name("pardus", Gtk.IconSize.MENU)
         else:
-            img_logo = Gtk.Image.new_from_icon_name("system-run", Gtk.IconSize.MENU)
+            img_logo = Gtk.Image.new_from_icon_name("preferences-system-symbolic", Gtk.IconSize.MENU)
         img_logo.set_margin_start(6)
         img_logo.set_margin_end(6)
         hb.pack_start(img_logo)
         
         # Add About button to HeaderBar
         btn_about = Gtk.Button()
-        btn_about.set_image(Gtk.Image.new_from_icon_name("dialog-information", Gtk.IconSize.BUTTON))
+        btn_about.set_image(Gtk.Image.new_from_icon_name("help-about-symbolic", Gtk.IconSize.BUTTON))
         btn_about.set_tooltip_text("Hakkında")
         btn_about.connect("clicked", self._on_about_clicked)
         hb.pack_end(btn_about)

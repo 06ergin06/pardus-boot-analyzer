@@ -596,6 +596,33 @@ class Controller:
         box.show_all()
         return box
 
+    def _get_optimizable_services(self):
+        try:
+            enabled_map = self.manager.get_unit_file_states()
+            blame_list, _ = self.manager.get_blame_data()
+        except Exception:
+            return [], 0.0
+            
+        optimizable_services = []
+        total_savings_sec = 0.0
+        
+        for item in blame_list:
+            name = item["name"]
+            if name in SAFE_TO_DISABLE_ONERI_SERVICES:
+                enabled_state = enabled_map.get(name, "unknown")
+                if enabled_state in ("enabled", "enabled-runtime"):
+                    sec = parse_blame_time(item["time"])
+                    desc, tip, oneri = get_description(name)
+                    optimizable_services.append({
+                        "name": name,
+                        "time_str": item["time"],
+                        "seconds": sec,
+                        "oneri": oneri or desc or "Kapatılması önerilen gereksiz hizmet."
+                    })
+                    total_savings_sec += sec
+                    
+        return optimizable_services, total_savings_sec
+
     def load_analysis_page(self):
         for child in self.breakdown_grid.get_children():
             self.breakdown_grid.remove(child)
@@ -651,29 +678,7 @@ class Controller:
                 self.sysinfo_grid.attach(lbl_v, 1, s_row, 1, 1)
                 s_row += 1
                 
-            enabled_map = self.manager.get_unit_file_states()
-            blame_list, _ = self.manager.get_blame_data()
-            
-            optimizable_services = []
-            total_savings_sec = 0.0
-            
-            for item in blame_list:
-                name = item["name"]
-                time_str = item["time"]
-                sec = parse_blame_time(time_str)
-                
-                enabled_state = enabled_map.get(name, "unknown")
-                is_enabled = enabled_state in ("enabled", "enabled-runtime")
-                
-                if name in SAFE_TO_DISABLE_ONERI_SERVICES and is_enabled:
-                    desc, tip, oneri = get_description(name)
-                    optimizable_services.append({
-                        "name": name,
-                        "time_str": time_str,
-                        "seconds": sec,
-                        "oneri": oneri or desc or "Kapatılması önerilen gereksiz hizmet."
-                    })
-                    total_savings_sec += sec
+            optimizable_services, total_savings_sec = self._get_optimizable_services()
             
             if total_savings_sec > 0:
                 self.lbl_savings_val.set_markup(
@@ -783,20 +788,8 @@ class Controller:
             threading.Thread(target=task, daemon=True).start()
 
     def _on_quick_optimize_clicked(self, button):
-        try:
-            enabled_map = self.manager.get_unit_file_states()
-            blame_list, _ = self.manager.get_blame_data()
-        except Exception as e:
-            self.set_status(f"Hata: {e}")
-            return
-            
-        services_to_disable = []
-        for item in blame_list:
-            name = item["name"]
-            if name in SAFE_TO_DISABLE_ONERI_SERVICES:
-                enabled_state = enabled_map.get(name, "unknown")
-                if enabled_state in ("enabled", "enabled-runtime"):
-                    services_to_disable.append(name)
+        opt_svcs, _ = self._get_optimizable_services()
+        services_to_disable = [s["name"] for s in opt_svcs]
                     
         if not services_to_disable:
             self.set_status("Kapatılacak hizmet bulunamadı.")
@@ -1052,23 +1045,7 @@ class Controller:
         cr.line_to(545, y + 22)
         cr.stroke()
         
-        optimizable_services = []
-        total_savings_sec = 0.0
-        
-        for item in blame_list:
-            name = item["name"]
-            if name in SAFE_TO_DISABLE_ONERI_SERVICES:
-                enabled_state = enabled_map.get(name, "unknown")
-                if enabled_state in ("enabled", "enabled-runtime"):
-                    sec = parse_blame_time(item["time"])
-                    desc, tip, oneri = get_description(name)
-                    optimizable_services.append({
-                        "name": name,
-                        "time_str": item["time"],
-                        "oneri": oneri or desc or "Kapatılması önerilen gereksiz hizmet."
-                    })
-                    total_savings_sec += sec
-                    
+        optimizable_services, total_savings_sec = self._get_optimizable_services()
         y += 40
         cr.set_source_rgb(0.3, 0.3, 0.3)
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)

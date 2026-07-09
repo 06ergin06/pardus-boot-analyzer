@@ -1,615 +1,615 @@
 DESCRIPTIONS = {
     "NetworkManager-wait-online.service": {
-        "desc": "Aglarin kullanima hazir olmasini bekler. Genelde gereksiz yere bekletir.",
+        "desc": "Ağların kullanıma hazır olmasını bekler. Açılışta ağ bağlantısının tamamen kurulmasını bekleyerek sistemi geciktirebilir.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Internet gecikmesi yasamiyorsaniz gereksiz."
+        "oneri": "Güvenle kapatılabilir. Açılışta ağın hazır olmasını beklemeden masaüstünün yüklenmesini sağlar. İnternet bağlantı sorunları yaşamıyorsanız kapatılması önerilir."
     },
     "NetworkManager.service": {
-        "desc": "Ethernet, Wi-Fi ve mobil ag baglantilarini yonetir.",
+        "desc": "Ethernet, Wi-Fi ve mobil ağ bağlantılarını yönetir.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Internet baglantisi icin gereklidir."
+        "oneri": "Kapatmayın. Sisteminizin internete ve yerel ağa bağlanması için kesinlikle gereklidir."
     },
     "upower.service": {
-        "desc": "Pil ve guc kaynagi bilgilerini yonetir. Dizustu bilgisayarlarda pil omrunu takip eder.",
+        "desc": "Pil ve güç kaynağı bilgilerini yönetir. Dizüstü bilgisayarlarda pil ömrünü takip eder.",
         "tip": "oneri",
-        "oneri": "Masaustu PC'de kapatilabilir. Dizustude gerekli olabilir."
+        "oneri": "Masaüstü bilgisayarlarda güvenle kapatılabilir. Dizüstü bilgisayarlarda pil durumu takibi için açık kalmalıdır."
     },
     "bluetooth.service": {
-        "desc": "Bluetooth cihazlarinin baglanmasini ve yonetimini saglar.",
+        "desc": "Bluetooth cihazlarının (klavye, fare, kulaklık vb.) bağlanmasını ve yönetimini sağlar.",
         "tip": "oneri",
-        "oneri": "Bluetooth kullanmiyorsaniz kapatabilirsiniz."
+        "oneri": "Bluetooth özellikli cihazlar kullanmıyorsanız açılış süresini iyileştirmek için kapatılması önerilir."
     },
     "cups.service": {
-        "desc": "CUPS yazici sistemi. Yazici alma ve yonetme islemlerini saglar.",
+        "desc": "CUPS yazıcı sistemi. Yazıcı tanımlama, yazdırma ve kuyruk işlemlerini yönetir.",
         "tip": "oneri",
-        "oneri": "Yazici kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sisteminizde bağlı veya tanımlı bir yazıcı kullanmıyorsanız açılışta gereksiz kaynak tüketmemesi için kapatılması önerilir."
     },
     "cups-browsed.service": {
-        "desc": "Agdaki paylasimli yazicilari otomatik olarak bulur ve ekler.",
+        "desc": "Ağdaki paylaşımlı yazıcıları otomatik olarak keşfeder ve sisteme ekler.",
         "tip": "oneri",
-        "oneri": "Yazici kullanmiyorsaniz kapatilabilir."
+        "oneri": "Ağ yazıcısı veya paylaşımlı yazıcı kullanmıyorsanız kapatılması önerilir."
     },
     "avahi-daemon.service": {
-        "desc": "Agda cihazlari ve servisleri otomatik kesfetmeyi saglar (mDNS/DNS-SD).",
+        "desc": "Yerel ağdaki cihazları ve servisleri otomatik olarak keşfetmeyi sağlar (mDNS/DNS-SD).",
         "tip": "oneri",
-        "oneri": "Cogu kullanici icin gereksizdir. Kapatilabilir."
+        "oneri": "Yerel ağda dosya/yazıcı paylaşımı veya Apple cihazları ile keşif yapmıyorsanız kapatılması önerilir."
     },
     "ModemManager.service": {
-        "desc": "Mobil genis bant (3G/4G/LTE) modem baglantilarini yonetir.",
+        "desc": "Mobil geniş bant (3G/4G/LTE) modem ve SIM kart bağlantılarını yönetir.",
         "tip": "oneri",
-        "oneri": "Mobil modem kullanmiyorsaniz kapatilabilir."
+        "oneri": "Hücresel şebeke modemleri veya SIM kartlı mobil modemler kullanmıyorsanız güvenle kapatılabilir."
     },
     "colord.service": {
-        "desc": "Renk yonetimi profillerini yonetir. Monitör ve yazici renk dogrulugu icin.",
+        "desc": "Renk yönetimi profillerini yönetir. Monitör ve yazıcı renk doğruluğunu sağlar.",
         "tip": "oneri",
-        "oneri": "Grafik/profesyonel tasarim yapmiyorsaniz kapatilabilir."
+        "oneri": "Profesyonel grafik tasarım veya renk kalibrasyonu yapmıyorsanız açılışı hızlandırmak için kapatılması önerilir."
     },
     "accounts-daemon.service": {
-        "desc": "Kullanici hesaplari ve kimlik dogrulama bilgilerini yonetir.",
+        "desc": "Kullanıcı hesapları ve kimlik doğrulama bilgilerini yönetir.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Kullanici hesabi yonetimi icin gereklidir."
+        "oneri": "Kapatmayın. Kullanıcı yönetimi ve sisteme giriş yapabilmek için kesinlikle gereklidir."
     },
     "udisks2.service": {
-        "desc": "Depolama cihazlarinin takilip-cikarilmasini ve yonetimini saglar.",
+        "desc": "Depolama cihazlarının (diskler, USB bellekler vb.) takılıp çıkarılmasını ve yönetimini sağlar.",
         "tip": "gerekli",
-        "oneri": "Genelde acik kalmalidir. USB bellek vs. takmak icin gerekli."
+        "oneri": "Açık kalmalıdır. USB bellek veya taşınabilir disklerin otomatik tanınması için gereklidir."
     },
     "polkit.service": {
-        "desc": "Yetkilendirme politikalarini yonetir. Uygulamalarin yonetici yetkisiyle calismasini saglar.",
+        "desc": "Yetkilendirme politikalarını yönetir. Uygulamaların yönetici yetkisiyle güvenli çalışmasını sağlar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Sistem guvenligi icin gereklidir."
+        "oneri": "Kapatmayın. Sistem güvenliği ve yetkilendirme işlemleri için kesinlikle gereklidir."
     },
     "wpa_supplicant.service": {
-        "desc": "Kablosuz ag (Wi-Fi) baglantisi icin gerekli kriptografik islemleri yapar.",
+        "desc": "Kablosuz ağ (Wi-Fi) bağlantısı için gerekli şifreleme ve kimlik doğrulama işlemlerini yapar.",
         "tip": "gerekli",
-        "oneri": "Wi-Fi kullaniyorsaniz kapatmayin. Kablolu baglanti kullaniyorsaniz kapatilabilir."
+        "oneri": "Wi-Fi bağlantısı kullanıyorsanız kapatmayın. Sadece kablolu internet kullanıyorsanız kapatılabilir."
     },
     "gdm.service": {
-        "desc": "GNOME Display Manager - Grafiksel giris ekrani.",
+        "desc": "GNOME Ekran Yöneticisi. Grafiksel giriş ekranını sağlar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Grafik arayuz icin gereklidir."
+        "oneri": "Kapatmayın. Grafik arayüzle oturum açabilmeniz için kesinlikle gereklidir."
     },
     "apparmor.service": {
-        "desc": "Uygulama guvenlik profillerini yukler (AppArmor). Sandbox guvenlik sistemi.",
+        "desc": "Uygulama güvenlik profillerini yükler. Güvenli uygulama izolasyonu sağlar.",
         "tip": "kritik",
-        "oneri": "Guvenlik icin acik kalmalidir."
+        "oneri": "Kapatmayın. Sistem güvenliği ve zararlı yazılımların sınırlandırılması için gereklidir."
     },
     "systemd-journald.service": {
-        "desc": "Sistem loglarini (gunluk) toplar ve saklar.",
+        "desc": "Sistem günlük (log) kayıtlarını toplar ve saklar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Hata ayiklama ve sistem takibi icin gereklidir."
+        "oneri": "Kapatmayın. Sistem hatalarının tespiti ve log takibi için kesinlikle gereklidir."
     },
     "systemd-logind.service": {
-        "desc": "Kullanici oturumlarini ve erisimini yonetir.",
+        "desc": "Kullanıcı oturumlarını, güç tuşlarını ve sistem erişimini yönetir.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Oturum acma/kapama icin gereklidir."
+        "oneri": "Kapatmayın. Oturum açma, kapama ve askıya alma işlemleri için gereklidir."
     },
     "systemd-udevd.service": {
-        "desc": "Cihaz algilama ve yonetimini yapar (udev). Yeni donanim takildiginda tanir.",
+        "desc": "Cihaz algılama ve udev kurallarını yönetir. Yeni donanım takıldığında otomatik tanır.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Donanim algilama icin gereklidir."
+        "oneri": "Kapatmayın. Donanım algılama ve sürücülerin yüklenmesi için kesinlikle gereklidir."
     },
     "lm-sensors.service": {
-        "desc": "Isi, voltaj ve fan sensorlerinden veri okur.",
+        "desc": "Anakart üzerindeki sıcaklık, voltaj ve fan sensörlerinden veri okur.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Sensor bilgilerine ihtiyaciniz yoksa gereksiz."
+        "oneri": "Donanım sıcaklıklarını veya fan hızlarını sürekli izleme ihtiyacınız yoksa kapatılabilir."
     },
     "smartmontools.service": {
-        "desc": "Disk sagligini izler (S.M.A.R.T.). Disk arizalarini onceden tahmin eder.",
+        "desc": "Sabit disk ve SSD sağlık durumunu (S.M.A.R.T.) izler, olası disk arızalarını tahmin eder.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Disk sagligini takip etmek istiyorsaniz acik birakin."
+        "oneri": "Disk sağlığını arka planda sürekli takip etmek istemiyorsanız açılış hızını artırmak için kapatılabilir."
     },
     "rtkit-daemon.service": {
-        "desc": "Gercek zamanli ses ve medya islemleri icin oncelik yonetimi.",
+        "desc": "Gerçek zamanlı ses ve medya işlemleri için sistem önceliklerini yönetir.",
         "tip": "gerekli",
-        "oneri": "Ses sorunu yasamiyorsaniz acik kalabilir. Ses icin genelde gerekli."
+        "oneri": "Açık kalmalıdır. Ses sisteminin (PulseAudio/PipeWire) düzgün ve takılmadan çalışması için gereklidir."
     },
     "packagekit.service": {
-        "desc": "Yazilim yoneticisi arka plan servisi. Paket kurulum/guncelleme islemlerini yapar.",
+        "desc": "Yazılım yöneticisi arka plan servisi. Paket güncelleme ve yükleme işlemlerini yönetir.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. El ile guncelleme yapiyorsaniz gereksiz."
+        "oneri": "Grafik arayüzden otomatik güncelleme kontrolleri istemiyorsanız kapatılabilir. Güncellemeleri uçbirimden kendiniz yapabilirsiniz."
     },
     "systemd-timesyncd.service": {
-        "desc": "Sistem saatini internet uzerinden otomatik olarak dogrular (NTP).",
+        "desc": "Sistem saatini internet üzerindeki güvenilir sunucularla (NTP) otomatik eşitler.",
         "tip": "gerekli",
-        "oneri": "Genelde acik birakilmali. Yanlis saat bazi uygulamalarda sorun cikarir."
+        "oneri": "Açık kalması önerilir. Yanlış sistem saati SSL sertifikası hatalarına ve tarayıcı sorunlarına yol açabilir."
     },
     "systemd-resolved.service": {
-        "desc": "DNS cozumleme islemlerini yonetir. Alan adlarini IP adresine cevirir.",
+        "desc": "Ağ DNS çözümleme işlemlerini yönetir.",
         "tip": "gerekli",
-        "oneri": "Genelde acik birakilmali. Alternatif DNS yoneticisi kullanmiyorsaniz gereklidir."
+        "oneri": "DNS çözümlemesi için açık kalması önerilir. Alternatif bir DNS yöneticisi kullanmıyorsanız kapatmayın."
     },
     "systemd-binfmt.service": {
-        "desc": "Farkli ikili dosya bicimlerini (Wine, Java vb.) tanimak icin gerekli ayarlari yukler.",
+        "desc": "Farklı ikili dosya biçimlerini (Wine, Java vb.) çalıştırmak için gerekli çekirdek yapılandırmasını yükler.",
         "tip": "oneri",
-        "oneri": "Genelde kapatilabilir. Wine veya QEMU kullanmiyorsaniz gereksiz."
+        "oneri": "Wine, Java veya QEMU gibi çapraz platform araçlarını kullanmıyorsanız kapatılabilir."
     },
     "systemd-rfkill.service": {
-        "desc": "Kablosuz cihazlarin (Wi-Fi, Bluetooth) acik/kapali durumunu hatirlar.",
+        "desc": "Kablosuz cihazların (Wi-Fi, Bluetooth) uçak modu veya güç durumlarını hatırlar.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Kablosuz donanim durumu otomatik hatirlanir."
+        "oneri": "Uçuş modu veya kablosuz donanım durumlarının otomatik hatırlanmasına ihtiyacınız yoksa kapatılabilir."
     },
     "systemd-fsck.service": {
-        "desc": "Baslangicta disk dosya sistemi sagligini kontrol eder (fsck).",
+        "desc": "Açılışta disk dosya sistemi bütünlüğünü ve sağlığını denetler.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Disk hatalarini onlemek icin gereklidir."
+        "oneri": "Kapatmayın. Olası dosya sistemi hatalarını ve veri kayıplarını önlemek için gereklidir."
     },
     "systemd-udev-trigger.service": {
-        "desc": "Baslangicta tum cihazlarin algilanmasini tetikler.",
+        "desc": "Açılış esnasında udev cihaz olaylarını tetikler ve donanımları algılar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Donanim tanima icin gereklidir."
+        "oneri": "Kapatmayın. Donanımların sistem tarafından doğru tanınması için kesinlikle gereklidir."
     },
     "systemd-remount-fs.service": {
-        "desc": "Baslangicta dosya sistemlerini yeniden baglar (remount) ve dogru ayarlarla baglanmasini saglar.",
+        "desc": "Açılışta kök ve diğer dosya sistemlerini doğru izinlerle yeniden bağlar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Dosya sistemleri icin gereklidir."
+        "oneri": "Kapatmayın. Dosya sistemlerinin yazma/okuma izinlerinin ayarlanması için gereklidir."
     },
     "systemd-modules-load.service": {
-        "desc": "Baslangicta belirtilen kernel modullerini yukler.",
+        "desc": "Sistem başlangıcında çekirdek (kernel) modüllerini otomatik yükler.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Kernel modulleri icin gereklidir."
+        "oneri": "Kapatmayın. Donanım sürücülerinin ve çekirdek özelliklerinin çalışması için gereklidir."
     },
     "systemd-sysctl.service": {
-        "desc": "Kernel parametrelerini baslangicta ayarlar (sysctl).",
+        "desc": "Çekirdek (kernel) parametrelerini açılışta yapılandırır.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Sistem ayarlari icin gereklidir."
+        "oneri": "Kapatmayın. Sistem ince ayarları ve kararlılığı için gereklidir."
     },
     "systemd-random-seed.service": {
-        "desc": "Baslangicta rastgele sayi uretecini (random seed) yukler.",
+        "desc": "Açılışta rastgele sayı üretecinin güvenliğini sağlamak için tohum verisi yükler.",
         "tip": "gerekli",
-        "oneri": "Acik kalabilir. Guvenlik icin onemlidir."
+        "oneri": "Açık kalması önerilir. Şifreleme ve güvenlik protokolleri için önemlidir."
     },
     "systemd-user-sessions.service": {
-        "desc": "Kullanici oturumlarinin baslatilmasini ve sonlandirilmasini yonetir.",
+        "desc": "Kullanıcı oturumlarının başlatılmasına izin verir ve yönetir.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Oturum yonetimi icin gereklidir."
+        "oneri": "Kapatmayın. Kullanıcıların grafik arayüz veya konsol üzerinden oturum açabilmesi için gereklidir."
     },
     "systemd-tmpfiles-setup.service": {
-        "desc": "Gecici dosya ve dizinleri baslangicta olusturur/temizler.",
+        "desc": "Geçici dosya ve dizinleri açılışta oluşturur ve eski olanları temizler.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Sistemin duzgun calismasi icin gereklidir."
+        "oneri": "Kapatmayın. Sistemin kararlı çalışması için geçici dizinlerin hazır olması şarttır."
     },
     "systemd-tmpfiles-setup-dev.service": {
-        "desc": "Cihaz dosyalarini baslangicta olusturur.",
+        "desc": "Sistem başlangıcında donanım cihaz dosyalarını oluşturur.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Donanim dosyalari icin gereklidir."
+        "oneri": "Kapatmayın. Donanım erişimi için gerekli cihaz düğümlerini oluşturur."
     },
     "systemd-tmpfiles-clean.service": {
-        "desc": "Gecici dosyalari belirli araliklarla temizler.",
+        "desc": "Geçici dosyaları arka planda belirli aralıklarla temizler.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Disk alani dert degilse gereksiz."
+        "oneri": "Kapatılabilir. Disk alanınız kısıtlı değilse veya manuel temizliyorsanız kapatılabilir."
     },
     "systemd-tmpfiles-setup-dev-early.service": {
-        "desc": "Cihaz dosyalarini erken baslangicta olusturur.",
+        "desc": "Açılışın erken evresinde kritik donanım cihaz dosyalarını hazırlar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın. Erken aşama donanım erişimi için zorunludur."
     },
     "systemd-journal-flush.service": {
-        "desc": "Baslangictaki loglari bellekten diske yazar.",
+        "desc": "Açılışın erken evresindeki log kayıtlarını bellekten kalıcı diske yazar.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Log kaydi onemli degilse gereksiz."
+        "oneri": "Hata tespiti için açık kalması önerilir. Logların kalıcı diske yazılmasını istemiyorsanız kapatılabilir."
     },
     "systemd-hostnamed.service": {
-        "desc": "Bilgisayar adini (hostname) yonetir.",
+        "desc": "Bilgisayar adını (hostname) yönetir.",
         "tip": "gerekli",
-        "oneri": "Genelde acik birakilir. Hostname degismiyorsa gereksiz."
+        "oneri": "Genelde açık bırakılır. Yerel ağda bilgisayar adınızın çözümlenmesi için gereklidir."
     },
     "systemd-machined.service": {
-        "desc": "Sanal makineleri ve konteynerlari yonetir ve izler.",
+        "desc": "Sanal makineleri ve kapsayıcıları (container) izler ve yönetir.",
         "tip": "oneri",
-        "oneri": "Docker/kapsayici kullanmiyorsaniz kapatilabilir."
+        "oneri": "Docker, LXC veya sistem düzeyinde sanallaştırma kullanmıyorsanız kapatılabilir."
     },
     "systemd-backlight.service": {
-        "desc": "Ekran ve klavye arka isigi parlaklik ayarlarini hatirlar ve geri yukler.",
+        "desc": "Ekran ve klavye arka ışık parlaklık ayarlarını sistem kapanirken kaydeder ve açılışta yükler.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Parlaklik ayari hatirlanmasi onemli degilse gereksiz."
+        "oneri": "Ekran parlaklığının açılışta otomatik hatırlanmasını istemiyorsanız kapatılabilir."
     },
     "fstrim.service": {
-        "desc": "SSD disklerde kullanilmayan bloklari temizler (TRIM). SSD omrunu uzatir.",
+        "desc": "SSD disklerde kullanılmayan veri bloklarını temizler (TRIM). SSD ömrünü uzatır.",
         "tip": "gerekli",
-        "oneri": "SSD kullaniyorsaniz acik birakin. HDD'de gereksiz."
+        "oneri": "SSD kullanıyorsanız kesinlikle açık bırakılmalıdır. Sadece HDD kullanıyorsanız kapatılabilir."
     },
     "fwupd.service": {
-        "desc": "Donanim yazilimlarini (firmware) gunceller.",
+        "desc": "Sistem donanım yazılımlarını (firmware) güvenli şekilde günceller.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Donanim guncellemesi onemli degilse gereksiz."
+        "oneri": "Otomatik donanım güncellemeleri istemiyorsanız kapatılabilir."
     },
     "fwupd-refresh.service": {
-        "desc": "Donanim yazilimi guncelleme veritabanini yeniler.",
+        "desc": "Donanım yazılımı güncelleme veritabanını belirli aralıklarla yeniler.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir."
+        "oneri": "Kapatılabilir."
     },
     "man-db.service": {
-        "desc": "Yardim sayfalari (man pages) veritabanini gunceller.",
+        "desc": "Uçbirim yardım sayfalarının (man pages) dizin veritabanını günceller.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Man sayfalarina ihtiyaciniz yoksa gereksiz."
+        "oneri": "Yardım sayfalarını sıkça kullanmıyorsanız açılıştaki disk yükünü azaltmak için kapatılabilir."
     },
     "logrotate.service": {
-        "desc": "Sistem log dosyalarini belirli boyuta ulasinca donusturur ve sıkıstirir.",
+        "desc": "Sistem günlük dosyalarını (log) otomatik arşivler, sıkıştırır ve temizler.",
         "tip": "gerekli",
-        "oneri": "Acik birakilmali. Loglarin disk doldurmasini engeller."
+        "oneri": "Açık kalması önerilir. Log dosyalarının zamanla diski doldurmasını engeller."
     },
     "dpkg-db-backup.service": {
-        "desc": "Paket veritabaninin (dpkg) yedegini alir.",
+        "desc": "Debian/Pardus paket yönetim veritabanının günlük yedeğini alır.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Paket yedegi onemli degilse gereksiz."
+        "oneri": "Güvenle kapatılabilir. Paket yedeklerinin diskte birikmesini istemiyorsanız kapatılabilir."
     },
     "exim4.service": {
-        "desc": "Exim4 e-posta sunucusu. Yerel e-posta gonderimi icin.",
+        "desc": "Exim4 yerel posta sunucusu. Sistem içi e-posta gönderimi ve yönlendirmesi için kullanılır.",
         "tip": "oneri",
-        "oneri": "E-posta sunucusu kullanmiyorsaniz kapatilabilir. Cogunlukla gereksizdir."
+        "oneri": "Sisteminizde bir yerel e-posta sunucusu çalıştırmıyorsanız (çoğu kullanıcı için gereksizdir) kapatılması kesinlikle önerilir."
     },
     "exim4-base.service": {
-        "desc": "Exim4 e-posta sunucusu temel yapilandirma servisi.",
+        "desc": "Exim4 yerel e-posta sunucusu temel yapılandırma servisi.",
         "tip": "oneri",
-        "oneri": "E-posta sunucusu kullanmiyorsaniz kapatilabilir."
+        "oneri": "Yerel e-posta sunucusu kullanmıyorsanız kapatılabilir."
     },
     "networking.service": {
-        "desc": "Ag arayuzlerini baslangicta yapilandirir (/etc/network/interfaces).",
+        "desc": "Geleneksel ağ arayüzlerini başlangıçta yapılandırır.",
         "tip": "gerekli",
-        "oneri": "NetworkManager kullanmiyorsaniz gereklidir."
+        "oneri": "NetworkManager dışındaki manuel ağ yapılandırmaları için gereklidir."
     },
     "ifupdown-pre.service": {
-        "desc": "Ag arayuzlerini baslatmadan once gerekli islemleri yapar.",
+        "desc": "Ağ arayüzleri başlatılmadan önce gerekli hazırlıkları yapar.",
         "tip": "gerekli",
-        "oneri": "Genelde acik birakilir."
+        "oneri": "Geleneksel ağ yönetimi kullanan sistemlerde açık bırakılır."
     },
     "dbus.service": {
-        "desc": "Uygulamalar arasi iletisim sistemi (D-Bus). Masaustu uygulamalari icin temel",
+        "desc": "Uygulamalar arası iletişim veri yolu (D-Bus). Masaüstü ortamının temel iletişim katmanıdır.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. GNOME ve cogu uygulama icin gereklidir."
+        "oneri": "Kapatmayın. Masaüstü arayüzü ve sistem servislerinin çalışması için kesinlikle gereklidir."
     },
     "plymouth-start.service": {
-        "desc": "Baslangic animasyonunu (splash) gosterir.",
+        "desc": "Başlangıç animasyonunu (Pardus açılış logosu ve yükleme ekranı) başlatır.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Baslangic animasyonu onemli degilse gereksiz."
+        "oneri": "Açılışta animasyon görmek istemiyorsanız kapatılabilir."
     },
     "plymouth-quit.service": {
-        "desc": "Baslangic animasyonunu sonlandirir ve giris ekranina gecer.",
+        "desc": "Açılış animasyonunu durdurur ve kontrolü giriş ekranına (display manager) devreder.",
         "tip": "oneri",
-        "oneri": "Plymouth kullanmiyorsaniz gereksiz."
+        "oneri": "Plymouth kullanılmıyorsanız gereksizdir."
     },
     "plymouth-quit-wait.service": {
-        "desc": "Baslangic animasyonunun kapanmasini bekler. Acilisi gereksiz yere uzatabilir.",
+        "desc": "Açılış animasyonunun tamamen kapanmasını bekler. Açılış süresini gereksiz uzatabilir.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Bu servis acilisi 1-3 saniye uzatabilir."
+        "oneri": "Kapatılması önerilir. Giriş ekranına geçişi 1-3 saniye arasında hızlandırabilir."
     },
     "plymouth-read-write.service": {
-        "desc": "Dosya sistemini salt-okunur moddan okuma-yazma moduna gecirir.",
+        "desc": "Dosya sistemini salt-okunur moddan yazılabilir moda geçirir.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın. Dosya yazma işlemleri için gereklidir."
     },
     "console-setup.service": {
-        "desc": "Klavye duzeni ve konsol yazi tipini ayarlar.",
+        "desc": "Konsol ekran yazı tipini ve klavye düzenini ayarlar.",
         "tip": "gerekli",
-        "oneri": "Acik birakilmali yoksa konsolda klavye duzeni hatali olabilir."
+        "oneri": "Açık kalması önerilir. Konsol ekranında Türkçe klavye desteği için gereklidir."
     },
     "keyboard-setup.service": {
-        "desc": "Klavye duzenini erken baslangicta ayarlar.",
+        "desc": "Klavye düzenini açılışın erken evresinde yapılandırır.",
         "tip": "gerekli",
-        "oneri": "Klavye duzeni icin acik birakilmali."
+        "oneri": "Açık kalmalıdır. Doğru klavye yerleşimi için gereklidir."
     },
     "kmod-static-nodes.service": {
-        "desc": "Statik cihaz dugumlerini olusturur.",
+        "desc": "Çekirdek modülleri için gerekli statik cihaz düğümlerini oluşturur.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Donanim icin gereklidir."
+        "oneri": "Kapatmayın. Donanımların doğru çalışabilmesi için gereklidir."
     },
     "power-profiles-daemon.service": {
-        "desc": "Guc tuketimi profillerini yonetir (performans/dengeli/tasarruf).",
+        "desc": "Güç tüketim profillerini (performans, dengeli, güç tasarrufu) yönetir.",
         "tip": "oneri",
-        "oneri": "Dizustude acik birakilabilir. Masaustunde gereksiz."
+        "oneri": "Dizüstü bilgisayarlarda pil ömrü için açık bırakılmalıdır. Masaüstünde kapatılabilir."
     },
     "switcheroo-control.service": {
-        "desc": "Harici GPU (NVIDIA Optimus) yonetimini saglar.",
+        "desc": "Çift ekran kartlı (NVIDIA Optimus / harici GPU) sistemlerde ekran kartları arası geçişi yönetir.",
         "tip": "oneri",
-        "oneri": "Harici GPU'nuz yoksa kapatilabilir."
+        "oneri": "Çift ekran kartlı dizüstü bilgisayarlar dışında kapatılabilir."
     },
     "upower.service": {
-        "desc": "Pil ve guc kaynagi bilgilerini yonetir.",
+        "desc": "Pil ve güç kaynağı bilgilerini yönetir. Dizüstü bilgisayarlarda pil ömrünü takip eder.",
         "tip": "oneri",
-        "oneri": "Masaustu bilgisayarda kapatilabilir."
+        "oneri": "Masaüstü bilgisayarlarda güvenle kapatılabilir. Dizüstü bilgisayarlarda pil durumu takibi için açık kalmalıdır."
     },
     "libvirtd.service": {
         "desc": "Sanal makine yonetimi (libvirt/virt-manager).",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
     },
     "libvirt-guests.service": {
-        "desc": "Sanal makinelerin durumunu kaydeder ve geri yukler.",
+        "desc": "Sanal makinelerin durumunu kaydeder ve geri yükler.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
     },
     "virtlogd.service": {
-        "desc": "Sanal makine loglarini yonetir.",
+        "desc": "Sanal makine loglarini yönetir.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
     },
     "virtlockd.service": {
-        "desc": "Sanal makine kilitlerini yonetir.",
+        "desc": "Sanal makine kilitlerini yönetir.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
     },
     "grub-common.service": {
-        "desc": "GRUB baslangic yoneticisi yapilandirmasini gunceller.",
+        "desc": "GRUB başlangıç yöneticisi ayarlarını başlangıçta kontrol eder.",
         "tip": "gerekli",
-        "oneri": "Acik birakilmali. Yeni kernel kurulumunda GRUB'u gunceller."
+        "oneri": "Açık bırakılması önerilir. Çekirdek güncellemelerinin GRUB'a doğru işlenmesini sağlar."
     },
     "lvm2-monitor.service": {
-        "desc": "LVM (Mantiksal Hacim Yonetimi) durumunu izler.",
+        "desc": "LVM (Mantıksal Hacim Yönetimi) disk bölümlerinin durumunu izler.",
         "tip": "oneri",
-        "oneri": "LVM kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sisteminizde LVM disk bölümleme yapısı kullanmıyorsanız kapatılabilir."
     },
     "blk-availability.service": {
-        "desc": "Blok cihazlarin kullanilabilirligini yonetir.",
+        "desc": "Blok cihazların kullanılabilirliğini yönetir.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Depolama cihazlari icin gereklidir."
+        "oneri": "Kapatmayın. Disklerin güvenli yönetimi için gereklidir."
     },
     "modprobe.service": {
-        "desc": "Kernel modullerini yukler/module yukleme.",
+        "desc": "Kernel modullerini yükler/module yukleme.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın."
     },
     "e2scrub_reap.service": {
         "desc": "ext4 dosya sistemi saglik kontrolu sonuclarini temizler.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir."
+        "oneri": "Kapatılabilir."
     },
     "e2scrub_all.service": {
         "desc": "Tum ext4 dosya sistemlerinde saglik kontrolu baslatir.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Periyodik disk kontrolu onemli degilse."
+        "oneri": "Kapatılabilir. Periyodik disk kontrolu onemli degilse."
     },
     "nvidia-resume.service": {
-        "desc": "NVIDIA ekran karti surucusunu uyku/uyanma durumunda yonetir.",
+        "desc": "NVIDIA ekran karti sürücüsünü uyku/uyanma durumunda yönetir.",
         "tip": "gerekli",
-        "oneri": "NVIDIA kart kullaniyorsaniz kapatmayin."
+        "oneri": "NVIDIA kart kullaniyorsaniz kapatmayın."
     },
     "nvidia-suspend.service": {
-        "desc": "NVIDIA ekran karti surucusunu uyku modunda yonetir.",
+        "desc": "NVIDIA ekran karti sürücüsünü uyku modunda yönetir.",
         "tip": "gerekli",
-        "oneri": "NVIDIA kart kullaniyorsaniz kapatmayin."
+        "oneri": "NVIDIA kart kullaniyorsaniz kapatmayın."
     },
     "apt-daily.service": {
-        "desc": "Gunluk paket guncelleme kontrolu yapar (APT).",
+        "desc": "Gunluk paket güncelleme kontrolu yapar (APT).",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Paketleri elle guncelliyorsaniz gereksiz."
+        "oneri": "Kapatılabilir. Paketleri elle güncelliyorsanız gereksiz."
     },
     "apt-daily-upgrade.service": {
-        "desc": "Bekleyen paket guncellemelerini otomatik yukler.",
+        "desc": "Bekleyen paket guncellemelerini otomatik yükler.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Otomatik guncelleme istemiyorsaniz gereksiz."
+        "oneri": "Kapatılabilir. Otomatik güncelleme istemiyorsaniz gereksiz."
     },
     "snapd.service": {
         "desc": "Snap paket yoneticisi arka plan servisi.",
         "tip": "oneri",
-        "oneri": "Snap kullanmiyorsaniz kapatilabilir."
+        "oneri": "Snap kullanmıyorsanız kapatılabilir."
     },
     "snapd.seeded.service": {
         "desc": "Snap paketlerinin ilk kurulumunu tamamlar.",
         "tip": "oneri",
-        "oneri": "Snap kullanmiyorsaniz kapatilabilir."
+        "oneri": "Snap kullanmıyorsanız kapatılabilir."
     },
     "snapd.apparmor.service": {
-        "desc": "Snap uygulamalari icin AppArmor profillerini yukler.",
+        "desc": "Snap uygulamalari için AppArmor profillerini yükler.",
         "tip": "oneri",
-        "oneri": "Snap kullanmiyorsaniz kapatilabilir."
+        "oneri": "Snap kullanmıyorsanız kapatılabilir."
     },
     "user@.service": {
         "desc": "Kullaniciya ait systemd servislerini baslatir (user manager).",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Kullanici servisleri icin gereklidir."
+        "oneri": "Kapatmayın. Kullanıcı servisleri için gereklidir."
     },
     "user-runtime-dir.service": {
         "desc": "Kullaniciya ait gecici dosya dizinini (runtime dir) olusturur.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın."
     },
     "wtmpdb-update-boot.service": {
         "desc": "Baslangic kaydini wtmp veritabanina ekler (oturum kayitlari).",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Oturum kaydi onemli degilse gereksiz."
+        "oneri": "Kapatılabilir. Oturum kaydi onemli degilse gereksiz."
     },
 
     "getty@.service": {
-        "desc": "Sanal konsolda (TTY) oturum acmayi saglar. Ctrl+Alt+F1-F6 ile gecilen ekranlar.",
+        "desc": "Sanal konsolda (TTY) oturum acmayi sağlar. Ctrl+Alt+F1-F6 ile gecilen ekranlar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Konsol oturumu icin gereklidir."
+        "oneri": "Kapatmayın. Konsol oturumu için gereklidir."
     },
     "user@.service": {
         "desc": "Kullaniciya ait systemd servislerini baslatir (user manager).",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Kullanici servisleri icin gereklidir."
+        "oneri": "Kapatmayın. Kullanıcı servisleri için gereklidir."
     },
     "user-runtime-dir@.service": {
         "desc": "Kullaniciya ait gecici dosya dizinini (runtime dir) olusturur.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın."
     },
     "systemd-backlight@.service": {
-        "desc": "Ekran ve klavye arka isigi parlaklik ayarlarini hatirlar ve geri yukler.",
+        "desc": "Ekran ve klavye arka ışığı parlaklık ayarlarini hatirlar ve geri yükler.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Parlaklik ayari onemli degilse gereksiz."
+        "oneri": "Kapatılabilir. Parlaklik ayari onemli degilse gereksiz."
     },
     "systemd-cryptsetup@.service": {
-        "desc": "Sifrelenmis disk bolumlerini (LUKS) baslangicta acmak icin sifre sorar.",
+        "desc": "Sifrelenmis disk bölümlerini (LUKS) başlangıçta acmak için şifre sorar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Sifrelenmis diskinizin acilmasi icin gereklidir."
+        "oneri": "Kapatmayın. Sifrelenmis diskinizin acilmasi için gereklidir."
     },
     "systemd-fsck@.service": {
-        "desc": "Baslangicta disk dosya sistemi sagligini kontrol eder (fsck).",
+        "desc": "Başlangıçta disk dosya sistemi sağlığını kontrol eder (fsck).",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Disk hatalarini onlemek icin gereklidir."
+        "oneri": "Kapatmayın. Disk hatalarini onlemek için gereklidir."
     },
     "systemd-modules-load.service": {
-        "desc": "Baslangicta belirtilen kernel modullerini yukler.",
+        "desc": "Sistem başlangıcında çekirdek (kernel) modüllerini otomatik yükler.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın. Donanım sürücülerinin ve çekirdek özelliklerinin çalışması için gereklidir."
     },
     "modprobe@.service": {
-        "desc": "Belirli kernel modullerini baslangicta yukler.",
+        "desc": "Belirli kernel modullerini başlangıçta yükler.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Donanim suruculeri icin gereklidir."
+        "oneri": "Kapatmayın. Donanim sürücüleri için gereklidir."
     },
     "systemd-zram-setup@.service": {
         "desc": "ZRAM (sikistirilmis sanal bellek) aygiti olusturur. RAM'i sikistirarak daha fazla bellek gibi kullanir.",
         "tip": "oneri",
-        "oneri": "ZRAM kullanmiyorsaniz kapatilabilir."
+        "oneri": "ZRAM kullanmıyorsanız kapatılabilir."
     },
     "systemd-pcrphase@.service": {
-        "desc": "TPM 2.0 olcum kayitlarini (PCR) baslangic asamalarinda gunceller.",
+        "desc": "TPM 2.0 olcum kayitlarini (PCR) baslangic asamalarinda günceller.",
         "tip": "gerekli",
-        "oneri": "TPM kullaniyorsaniz kapatmayin."
+        "oneri": "TPM kullaniyorsaniz kapatmayın."
     },
     "dirmngr@.service": {
-        "desc": "GPG anahtar sunucusu ile iletisimi yonetir. Paket imzalari dogrulamasi icin.",
+        "desc": "GPG anahtar sunucusu ile iletisimi yönetir. Paket imzalari dogrulamasi için.",
         "tip": "gerekli",
-        "oneri": "Pacman/kurulum icin genelde gerekli."
+        "oneri": "Pacman/kurulum için genelde gerekli."
     },
     "gpg-agent@.service": {
-        "desc": "GPG sifreleme anahtarlarini bellekte tutar. Paket imzalamasi ve sifreleme icin.",
+        "desc": "GPG sifreleme anahtarlarını bellekte tutar. Paket imzalaması ve sifreleme için.",
         "tip": "gerekli",
-        "oneri": "Pacman ve paket yonetimi icin genelde gerekli."
+        "oneri": "Pacman ve paket yonetimi için genelde gerekli."
     },
     "keyboxd@.service": {
-        "desc": "GPG anahtar deposu yoneticisi. GPG anahtarlarini guvenli sekilde saklar.",
+        "desc": "GPG anahtar deposu yoneticisi. GPG anahtarlarını guvenli sekilde saklar.",
         "tip": "gerekli",
-        "oneri": "Pacman icin genelde gerekli."
+        "oneri": "Pacman için genelde gerekli."
     },
 
     "ananicy-cpp.service": {
-        "desc": "IO ve CPU onceliklerini otomatik ayarlayarak sistem yanit verebilirligini artirir.",
+        "desc": "IO ve CPU onceliklerini otomatik ayarlayarak sistem yanit verebilirligini artırır.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Oyun/masaustu performansi icin faydali olabilir."
+        "oneri": "Kapatılabilir. Oyun/masaüstü performansi için faydali olabilir."
     },
     "archlinux-keyring-wkd-sync.service": {
-        "desc": "Arch Linux paket imzalama anahtarlarini Web Key Directory uzerinden gunceller.",
+        "desc": "Arch Linux paket imzalama anahtarlarını Web Key Directory uzerinden günceller.",
         "tip": "gerekli",
-        "oneri": "Pacman paket dogrulamasi icin gereklidir."
+        "oneri": "Pacman paket dogrulamasi için gereklidir."
     },
     "asusd.service": {
-        "desc": "ASUS donanim yonetimi (klavye isigi, performans modu, fan profilleri).",
+        "desc": "ASUS donanim yonetimi (klavye ışığı, performans modu, fan profilleri).",
         "tip": "oneri",
-        "oneri": "ASUS laptop kullaniyorsaniz acik birakin."
+        "oneri": "ASUS laptop kullaniyorsaniz açık birakin."
     },
     "asus-shutdown.service": {
         "desc": "ASUS donanimini bilgisayar kapanirken guvenli sekilde kapatir.",
         "tip": "oneri",
-        "oneri": "ASUS laptop kullaniyorsaniz kapatmayin."
+        "oneri": "ASUS laptop kullaniyorsaniz kapatmayın."
     },
     "auditd.service": {
-        "desc": "Sistem guvenlik denetim loglarini (audit) toplar ve kaydeder.",
+        "desc": "Sistem güvenlik denetim loglarini (audit) toplar ve kaydeder.",
         "tip": "oneri",
-        "oneri": "Guvenlik denetimi istemiyorsaniz kapatilabilir."
+        "oneri": "Guvenlik denetimi istemiyorsaniz kapatılabilir."
     },
     "audit-rules.service": {
-        "desc": "Sistem guvenlik denetim kurallarini yukler.",
+        "desc": "Sistem güvenlik denetim kurallarini yükler.",
         "tip": "oneri",
         "oneri": "auditd kapaliysa gereksiz."
     },
     "bpftune.service": {
-        "desc": "BPF (Berkeley Packet Filter) ile ag performansini otomatik ayarlar.",
+        "desc": "BPF (Berkeley Packet Filter) ile ag performansını otomatik ayarlar.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Gelismis ag optimizasyonu icin."
+        "oneri": "Kapatılabilir. Gelismis ag optimizasyonu için."
     },
     "containerd.service": {
-        "desc": "Konteyner calistirma ortami (containerd). Docker ve diger konteynerlerin temeli.",
+        "desc": "Konteyner çalıştırma ortami (containerd). Docker ve diger konteynerlerin temeli.",
         "tip": "oneri",
-        "oneri": "Docker/konteyner kullanmiyorsaniz kapatilabilir."
+        "oneri": "Docker/konteyner kullanmıyorsanız kapatılabilir."
     },
     "dbus-broker.service": {
-        "desc": "Hizli ve guvenilir D-Bus mesaji brokeri. Uygulamalar arasi iletisimi saglar.",
+        "desc": "Hizli ve guvenilir D-Bus mesaji brokeri. Uygulamalar arasi iletisimi sağlar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Masaustu ortami icin gereklidir."
+        "oneri": "Kapatmayın. Masaüstü ortami için gereklidir."
     },
     "dm-event.service": {
-        "desc": "Device Mapper olaylarini izler ve LVM islemlerini tetikler.",
+        "desc": "Device Mapper olaylarini izler ve LVM işlemlerini tetikler.",
         "tip": "gerekli",
-        "oneri": "LVM kullaniyorsaniz kapatmayin."
+        "oneri": "LVM kullaniyorsaniz kapatmayın."
     },
     "docker.service": {
-        "desc": "Docker konteyner platformu. Konteynerleri calistirir ve yonetir.",
+        "desc": "Docker konteyner platformu. Konteynerleri calistirir ve yönetir.",
         "tip": "oneri",
-        "oneri": "Docker kullanmiyorsaniz kapatilabilir."
+        "oneri": "Docker kullanmıyorsanız kapatılabilir."
     },
     "emergency.service": {
-        "desc": "Acil durum modu. Sistem baslamazsa komut satiri icin kullanilir.",
+        "desc": "Acil durum modu. Sistem baslamazsa komut satiri için kullanilir.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Kurtarma modu icin gereklidir."
+        "oneri": "Kapatmayın. Kurtarma modu için gereklidir."
     },
     "ldconfig.service": {
-        "desc": "Paylasilan kutuphane (shared library) onbellegini gunceller.",
+        "desc": "Paylasilan kutuphane (shared library) önbelleğini günceller.",
         "tip": "gerekli",
-        "oneri": "Kapatmayin. Yeni kutuphanelerin taninmasi icin gereklidir."
+        "oneri": "Kapatmayın. Yeni kütüphanelerin taninmasi için gereklidir."
     },
     "libvirtd.service": {
         "desc": "Sanal makine yonetimi (libvirt/virt-manager). Konuk makineleri calistirir.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
     },
     "lvm2-lvmpolld.service": {
-        "desc": "LVM hacim yonetimi islemlerini arka planda izler ve yonetir.",
+        "desc": "LVM hacim yonetimi işlemlerini arka planda izler ve yönetir.",
         "tip": "oneri",
-        "oneri": "LVM kullanmiyorsaniz kapatilabilir."
+        "oneri": "LVM kullanmıyorsanız kapatılabilir."
     },
     "lvm2-monitor.service": {
-        "desc": "LVM (Mantiksal Hacim Yonetimi) durumunu izler ve degisiklikleri bildirir.",
+        "desc": "LVM (Mantıksal Hacim Yönetimi) disk bölümlerinin durumunu izler.",
         "tip": "oneri",
-        "oneri": "LVM kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sisteminizde LVM disk bölümleme yapısı kullanmıyorsanız kapatılabilir."
     },
     "mkinitcpio-generate-shutdown-ramfs.service": {
-        "desc": "Kapanis icin gerekli initramfs (ilk RAM dosya sistemi) imajini olusturur.",
+        "desc": "Kapanis için gerekli initramfs (ilk RAM dosya sistemi) imajini olusturur.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Sistemin guvenli kapanmasi icin gereklidir."
+        "oneri": "Kapatmayın. Sistemin guvenli kapanmasi için gereklidir."
     },
     "plocate-updatedb.service": {
-        "desc": "Dosya arama veritabanini (plocate/mlocate) gunceller. 'locate' komutu icin.",
+        "desc": "Dosya arama veritabanını (plocate/mlocate) günceller. 'locate' komutu için.",
         "tip": "oneri",
-        "oneri": "'locate' komutunu kullanmiyorsaniz kapatilabilir."
+        "oneri": "'locate' komutunu kullanmıyorsanız kapatılabilir."
     },
     "powertop.service": {
         "desc": "Guc tuketimini analiz eder ve enerji tasarrufu onerileri sunar.",
         "tip": "oneri",
-        "oneri": "Dizustu bilgisayarda faydali. Masaustunde gereksiz."
+        "oneri": "Dizüstü bilgisayarda faydali. Masaustunde gereksiz."
     },
     "rescue.service": {
-        "desc": "Kurtarma modu. Tek kullanici modunda sistem kurtarma icin.",
+        "desc": "Kurtarma modu. Tek kullanıcı modunda sistem kurtarma için.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Acil durum kurtarma icin gereklidir."
+        "oneri": "Kapatmayın. Acil durum kurtarma için gereklidir."
     },
     "sddm.service": {
-        "desc": "Basit masaustu yoneticisi (SDDM). Grafiksel giris ekrani.",
+        "desc": "Basit masaüstü yoneticisi (SDDM). Grafiksel giriş ekranı.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Grafik arayuz icin gereklidir."
+        "oneri": "Kapatmayın. Grafik arayüz için gereklidir."
     },
     "shadow.service": {
-        "desc": "Golge parola ve kullanici hesabi bilgilerini gunceller.",
+        "desc": "Golge parola ve kullanıcı hesabı bilgilerini günceller.",
         "tip": "gerekli",
-        "oneri": "Kapatmayin. Kullanici yonetimi icin gereklidir."
+        "oneri": "Kapatmayın. Kullanıcı yonetimi için gereklidir."
     },
     "snapper-cleanup.service": {
-        "desc": "Snapper anlık goruntu (snapshot) temizligini otomatik yapar.",
+        "desc": "Snapper anlık goruntu (snapshot) temizliğini otomatik yapar.",
         "tip": "oneri",
-        "oneri": "Snapper kullanmiyorsaniz kapatilabilir."
+        "oneri": "Snapper kullanmıyorsanız kapatılabilir."
     },
     "systemd-battery-check.service": {
-        "desc": "Baslangicta pil sagligini kontrol eder ve dusuk seviyede uyarir.",
+        "desc": "Başlangıçta pil sağlığını kontrol eder ve dusuk seviyede uyarir.",
         "tip": "oneri",
-        "oneri": "Dizustu kullaniyorsaniz acik birakabilirsiniz."
+        "oneri": "Dizüstü kullaniyorsaniz açık birakabilirsiniz."
     },
     "systemd-boot-random-seed.service": {
-        "desc": "Baslangicta rastgele sayi uretecini TPM ile guvenli sekilde yukler.",
+        "desc": "Başlangıçta rastgele sayi uretecini TPM ile guvenli sekilde yükler.",
         "tip": "gerekli",
-        "oneri": "TPM kullaniyorsaniz kapatmayin."
+        "oneri": "TPM kullaniyorsaniz kapatmayın."
     },
     "systemd-bsod.service": {
         "desc": "Kritik sistem hatalarinda mavi ekran (BSOD) gosterir.",
         "tip": "oneri",
-        "oneri": "Kapatilabilir. Sadece hata durumunda devreye girer."
+        "oneri": "Kapatılabilir. Sadece hata durumunda devreye girer."
     },
     "systemd-confext.service": {
-        "desc": "Sistem yapilandirma dosyasi uzantilarini (/etc/extensions) yukler.",
+        "desc": "Sistem yapilandirma dosyasi uzantılarını (/etc/extensions) yükler.",
         "tip": "oneri",
-        "oneri": "Kullanmiyorsaniz kapatilabilir."
+        "oneri": "Kullanmiyorsaniz kapatılabilir."
     },
     "systemd-firstboot.service": {
         "desc": "Sistem ilk baslatildiginda temel yapilandirma (dil, saat, klavye) sorar.",
@@ -617,64 +617,64 @@ DESCRIPTIONS = {
         "oneri": "Sistem zaten kuruluysa calismaz, kapatmaya gerek yok."
     },
     "systemd-hibernate-resume.service": {
-        "desc": "Hazirda bekletme (hibernate) modundan donuste sistem durumunu geri yukler.",
+        "desc": "Hazirda bekletme (hibernate) modundan donuste sistem durumunu geri yükler.",
         "tip": "kritik",
-        "oneri": "Hazirda bekletme kullaniyorsaniz kapatmayin."
+        "oneri": "Hazirda bekletme kullaniyorsaniz kapatmayın."
     },
     "systemd-importd.service": {
-        "desc": "Konteyner/sanal makine imajlarini iceri aktarmayi yonetir.",
+        "desc": "Konteyner/sanal makine imajlarini iceri aktarmayi yönetir.",
         "tip": "oneri",
-        "oneri": "Konteyner kullanmiyorsaniz kapatilabilir."
+        "oneri": "Konteyner kullanmıyorsanız kapatılabilir."
     },
     "systemd-machine-id-commit.service": {
         "desc": "Gecici makine kimligini (machine-id) kalici hale getirir.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın."
     },
     "systemd-oomd.service": {
         "desc": "Bellek yetersizliginde (OOM) hangi uygulamanin sonlandirilacagina akilli sekilde karar verir.",
         "tip": "gerekli",
-        "oneri": "Bellek yetersizligi yasiyorsaniz acik birakin."
+        "oneri": "Bellek yetersizligi yasiyorsaniz açık birakin."
     },
     "systemd-quotacheck-root.service": {
-        "desc": "Kok dosya sistemi icin disk kullanim sinirlamalarini (quota) kontrol eder.",
+        "desc": "Kok dosya sistemi için disk kullanim sinirlamalarini (quota) kontrol eder.",
         "tip": "oneri",
-        "oneri": "Disk kotasi kullanmiyorsaniz gereksiz."
+        "oneri": "Disk kotasi kullanmıyorsanız gereksiz."
     },
     "systemd-repart.service": {
-        "desc": "Disk bolumlerini otomatik olarak yeniden boyutlandirir ve olusturur.",
+        "desc": "Disk bölümlerini otomatik olarak yeniden boyutlandirir ve olusturur.",
         "tip": "oneri",
-        "oneri": "Genelde calismaz. Otomatik bolumleme gerekiyorsa kullanilir."
+        "oneri": "Genelde calismaz. Otomatik bölümleme gerekiyorsa kullanilir."
     },
     "systemd-resolved.service": {
-        "desc": "DNS cozumleme islemlerini yonetir. Alan adlarini IP adresine cevirir.",
+        "desc": "Ağ DNS çözümleme işlemlerini yönetir.",
         "tip": "gerekli",
-        "oneri": "Genelde acik birakilmali."
+        "oneri": "DNS çözümlemesi için açık kalması önerilir. Alternatif bir DNS yöneticisi kullanmıyorsanız kapatmayın."
     },
     "systemd-soft-reboot.service": {
-        "desc": "Yeniden baslatmadan sadece kullanici alanini (user space) yeniden baslatir.",
+        "desc": "Yeniden baslatmadan sadece kullanıcı alanini (user space) yeniden baslatir.",
         "tip": "oneri",
         "oneri": "Genelde kullanilmaz. Elle tetiklenir."
     },
     "systemd-sysext.service": {
-        "desc": "Sistem goruntu uzantilarini (sysroot /var/lib/extensions) yukler.",
+        "desc": "Sistem goruntu uzantılarını (sysroot /var/lib/extensions) yükler.",
         "tip": "oneri",
-        "oneri": "Kullanmiyorsaniz kapatilabilir."
+        "oneri": "Kullanmiyorsaniz kapatılabilir."
     },
     "systemd-sysusers.service": {
-        "desc": "Sistem kullanicilarini ve gruplarini baslangicta olusturur.",
+        "desc": "Sistem kullanicilarini ve gruplarini başlangıçta olusturur.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Kullanici hesaplari icin gereklidir."
+        "oneri": "Kapatmayın. Kullanıcı hesapları için gereklidir."
     },
     "systemd-tpm2-setup.service": {
-        "desc": "TPM 2.0 guvenlik yongasini baslangicta yapilandirir.",
+        "desc": "TPM 2.0 güvenlik yongasını başlangıçta yapılandırır.",
         "tip": "gerekli",
-        "oneri": "TPM kullaniyorsaniz kapatmayin."
+        "oneri": "TPM kullaniyorsaniz kapatmayın."
     },
     "systemd-udev-load-credentials.service": {
-        "desc": "Udev kurallari icin gerekli yetki bilgilerini yukler.",
+        "desc": "Udev kurallari için gerekli yetki bilgilerini yükler.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın."
     },
     "systemd-udev-settle.service": {
         "desc": "Tum cihazlarin algilanmasini bekler. Acilisi gereksiz yere uzatabilir.",
@@ -682,79 +682,79 @@ DESCRIPTIONS = {
         "oneri": "Gereksiz yere bekletiyorsa maskelenebilir. Genelde gereksizdir."
     },
     "systemd-update-done.service": {
-        "desc": "Sistem guncellemesinden sonra yapilmasi gereken islemleri isaretler.",
+        "desc": "Sistem guncellemesinden sonra yapılması gereken islemleri işaretler.",
         "tip": "gerekli",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın."
     },
     "systemd-userdbd.service": {
-        "desc": "Kullanici veritabani servisi. Kullanicilari JSON uzerinden dinamik sorgular.",
+        "desc": "Kullanıcı veritabanı servisi. Kullanicilari JSON uzerinden dinamik sorgular.",
         "tip": "gerekli",
-        "oneri": "Genelde acik birakilir."
+        "oneri": "Genelde açık birakilir."
     },
     "systemd-vconsole-setup.service": {
-        "desc": "Klavye duzeni ve konsol yazi tipini baslangicta ayarlar.",
+        "desc": "Klavye düzeni ve konsol yazı tipini başlangıçta ayarlar.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Klavye duzeni icin gereklidir."
+        "oneri": "Kapatmayın. Klavye düzeni için gereklidir."
     },
     "tlp.service": {
-        "desc": "Guc yonetimi aracı. Dizustu bilgisayarlarda pil omrunu uzatir.",
+        "desc": "Guc yonetimi aracı. Dizüstü bilgisayarlarda pil ömrünü uzatır.",
         "tip": "oneri",
-        "oneri": "Dizustu kullaniyorsaniz acik birakin. Masaustunde gereksiz."
+        "oneri": "Dizüstü kullaniyorsaniz açık birakin. Masaustunde gereksiz."
     },
     "ufw.service": {
-        "desc": "Basit guvenlik duvari (Uncomplicated Firewall). Ag trafigini kontrol eder.",
+        "desc": "Basit güvenlik duvari (Uncomplicated Firewall). Ag trafigini kontrol eder.",
         "tip": "gerekli",
-        "oneri": "Guvenlik duvari istiyorsaniz acik birakin."
+        "oneri": "Guvenlik duvari istiyorsaniz açık birakin."
     },
     "virtsecretd.service": {
-        "desc": "Sanal makine sirlarini (parola, anahtar) yonetir.",
+        "desc": "Sanal makine sirlarini (parola, anahtar) yönetir.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
     },
     "virtlogd.service": {
-        "desc": "Sanal makine loglarini yonetir.",
+        "desc": "Sanal makine loglarini yönetir.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
     },
     "virtlockd.service": {
-        "desc": "Sanal makine kilitlerini yonetir. Kaynak catismasini onler.",
+        "desc": "Sanal makine kilitlerini yönetir. Kaynak catismasini onler.",
         "tip": "oneri",
-        "oneri": "Sanal makine kullanmiyorsaniz kapatilabilir."
+        "oneri": "Sanal makine kullanmıyorsanız kapatılabilir."
     },
     "warp-svc.service": {
-        "desc": "Cloudflare WARP VPN servisi. Internet baglantinizi guvenli hale getirir.",
+        "desc": "Cloudflare WARP VPN servisi. İnternet baglantinizi guvenli hale getirir.",
         "tip": "oneri",
-        "oneri": "WARP kullanmiyorsaniz kapatilabilir."
+        "oneri": "WARP kullanmıyorsanız kapatılabilir."
     },
     "zapret.service": {
-        "desc": "DPI (Derin Paket Inceleme) engellemesini asmak icin ag trafigini duzenler.",
+        "desc": "DPI (Derin Paket Inceleme) engellemesini asmak için ag trafigini düzenler.",
         "tip": "oneri",
-        "oneri": "Kullanmiyorsaniz kapatilabilir."
+        "oneri": "Kullanmiyorsaniz kapatılabilir."
     },
     "cachyos-iw-set-regdomain.service": {
-        "desc": "Kablosuz ag bolge kodunu (regdomain) ayarlar. Wi-Fi kanal uyumlulugu icin.",
+        "desc": "Kablosuz ag bölge kodunu (regdomain) ayarlar. Wi-Fi kanal uyumlulugu için.",
         "tip": "oneri",
         "oneri": "Wi-Fi calismiyorsa gerekli olabilir."
     },
     "initrd-cleanup.service": {
-        "desc": "Initrd (ilk RAM disk) asamasindan sonra gecici dosyalari temizler.",
+        "desc": "Initrd (ilk RAM disk) aşamasından sonra gecici dosyalari temizler.",
         "tip": "kritik",
-        "oneri": "Kapatmayin. Sistem baslangici icin gereklidir."
+        "oneri": "Kapatmayın. Sistem baslangici için gereklidir."
     },
     "initrd-parse-etc.service": {
-        "desc": "Initrd asamasinda /etc dosyalarini okur ve yapilandirmayi yukler.",
+        "desc": "Initrd aşamasında /etc dosyalarini okur ve yapilandirmayi yükler.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın."
     },
     "initrd-switch-root.service": {
-        "desc": "Initrd'den gercek kok dosya sistemine gecisi yonetir.",
+        "desc": "Initrd'den gerçek kök dosya sistemine geçişi yönetir.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın."
     },
     "initrd-udevadm-cleanup-db.service": {
-        "desc": "Initrd asamasindaki cihaz veritabanini temizler.",
+        "desc": "Initrd asamasindaki cihaz veritabanını temizler.",
         "tip": "kritik",
-        "oneri": "Kapatmayin."
+        "oneri": "Kapatmayın."
     },
 }
 
