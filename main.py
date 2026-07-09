@@ -3,147 +3,32 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
 from src.controller import Controller
 
-class PardusAboutDialog(Gtk.Dialog):
+class PardusAboutDialog(Gtk.AboutDialog):
     def __init__(self, parent):
         super().__init__(parent=parent, flags=Gtk.DialogFlags.MODAL)
-        self.set_default_size(420, 360)
-        self.set_resizable(False)
+        self.set_program_name("Pardus Başlangıç Yöneticisi")
+        self.set_version("1.0.0")
+        self.set_comments("Sistem açılışını analiz et ve başlangıç hizmetlerini yönet.")
+        self.set_copyright("© 2026 TÜBİTAK BİLGEM")
+        self.set_website("https://github.com/06ergin06/pardus-boot-analyzer")
+        self.set_website_label("Web sitesi")
         
-        # HeaderBar for the about dialog itself
-        hb = Gtk.HeaderBar()
-        hb.set_show_close_button(True)
-        hb.set_title("Hakkında")
-        self.set_titlebar(hb)
-        
-        # Stack
-        self.stack = Gtk.Stack()
-        self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
-        self.stack.set_transition_duration(300)
-        
-        # --- Tab 1: Hakkında (About) ---
-        vbox1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        vbox1.set_margin_start(24)
-        vbox1.set_margin_end(24)
-        vbox1.set_margin_top(16)
-        vbox1.set_margin_bottom(16)
-        
-        # Icon
-        img = Gtk.Image.new_from_icon_name("utilities-system-monitor", Gtk.IconSize.DIALOG)
-        vbox1.pack_start(img, False, False, 8)
-        
-        # Title
-        lbl_title = Gtk.Label()
-        lbl_title.set_markup("<span size='large' weight='bold'>Pardus Başlangıç Yöneticisi</span>")
-        vbox1.pack_start(lbl_title, False, False, 2)
-        
-        # Version
-        lbl_ver = Gtk.Label(label="1.0.0")
-        lbl_ver.get_style_context().add_class("dim-label")
-        vbox1.pack_start(lbl_ver, False, False, 2)
-        
-        # Description
-        lbl_desc = Gtk.Label(label="Sistem açılışını analiz et ve başlangıç hizmetlerini yönet.")
-        lbl_desc.set_line_wrap(True)
-        vbox1.pack_start(lbl_desc, False, False, 4)
-        
-        # Website link
-        lbl_web = Gtk.Label()
-        lbl_web.set_markup("<a href='https://github.com/06ergin06/pardus-boot-analyzer'>Web sitesi</a>")
-        vbox1.pack_start(lbl_web, False, False, 4)
-        
-        # Copyright
-        lbl_copy = Gtk.Label(label="© 2026 TÜBİTAK BİLGEM")
-        lbl_copy.get_style_context().add_class("dim-label")
-        vbox1.pack_start(lbl_copy, False, False, 2)
-        
-        # License Disclaimer
-        lbl_license = Gtk.Label()
-        lbl_license.set_markup(
-            "<span size='small'>Bu program kesinlikle hiçbir garanti vermiyor.\n"
-            "Ayrıntılar için <a href='https://www.gnu.org/licenses/gpl-3.0.html'>GNU Genel Kamu Lisansı, sürüm 3 ya da sonrası</a> bağlantısına bakın.</span>"
+        self.set_license(
+            "Bu program kesinlikle hiçbir garanti vermiyor.\n"
+            "Ayrıntılar için GNU Genel Kamu Lisansı, sürüm 3 ya da sonrası bağlantısına bakın."
         )
-        lbl_license.set_justify(Gtk.Justification.CENTER)
-        lbl_license.set_line_wrap(True)
-        vbox1.pack_start(lbl_license, False, False, 4)
+        self.set_wrap_license(True)
         
-        # Credits button
-        btn_show_credits = Gtk.Button(label="Hazırlayanlar")
-        btn_show_credits.connect("clicked", self._on_credits_clicked)
-        vbox1.pack_start(btn_show_credits, False, False, 8)
+        icon_theme = Gtk.IconTheme.get_default()
+        if icon_theme.has_icon("pardus"):
+            self.set_logo_icon_name("pardus")
+        else:
+            self.set_logo_icon_name("utilities-system-monitor")
+            
+        self.set_authors(["İbrahim Hakkı Ergin (Oluşturan, Tasarım, Grafikler)"])
+        self.set_artists(["İbrahim Hakkı Ergin"])
         
-        self.stack.add_named(vbox1, "about")
-        
-        # --- Tab 2: Hazırlayanlar (Credits) ---
-        vbox2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        vbox2.set_margin_start(24)
-        vbox2.set_margin_end(24)
-        vbox2.set_margin_top(16)
-        vbox2.set_margin_bottom(16)
-        
-        # Back Header
-        h_nav = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        btn_back = Gtk.Button()
-        btn_back.set_image(Gtk.Image.new_from_icon_name("go-previous-symbolic", Gtk.IconSize.BUTTON))
-        btn_back.set_relief(Gtk.ReliefStyle.NONE)
-        btn_back.connect("clicked", self._on_back_clicked)
-        h_nav.pack_start(btn_back, False, False, 0)
-        
-        lbl_credits_title = Gtk.Label()
-        lbl_credits_title.set_markup("<span size='medium' weight='bold'>Hazırlayanlar</span>")
-        h_nav.pack_start(lbl_credits_title, False, False, 0)
-        vbox2.pack_start(h_nav, False, False, 4)
-        
-        # Credits grid
-        grid = Gtk.Grid()
-        grid.set_column_spacing(18)
-        grid.set_row_spacing(10)
-        grid.set_halign(Gtk.Align.CENTER)
-        vbox2.pack_start(grid, True, True, 10)
-        
-        # Row 0: Oluşturan
-        lbl_cr_title = Gtk.Label(xalign=1)
-        lbl_cr_title.set_markup("<b>Oluşturan</b>")
-        lbl_cr_title.get_style_context().add_class("dim-label")
-        grid.attach(lbl_cr_title, 0, 0, 1, 1)
-        
-        lbl_cr_val = Gtk.Label(xalign=0)
-        lbl_cr_val.set_text("İbrahim Hakkı Ergin")
-        grid.attach(lbl_cr_val, 1, 0, 1, 1)
-        
-        # Row 1: Tasarım
-        lbl_ds_title = Gtk.Label(xalign=1)
-        lbl_ds_title.set_markup("<b>Tasarım</b>")
-        lbl_ds_title.get_style_context().add_class("dim-label")
-        grid.attach(lbl_ds_title, 0, 1, 1, 1)
-        
-        lbl_ds_val = Gtk.Label(xalign=0)
-        lbl_ds_val.set_text("İbrahim Hakkı Ergin")
-        grid.attach(lbl_ds_val, 1, 1, 1, 1)
-        
-        # Row 2: Grafikler
-        lbl_gr_title = Gtk.Label(xalign=1)
-        lbl_gr_title.set_markup("<b>Grafikler</b>")
-        lbl_gr_title.get_style_context().add_class("dim-label")
-        grid.attach(lbl_gr_title, 0, 2, 1, 1)
-        
-        lbl_gr_val = Gtk.Label(xalign=0)
-        lbl_gr_val.set_text("İbrahim Hakkı Ergin")
-        grid.attach(lbl_gr_val, 1, 2, 1, 1)
-        
-        self.stack.add_named(vbox2, "credits")
-        
-        content = self.get_content_area()
-        content.pack_start(self.stack, True, True, 0)
-        
-        self.show_all()
-
-    def _on_credits_clicked(self, button):
-        self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
-        self.stack.set_visible_child_name("credits")
-
-    def _on_back_clicked(self, button):
-        self.stack.set_transition_type(Gtk.StackTransitionType.SLIDE_DOWN)
-        self.stack.set_visible_child_name("about")
+        self.connect("response", lambda dialog, response_id: dialog.destroy())
 
 class PardusBootManager:
     def __init__(self):
