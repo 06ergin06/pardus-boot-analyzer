@@ -1326,21 +1326,64 @@ class Controller:
         self.detail_suggestion.set_line_wrap(True)
         v_detail_text.pack_start(self.detail_suggestion, False, False, 0)
         
-        v_actions = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        v_actions.set_size_request(160, -1)
-        h_detail.pack_start(v_actions, False, False, 0)
+        # Dikey ayırıcı çizgiler ve gruplandırılmış eylem kutuları
+        sep1 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+        h_detail.pack_start(sep1, False, False, 4)
         
-        self.btn_enable = Gtk.Button(label="Etkinleştir")
-        v_actions.pack_start(self.btn_enable, False, False, 0)
+        # 1. Açılış Ayarı Grubu
+        v_boot_group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        v_boot_group.set_size_request(160, -1)
+        h_detail.pack_start(v_boot_group, False, False, 0)
         
-        self.btn_run = Gtk.Button(label="Başlat")
-        v_actions.pack_start(self.btn_run, False, False, 0)
+        lbl_boot_title = Gtk.Label()
+        lbl_boot_title.set_markup("<span weight='bold' size='medium'>Açılış Ayarı</span>")
+        v_boot_group.pack_start(lbl_boot_title, False, False, 0)
+        
+        self.btn_enable = Gtk.Button(label="Açılışta Çalıştır")
+        v_boot_group.pack_start(self.btn_enable, False, False, 0)
+        
+        self.lbl_boot_state_status = Gtk.Label()
+        self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>Durum bilinmiyor</span>")
+        v_boot_group.pack_start(self.lbl_boot_state_status, False, False, 0)
+        
+        # Ayırıcı
+        sep2 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+        h_detail.pack_start(sep2, False, False, 4)
+        
+        # 2. Şimdiki Durum Grubu
+        v_current_group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        v_current_group.set_size_request(160, -1)
+        h_detail.pack_start(v_current_group, False, False, 0)
+        
+        lbl_current_title = Gtk.Label()
+        lbl_current_title.set_markup("<span weight='bold' size='medium'>Şimdiki Durum</span>")
+        v_current_group.pack_start(lbl_current_title, False, False, 0)
+        
+        self.btn_run = Gtk.Button(label="Şimdi Başlat")
+        v_current_group.pack_start(self.btn_run, False, False, 0)
+        
+        self.lbl_current_state_status = Gtk.Label()
+        self.lbl_current_state_status.set_markup("<span size='small' color='#6c757d'>Durum bilinmiyor</span>")
+        v_current_group.pack_start(self.lbl_current_state_status, False, False, 0)
+        
+        # Ayırıcı
+        sep3 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+        h_detail.pack_start(sep3, False, False, 4)
+        
+        # 3. Diğer İşlemler Grubu
+        v_utility_group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        v_utility_group.set_size_request(170, -1)
+        h_detail.pack_start(v_utility_group, False, False, 0)
+        
+        lbl_utility_title = Gtk.Label()
+        lbl_utility_title.set_markup("<span weight='bold' size='medium'>Diğer İşlemler</span>")
+        v_utility_group.pack_start(lbl_utility_title, False, False, 0)
         
         self.btn_mask = Gtk.Button(label="Maskele")
-        v_actions.pack_start(self.btn_mask, False, False, 0)
+        v_utility_group.pack_start(self.btn_mask, False, False, 0)
         
         h_bottom_actions1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        v_actions.pack_start(h_bottom_actions1, False, False, 0)
+        v_utility_group.pack_start(h_bottom_actions1, False, False, 0)
         
         self.btn_log = Gtk.Button(label="Günlük Kaydı")
         h_bottom_actions1.pack_start(self.btn_log, True, True, 0)
@@ -1349,7 +1392,29 @@ class Controller:
         h_bottom_actions1.pack_start(self.btn_dep, True, True, 0)
         
         self.btn_refresh = Gtk.Button(label="Yenile")
-        v_actions.pack_start(self.btn_refresh, False, False, 0)
+        v_utility_group.pack_start(self.btn_refresh, False, False, 0)
+
+        # En alta açıklayıcı İpucu/Bilgi Notu eklenmesi
+        sep_help = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        self.detail_area.pack_start(sep_help, False, False, 2)
+        
+        h_help_note = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        h_help_note.set_margin_start(4)
+        h_help_note.set_margin_end(4)
+        self.detail_area.pack_start(h_help_note, False, False, 0)
+        
+        img_help = Gtk.Image.new_from_icon_name("dialog-information-symbolic", Gtk.IconSize.MENU)
+        h_help_note.pack_start(img_help, False, False, 0)
+        
+        lbl_help = Gtk.Label(xalign=0)
+        lbl_help.set_markup(
+            "<span size='small' style='italic' color='#555555'>"
+            "<b>💡 Bilgi:</b> <i>Açılış Ayarı</i> servisin bilgisayar açılırken otomatik çalışıp çalışmayacağını; "
+            "<i>Şimdiki Durum</i> ise servisin şu saniyede arka planda aktif (RAM/İşlemci tüketiyor) olup olmadığını belirler."
+            "</span>"
+        )
+        lbl_help.set_line_wrap(True)
+        h_help_note.pack_start(lbl_help, True, True, 0)
         
         self.view_combo.connect("changed", self._on_view_changed)
         self.filter_combo.connect("changed", self._on_filter_changed)
@@ -1382,6 +1447,8 @@ class Controller:
         self.btn_mask.set_sensitive(False)
         self.btn_log.set_sensitive(False)
         self.btn_dep.set_sensitive(False)
+        self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>Açılış durumu bilinmiyor</span>")
+        self.lbl_current_state_status.set_markup("<span size='small' color='#6c757d'>Çalışma durumu bilinmiyor</span>")
         self._updating_widgets = False
         
         GLib.timeout_add(10, self._do_load)
@@ -1609,23 +1676,44 @@ class Controller:
         is_running = active_state == "active"
         is_masked = sub == "masked" or enabled_state == "masked"
 
-        if is_enabled:
-            self.btn_enable.set_label("Devre Dışı Bırak")
-            self.btn_enable.get_style_context().remove_class("success")
-            self.btn_enable.get_style_context().add_class("danger")
+        if enabled_state == "static":
+            self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>● <b>Statik (Sabit Ayar)</b></span>")
+            self.btn_enable.set_label("Değiştirilemez")
+            self.btn_enable.set_sensitive(False)
+        elif enabled_state == "indirect":
+            self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>● <b>Dolaylı (İndirekt)</b></span>")
+            self.btn_enable.set_label("Değiştirilemez")
+            self.btn_enable.set_sensitive(False)
+        elif enabled_state == "masked":
+            self.lbl_boot_state_status.set_markup("<span size='small' color='#6c757d'>🔒 <b>Maskelenmiş (Kapalı)</b></span>")
+            self.btn_enable.set_label("Değiştirilemez")
+            self.btn_enable.set_sensitive(False)
         else:
-            self.btn_enable.set_label("Etkinleştir")
-            self.btn_enable.get_style_context().remove_class("danger")
-            self.btn_enable.get_style_context().add_class("success")
+            if is_enabled:
+                self.btn_enable.set_label("Açılışta Çalıştırma")
+                self.btn_enable.get_style_context().remove_class("success")
+                self.btn_enable.get_style_context().add_class("danger")
+                self.lbl_boot_state_status.set_markup("<span size='small' color='#198754'>● <b>Açılışta Çalışacak</b></span>")
+            else:
+                self.btn_enable.set_label("Açılışta Çalıştır")
+                self.btn_enable.get_style_context().remove_class("danger")
+                self.btn_enable.get_style_context().add_class("success")
+                self.lbl_boot_state_status.set_markup("<span size='small' color='#dc3545'>○ <b>Açılışta Çalışmayacak</b></span>")
 
         if is_running:
-            self.btn_run.set_label("Durdur")
+            self.btn_run.set_label("Şimdi Durdur")
             self.btn_run.get_style_context().remove_class("primary")
             self.btn_run.get_style_context().add_class("danger")
+            self.lbl_current_state_status.set_markup("<span size='small' color='#198754'>● <b>Şu An Çalışıyor</b></span>")
         else:
-            self.btn_run.set_label("Başlat")
+            self.btn_run.set_label("Şimdi Başlat")
             self.btn_run.get_style_context().remove_class("danger")
             self.btn_run.get_style_context().add_class("primary")
+            self.lbl_current_state_status.set_markup("<span size='small' color='#dc3545'>○ <b>Şu An Durduruldu</b></span>")
+
+        if active_state in ("activating", "deactivating"):
+            self.lbl_current_state_status.set_markup(f"<span size='small' color='#ffc107'>⏳ <b>Geçiş Yapıyor ({active_state})</b></span>")
+            self.btn_run.set_sensitive(False)
 
         if is_masked:
             self.btn_mask.set_label("Maskeyi Kaldır")
@@ -1650,29 +1738,89 @@ class Controller:
         d = self._all_data_map.get(name)
         if not d:
             return
+            
         is_enabled = d.get("enabled", "unknown") in ("enabled", "enabled-runtime", "generated")
+        is_running = d["active"] == "active"
         action = "disable" if is_enabled else "enable"
         
         if action == "disable":
             deps = self.manager.get_reverse_dependencies(name)
-            if deps:
+            if is_running:
                 dlg = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                    type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.YES_NO,
-                    message_format=f"'{name}' Hizmetini Kapatmak İstiyor musunuz?"
+                    type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
+                    message_format="Çift Yönlü İşlem Önerisi (Kapatma)"
                 )
-                dep_list_str = "\n".join(f"- {dep}" for dep in deps[:8])
-                if len(deps) > 8:
-                    dep_list_str += f"\n- ve {len(deps) - 8} hizmet daha..."
+                dlg.add_button("İkisini de Kapat (Önerilen)", 2)
+                dlg.add_button("Sadece Başlangıç Ayarını Değiştir", 1)
+                dlg.add_button("İptal", Gtk.ResponseType.CANCEL)
+                
+                sec_text = (
+                    f"'{name}' hizmetinin açılışta otomatik başlamasını kapatıyorsunuz.\n"
+                    "Bu hizmet şu an arka planda aktif/çalışır durumda.\n\n"
+                    "Hem açılış ayarını kapatıp hem de çalışan süreci şimdi durdurmak ister misiniz?"
+                )
+                if deps:
+                    dep_list_str = "\n".join(f"- {dep}" for dep in deps[:8])
+                    if len(deps) > 8:
+                        dep_list_str += f"\n- ve {len(deps) - 8} hizmet daha..."
+                    sec_text += f"\n\n⚠️ DİKKAT: Bu hizmeti kapatmak, bağımlı çalışan şu hizmetleri etkileyebilir:\n{dep_list_str}"
+                
+                dlg.format_secondary_text(sec_text)
+                resp = dlg.run()
+                dlg.destroy()
+                
+                if resp == 2:
+                    self._run_systemctl_batch(["disable", "stop"], name, self.load_all)
+                elif resp == 1:
+                    self._run_systemctl_batch(["disable"], name, self.load_all)
+                else:
+                    return
+            else:
+                if deps:
+                    dlg = Gtk.MessageDialog(
+                        parent=self.window, flags=Gtk.DialogFlags.MODAL,
+                        type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.YES_NO,
+                        message_format=f"'{name}' Hizmetini Açılışta Kapatmak İstiyor musunuz?"
+                    )
+                    dep_list_str = "\n".join(f"- {dep}" for dep in deps[:8])
+                    if len(deps) > 8:
+                        dep_list_str += f"\n- ve {len(deps) - 8} hizmet daha..."
+                    dlg.format_secondary_text(
+                        f"Bu hizmeti açılışta kapatmak, ona bağımlı şu hizmetleri etkileyebilir:\n\n{dep_list_str}\n\nDevam etmek istiyor musunuz?"
+                    )
+                    resp = dlg.run()
+                    dlg.destroy()
+                    if resp != Gtk.ResponseType.YES:
+                        return
+                self._run_systemctl("disable", name, self.load_all)
+        else:
+            if not is_running:
+                dlg = Gtk.MessageDialog(
+                    parent=self.window, flags=Gtk.DialogFlags.MODAL,
+                    type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
+                    message_format="Çift Yönlü İşlem Önerisi (Etkinleştirme)"
+                )
+                dlg.add_button("Şimdi Başlat ve Açılışta Etkinleştir", 2)
+                dlg.add_button("Sadece Başlangıçta Etkinleştir", 1)
+                dlg.add_button("İptal", Gtk.ResponseType.CANCEL)
+                
                 dlg.format_secondary_text(
-                    f"Bu hizmeti kapatmak, ona bağımlı çalışan şu hizmetleri etkileyebilir:\n\n{dep_list_str}\n\nDevam etmek istiyor musunuz?"
+                    f"'{name}' hizmetinin açılışta otomatik başlamasını etkinleştiriyorsunuz.\n"
+                    "Bu hizmet şu an arka planda çalışmıyor.\n\n"
+                    "Açılışta etkinleştirirken aynı zamanda şu anki oturumda hemen başlatmak ister misiniz?"
                 )
                 resp = dlg.run()
                 dlg.destroy()
-                if resp != Gtk.ResponseType.YES:
+                
+                if resp == 2:
+                    self._run_systemctl_batch(["enable", "start"], name, self.load_all)
+                elif resp == 1:
+                    self._run_systemctl_batch(["enable"], name, self.load_all)
+                else:
                     return
-                    
-        self._run_systemctl(action, name, self.load_all)
+            else:
+                self._run_systemctl("enable", name, self.load_all)
 
     def _on_service_run_clicked(self, button):
         name = self._get_selected_name()
@@ -1683,7 +1831,65 @@ class Controller:
             return
         is_running = d["active"] == "active"
         action = "stop" if is_running else "start"
-        self._run_systemctl(action, name, self.load_all)
+        
+        # When stopping a service, suggest disabling it as well (Dual Action)
+        if action == "stop":
+            is_enabled = d.get("enabled", "unknown") in ("enabled", "enabled-runtime", "generated")
+            if is_enabled:
+                dlg = Gtk.MessageDialog(
+                    parent=self.window, flags=Gtk.DialogFlags.MODAL,
+                    type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
+                    message_format="Çift Yönlü İşlem Önerisi (Durdurma)"
+                )
+                dlg.add_button("İkisini de Kapat (Önerilen)", 2)
+                dlg.add_button("Sadece Şimdiki Süreci Durdur", 1)
+                dlg.add_button("İptal", Gtk.ResponseType.CANCEL)
+                
+                dlg.format_secondary_text(
+                    f"'{name}' hizmetini şu anki oturumda durduruyorsunuz.\n"
+                    "Bu hizmet başlangıçta otomatik çalışacak şekilde ayarlanmış.\n\n"
+                    "Hem şu an durdurup hem de bir sonraki açılışlarda çalışmamasını (devre dışı bırakılmasını) ister misiniz?"
+                )
+                resp = dlg.run()
+                dlg.destroy()
+                
+                if resp == 2:
+                    self._run_systemctl_batch(["disable", "stop"], name, self.load_all)
+                elif resp == 1:
+                    self._run_systemctl_batch(["stop"], name, self.load_all)
+                else:
+                    return
+            else:
+                self._run_systemctl("stop", name, self.load_all)
+        else:
+            # Action is start
+            is_enabled = d.get("enabled", "unknown") in ("enabled", "enabled-runtime", "generated")
+            if not is_enabled and d.get("enabled") not in ("static", "indirect", "masked"):
+                dlg = Gtk.MessageDialog(
+                    parent=self.window, flags=Gtk.DialogFlags.MODAL,
+                    type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
+                    message_format="Çift Yönlü İşlem Önerisi (Başlatma)"
+                )
+                dlg.add_button("Şimdi Başlat ve Açılışta Etkinleştir", 2)
+                dlg.add_button("Sadece Şimdi Başlat", 1)
+                dlg.add_button("İptal", Gtk.ResponseType.CANCEL)
+                
+                dlg.format_secondary_text(
+                    f"'{name}' hizmetini şu anki oturumda başlatıyorsunuz.\n"
+                    "Bu hizmet başlangıçta otomatik çalışacak şekilde ayarlanmamış.\n\n"
+                    "Hem şimdi başlatıp hem de sonraki açılışlarda otomatik başlamasını (etkinleştirilmesini) ister misiniz?"
+                )
+                resp = dlg.run()
+                dlg.destroy()
+                
+                if resp == 2:
+                    self._run_systemctl_batch(["enable", "start"], name, self.load_all)
+                elif resp == 1:
+                    self._run_systemctl_batch(["start"], name, self.load_all)
+                else:
+                    return
+            else:
+                self._run_systemctl("start", name, self.load_all)
 
     def _on_service_mask_clicked(self, button):
         name = self._get_selected_name()
@@ -1739,6 +1945,51 @@ class Controller:
                 fn = m.get(action)
                 ok, msg = fn(name) if fn else (False, f"Bilinmeyen eylem: {action}")
                 GLib.idle_add(self._on_cmd_done, ok, msg, cb)
+            except Exception as e:
+                GLib.idle_add(self._on_cmd_done, False, str(e), cb)
+                
+        threading.Thread(target=task, daemon=True).start()
+
+    def _run_systemctl_batch(self, actions, name, cb):
+        action_names_tr = {
+            "enable": "Açılışta Etkinleştirme",
+            "disable": "Açılışta Kapatma",
+            "start": "Şimdi Başlatma",
+            "stop": "Şimdi Durdurma",
+            "mask": "Maskeleme",
+            "unmask": "Maske Kaldırma"
+        }
+        
+        if not self._ensure_auth():
+            self.set_status("Yetkilendirme iptal edildi.")
+            return
+            
+        actions_str = " ve ".join(action_names_tr.get(a, a) for a in actions)
+        self.set_status(f"'{name}' için {actions_str} eylemleri başlatıldı...")
+        
+        def task():
+            try:
+                m = {
+                    "enable": self.manager.enable_service,
+                    "disable": self.manager.disable_service,
+                    "start": self.manager.start_service,
+                    "stop": self.manager.stop_service,
+                    "mask": self.manager.mask_service,
+                    "unmask": self.manager.unmask_service
+                }
+                
+                success = True
+                final_msg = ""
+                for action in actions:
+                    fn = m.get(action)
+                    ok, msg = fn(name) if fn else (False, f"Bilinmeyen eylem: {action}")
+                    if not ok:
+                        success = False
+                        final_msg += f"[{action_names_tr.get(action, action)} Hatası: {msg}] "
+                    else:
+                        final_msg += f"[{action_names_tr.get(action, action)} başarılı] "
+                
+                GLib.idle_add(self._on_cmd_done, success, final_msg.strip(), cb)
             except Exception as e:
                 GLib.idle_add(self._on_cmd_done, False, str(e), cb)
                 
