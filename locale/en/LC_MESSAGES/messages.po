@@ -58,6 +58,9 @@ msgstr "Boot Time Summary"
 msgid "adi"
 msgstr "Name"
 
+msgid "alt_durum"
+msgstr "Sub State"
+
 msgid "analiz_alt_bilgi"
 msgstr "Analyze your system boot time and manage recommended services safely."
 
@@ -240,6 +243,9 @@ msgstr "Select a service from the list to view details."
 
 msgid "hizmetin_yedegi"
 msgstr "services backed up"
+
+msgid "hizmetler_subtitle"
+msgstr "Manage, enable, or disable system services and hardware units."
 
 msgid "hizmetler_uygun_detay"
 msgstr "The services startup configuration already matches this profile."
@@ -463,6 +469,12 @@ msgstr "Save Profile"
 msgid "profili_uygula"
 msgstr "Apply Profile"
 
+msgid "profiller_subtitle"
+msgstr "Optimize your system with a single click based on specific usage scenarios."
+
+msgid "profiller_title"
+msgstr "System Boot Profiles"
+
 msgid "sadece_acilis_etkinlestir"
 msgstr "Only Enable at Boot"
 
@@ -567,6 +579,9 @@ msgstr "Stopped"
 
 msgid "subtitle"
 msgstr "System Boot Analysis and Optimization Tool"
+
+msgid "sure"
+msgstr "Time"
 
 msgid "sys_kernel"
 msgstr "Kernel:"

@@ -59,6 +59,9 @@ msgstr ""
 msgid "adi"
 msgstr ""
 
+msgid "alt_durum"
+msgstr ""
+
 msgid "analiz_alt_bilgi"
 msgstr ""
 
@@ -240,6 +243,9 @@ msgid "hizmet_secilmedi_desc"
 msgstr ""
 
 msgid "hizmetin_yedegi"
+msgstr ""
+
+msgid "hizmetler_subtitle"
 msgstr ""
 
 msgid "hizmetler_uygun_detay"
@@ -464,6 +470,12 @@ msgstr ""
 msgid "profili_uygula"
 msgstr ""
 
+msgid "profiller_subtitle"
+msgstr ""
+
+msgid "profiller_title"
+msgstr ""
+
 msgid "sadece_acilis_etkinlestir"
 msgstr ""
 
@@ -567,6 +579,9 @@ msgid "su_an_durduruldu"
 msgstr ""
 
 msgid "subtitle"
+msgstr ""
+
+msgid "sure"
 msgstr ""
 
 msgid "sys_kernel"

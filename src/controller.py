@@ -1232,12 +1232,12 @@ class Controller:
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         
         lbl_title = Gtk.Label(xalign=0)
-        lbl_title.set_text("Sistem Hizmetleri")
+        lbl_title.set_text(tr("side_hizmetler"))
         lbl_title.get_style_context().add_class("content-title")
         box.pack_start(lbl_title, False, False, 0)
         
         lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_text("Sistem servislerini ve donanım birimlerini yönetin, etkinleştirin veya devre dışı bırakın.")
+        lbl_sub.set_text(tr("hizmetler_subtitle"))
         lbl_sub.get_style_context().add_class("content-subtitle")
         box.pack_start(lbl_sub, False, False, 0)
         
@@ -1284,7 +1284,7 @@ class Controller:
         self.treeview.set_rules_hint(True)
         scrolled.add(self.treeview)
         
-        col_name = Gtk.TreeViewColumn("Servis Adı")
+        col_name = Gtk.TreeViewColumn(tr("hizmet_adi"))
         col_name.set_resizable(True)
         col_name.set_expand(True)
         col_name.set_min_width(200)
@@ -1293,7 +1293,7 @@ class Controller:
         col_name.add_attribute(renderer_name, "text", 0)
         self.treeview.append_column(col_name)
         
-        col_status = Gtk.TreeViewColumn("Durum")
+        col_status = Gtk.TreeViewColumn(tr("durum"))
         col_status.set_resizable(True)
         col_status.set_fixed_width(120)
         renderer_status = Gtk.CellRendererText()
@@ -1301,7 +1301,7 @@ class Controller:
         col_status.add_attribute(renderer_status, "markup", 1)
         self.treeview.append_column(col_status)
         
-        col_sub = Gtk.TreeViewColumn("Alt Durum")
+        col_sub = Gtk.TreeViewColumn(tr("alt_durum"))
         col_sub.set_resizable(True)
         col_sub.set_fixed_width(100)
         renderer_sub = Gtk.CellRendererText()
@@ -1309,7 +1309,7 @@ class Controller:
         col_sub.add_attribute(renderer_sub, "text", 2)
         self.treeview.append_column(col_sub)
         
-        col_blame = Gtk.TreeViewColumn("Süre")
+        col_blame = Gtk.TreeViewColumn(tr("sure"))
         col_blame.set_resizable(True)
         col_blame.set_fixed_width(90)
         renderer_blame = Gtk.CellRendererText()
@@ -2151,12 +2151,12 @@ class Controller:
         main_scrolled.add(box)
         
         lbl_title = Gtk.Label(xalign=0)
-        lbl_title.set_text("Sistem Başlangıç Profilleri")
+        lbl_title.set_text(tr("profiller_title"))
         lbl_title.get_style_context().add_class("content-title")
         box.pack_start(lbl_title, False, False, 0)
         
         lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_text("Sisteminizi tek tıkla belirli kullanım senaryolarına göre optimize edebilirsiniz.")
+        lbl_sub.set_text(tr("profiller_subtitle"))
         lbl_sub.get_style_context().add_class("content-subtitle")
         box.pack_start(lbl_sub, False, False, 0)
         
@@ -2167,7 +2167,7 @@ class Controller:
             "ofis": {
                 "name": tr("prof_office_name"),
                 "icon": "document-open",
-                "desc": "Günlük ofis işleri için ideal. Yazıcı ve ağ servisleri etkinleştirilirken; Docker ve veritabanı servisleri kapatılarak açılış hızlandırılır.",
+                "desc": tr("prof_office_desc"),
                 "services": {
                     "cups.service": "enable",
                     "cups-browsed.service": "enable",
@@ -2201,7 +2201,7 @@ class Controller:
                 }
             },
             "minimum": {
-                "name": "Minimum Mod",
+                "name": tr("prof_min_name"),
                 "icon": "battery",
                 "desc": tr("prof_min_desc"),
                 "services": {

@@ -58,6 +58,9 @@ msgstr "Açılış Süresi Özeti"
 msgid "adi"
 msgstr "Adı"
 
+msgid "alt_durum"
+msgstr "Alt Durum"
+
 msgid "analiz_alt_bilgi"
 msgstr "Sisteminizin açılış süresini ve kapatılması güvenli olan önerilen hizmetleri yönetin."
 
@@ -240,6 +243,9 @@ msgstr "Detayları görmek için listeden bir hizmet seçin."
 
 msgid "hizmetin_yedegi"
 msgstr "hizmetin yedeği"
+
+msgid "hizmetler_subtitle"
+msgstr "Sistem servislerini ve donanım birimlerini yönetin, etkinleştirin veya devre dışı bırakın."
 
 msgid "hizmetler_uygun_detay"
 msgstr "Hizmetlerin başlangıç durumları zaten bu profile uygun."
@@ -463,6 +469,12 @@ msgstr "Profili Kaydet"
 msgid "profili_uygula"
 msgstr "Profili Uygula"
 
+msgid "profiller_subtitle"
+msgstr "Sisteminizi tek tıkla belirli kullanım senaryolarına göre optimize edebilirsiniz."
+
+msgid "profiller_title"
+msgstr "Sistem Başlangıç Profilleri"
+
 msgid "sadece_acilis_etkinlestir"
 msgstr "Sadece Başlangıçta Etkinleştir"
 
@@ -567,6 +579,9 @@ msgstr "Şu An Durduruldu"
 
 msgid "subtitle"
 msgstr "Sistem Açılış Analiz ve Optimizasyon Aracı"
+
+msgid "sure"
+msgstr "Süre"
 
 msgid "sys_kernel"
 msgstr "Çekirdek:"
