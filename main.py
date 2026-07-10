@@ -1,3 +1,58 @@
+import os
+import sys
+
+# Force GTK to use the compiled-in Adwaita theme ONLY on minimal window managers (like Hyprland, Sway, i3)
+# where GTK theme engines are unconfigured or missing.
+try:
+    desktop = (os.environ.get("XDG_CURRENT_DESKTOP") or "").lower()
+    is_minimal = any(wm in desktop for wm in ("hyprland", "sway", "i3", "openbox", "bspwm", "awesome")) or not desktop
+    
+    if is_minimal:
+        is_dark = False
+        # 1. Check existing env variables
+        for key in ("GTK_THEME", "THEME"):
+            val = (os.environ.get(key) or "").lower()
+            if "dark" in val or "black" in val or "night" in val:
+                is_dark = True
+                break
+                
+        # 2. Check portal color-scheme via dbus (KDE, Hyprland, Wayland standard)
+        if not is_dark:
+            try:
+                import subprocess
+                out = subprocess.check_output(
+                    ["dbus-send", "--print-reply", "--dest=org.freedesktop.portal.Desktop",
+                     "/org/freedesktop/portal/desktop", "org.freedesktop.portal.Settings.Read",
+                     "string:org.freedesktop.appearance", "string:color-scheme"],
+                    stderr=subprocess.DEVNULL, timeout=1
+                ).decode("utf-8")
+                if "uint32 1" in out:
+                    is_dark = True
+            except Exception:
+                pass
+                
+        # 3. Check settings.ini
+        if not is_dark:
+            try:
+                path = os.path.expanduser("~/.config/gtk-3.0/settings.ini")
+                if os.path.exists(path):
+                    with open(path, "r", encoding="utf-8") as f:
+                        content = f.read().lower()
+                        if "gtk-application-prefer-dark-theme=true" in content or "gtk-application-prefer-dark-theme=1" in content:
+                            is_dark = True
+                        else:
+                            for line in content.splitlines():
+                                if line.strip().startswith("gtk-theme-name"):
+                                    if any(x in line for x in ("dark", "black", "night", "tokyo", "dracula")):
+                                        is_dark = True
+                                        break
+            except Exception:
+                pass
+                
+        os.environ["GTK_THEME"] = "Adwaita:dark" if is_dark else "Adwaita"
+except Exception:
+    pass
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib

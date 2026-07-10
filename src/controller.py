@@ -108,6 +108,10 @@ def make_status_markup(status):
     return f'<span foreground="{color}">\u25cf</span> <b>{tr}</b>'
 
 def _is_dark_theme():
+    # If GTK_THEME env variable contains dark, it is definitely dark
+    val = (os.environ.get("GTK_THEME") or "").lower()
+    if "dark" in val:
+        return True
     try:
         s = Gtk.Settings.get_default()
         if s.get_property("gtk-application-prefer-dark-theme"):
