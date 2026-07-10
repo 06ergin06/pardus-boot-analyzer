@@ -1,0 +1,748 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-10 21:00+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "about"
+msgstr ""
+
+msgid "about_comments"
+msgstr ""
+
+msgid "aciklama"
+msgstr ""
+
+msgid "aciklama_yok"
+msgstr ""
+
+msgid "acilis_ayari"
+msgstr ""
+
+msgid "acilis_calisacak"
+msgstr ""
+
+msgid "acilis_calismayacak"
+msgstr ""
+
+msgid "acilis_calistir"
+msgstr ""
+
+msgid "acilis_calistirma"
+msgstr ""
+
+msgid "acilis_kapatma_dep"
+msgstr ""
+
+msgid "acilis_kapatma_soru"
+msgstr ""
+
+msgid "acilis_suresi"
+msgstr ""
+
+msgid "acilis_suresi_ozeti"
+msgstr ""
+
+msgid "adi"
+msgstr ""
+
+msgid "analiz_alt_bilgi"
+msgstr ""
+
+msgid "autostart_subtitle"
+msgstr ""
+
+msgid "avahi_desc"
+msgstr ""
+
+msgid "bagimliliklar"
+msgstr ""
+
+msgid "basariyla_kapatildi"
+msgstr ""
+
+msgid "baslangic_optimizasyonu"
+msgstr ""
+
+msgid "baslangica_eklendi"
+msgstr ""
+
+msgid "baslatma_sorusu"
+msgstr ""
+
+msgid "bellek"
+msgstr ""
+
+msgid "bilgi_ipucu"
+msgstr ""
+
+msgid "bluetooth_desc"
+msgstr ""
+
+msgid "cekirdek_surumu"
+msgstr ""
+
+msgid "cift_yon_baslatma"
+msgstr ""
+
+msgid "cift_yon_durdurma"
+msgstr ""
+
+msgid "cift_yon_etkinlestirme"
+msgstr ""
+
+msgid "cift_yon_kapatma"
+msgstr ""
+
+msgid "comp_firmware"
+msgstr ""
+
+msgid "comp_initrd"
+msgstr ""
+
+msgid "comp_kernel"
+msgstr ""
+
+msgid "comp_loader"
+msgstr ""
+
+msgid "comp_userspace"
+msgstr ""
+
+msgid "cups_browsed_desc"
+msgstr ""
+
+msgid "cups_service_desc"
+msgstr ""
+
+msgid "degistirilemez"
+msgstr ""
+
+msgid "devices"
+msgstr ""
+
+msgid "diger_islemler"
+msgstr ""
+
+msgid "dolayli_indirekt"
+msgstr ""
+
+msgid "durdurma_sorusu"
+msgstr ""
+
+msgid "durum"
+msgstr ""
+
+msgid "durum_bilinmiyor"
+msgstr ""
+
+msgid "etkinlestirme_sorusu"
+msgstr ""
+
+msgid "filter_active"
+msgstr ""
+
+msgid "filter_all"
+msgstr ""
+
+msgid "filter_disabled"
+msgstr ""
+
+msgid "filter_inactive"
+msgstr ""
+
+msgid "filter_masked"
+msgstr ""
+
+msgid "firmware"
+msgstr ""
+
+msgid "gecikme"
+msgstr ""
+
+msgid "gecikme_guncellendi"
+msgstr ""
+
+msgid "gecis_yapiyor"
+msgstr ""
+
+msgid "geri_yukle"
+msgstr ""
+
+msgid "geri_yukleme_basarili"
+msgstr ""
+
+msgid "goz_at"
+msgstr ""
+
+msgid "guncelleme_denetle"
+msgstr ""
+
+msgid "gunluk_kaydi"
+msgstr ""
+
+msgid "hata"
+msgstr ""
+
+msgid "hata_dosya_yok"
+msgstr ""
+
+msgid "hata_log_yetki"
+msgstr ""
+
+msgid "hizlandirma_potansiyeli"
+msgstr ""
+
+msgid "hizmet_adi"
+msgstr ""
+
+msgid "hizmet_kapatiliyor"
+msgstr ""
+
+msgid "hizmet_kapatma_dep"
+msgstr ""
+
+msgid "hizmet_kapatma_soru"
+msgstr ""
+
+msgid "hizmet_kurali"
+msgstr ""
+
+msgid "hizmet_kurallari_lbl"
+msgstr ""
+
+msgid "hizmet_kurallari_sub"
+msgstr ""
+
+msgid "hizmet_listesi_guncellendi"
+msgstr ""
+
+msgid "hizmet_sayisi"
+msgstr ""
+
+msgid "hizmet_secilmedi"
+msgstr ""
+
+msgid "hizmet_secilmedi_desc"
+msgstr ""
+
+msgid "hizmetin_yedegi"
+msgstr ""
+
+msgid "hizmetler_uygun_detay"
+msgstr ""
+
+msgid "ikisini_de_kapat"
+msgstr ""
+
+msgid "iptal"
+msgstr ""
+
+msgid "islemci"
+msgstr ""
+
+msgid "isletim_sistemi"
+msgstr ""
+
+msgid "kap_hizmet_yok"
+msgstr ""
+
+msgid "kapatma_sorusu"
+msgstr ""
+
+msgid "kaydet"
+msgstr ""
+
+msgid "kaydetme_hatasi"
+msgstr ""
+
+msgid "kernel"
+msgstr ""
+
+msgid "komut"
+msgstr ""
+
+msgid "kritik_hizmet"
+msgstr ""
+
+msgid "kritik_maske_uyarisi"
+msgstr ""
+
+msgid "kritik_uyari"
+msgstr ""
+
+msgid "kullanici_onerisi"
+msgstr ""
+
+msgid "kullanici_ozel_profilleri"
+msgstr ""
+
+msgid "lisans"
+msgstr ""
+
+msgid "loader"
+msgstr ""
+
+msgid "log_bulunamadi"
+msgstr ""
+
+msgid "maske_sorusu"
+msgstr ""
+
+msgid "maskele"
+msgstr ""
+
+msgid "maskelenmis_kapali"
+msgstr ""
+
+msgid "maskeyi_kaldir"
+msgstr ""
+
+msgid "mevcut_durumu_kaydet"
+msgstr ""
+
+msgid "modem_desc"
+msgstr ""
+
+msgid "mysql_desc"
+msgstr ""
+
+msgid "no_autostart_apps"
+msgstr ""
+
+msgid "no_backups_found"
+msgstr ""
+
+msgid "no_custom_profiles"
+msgstr ""
+
+msgid "oneri"
+msgstr ""
+
+msgid "onerilenler_kapatiliyor_bekleyin"
+msgstr ""
+
+msgid "opt_alt_bilgi"
+msgstr ""
+
+msgid "other"
+msgstr ""
+
+msgid "ozel_profil_olusturuldu"
+msgstr ""
+
+msgid "ozel_profil_silindi"
+msgstr ""
+
+msgid "ozel_profilim"
+msgstr ""
+
+msgid "pdf_acilis_ozeti"
+msgstr ""
+
+msgid "pdf_baslik"
+msgstr ""
+
+msgid "pdf_donanim_bilgileri"
+msgstr ""
+
+msgid "pdf_footer"
+msgstr ""
+
+msgid "pdf_hatasi"
+msgstr ""
+
+msgid "pdf_kaydedildi"
+msgstr ""
+
+msgid "pdf_no_opt"
+msgstr ""
+
+msgid "pdf_olustur"
+msgstr ""
+
+msgid "pdf_olusturuluyor"
+msgstr ""
+
+msgid "pdf_opt_onerileri"
+msgstr ""
+
+msgid "pdf_sayfa_1_1"
+msgstr ""
+
+msgid "pdf_sistem_ozeti"
+msgstr ""
+
+msgid "pdf_tamamlanamadi"
+msgstr ""
+
+msgid "pdf_tarih"
+msgstr ""
+
+msgid "pdf_yavas_hizmetler"
+msgstr ""
+
+msgid "postgresql_desc"
+msgstr ""
+
+msgid "prof_dev_desc"
+msgstr ""
+
+msgid "prof_dev_name"
+msgstr ""
+
+msgid "prof_min_desc"
+msgstr ""
+
+msgid "prof_min_name"
+msgstr ""
+
+msgid "prof_office_desc"
+msgstr ""
+
+msgid "prof_office_name"
+msgstr ""
+
+msgid "profil_adi_girin_hata"
+msgstr ""
+
+msgid "profil_adi_lbl"
+msgstr ""
+
+msgid "profil_adi_placeholder"
+msgstr ""
+
+msgid "profil_bagimlilik_uyarisi"
+msgstr ""
+
+msgid "profil_basariyla_uygulandi"
+msgstr ""
+
+msgid "profil_okuma_hatasi"
+msgstr ""
+
+msgid "profil_uygula_aciklama"
+msgstr ""
+
+msgid "profil_uygula_bagimlilik_mesaji"
+msgstr ""
+
+msgid "profil_uygula_soru"
+msgstr ""
+
+msgid "profil_uygulama_hatasi"
+msgstr ""
+
+msgid "profil_uygulaniyor"
+msgstr ""
+
+msgid "profil_uygulaniyor_bekleyin"
+msgstr ""
+
+msgid "profil_zaten_uygulanmis"
+msgstr ""
+
+msgid "profili_kaydedildi"
+msgstr ""
+
+msgid "profili_kaydet_title"
+msgstr ""
+
+msgid "profili_uygula"
+msgstr ""
+
+msgid "sadece_acilis_etkinlestir"
+msgstr ""
+
+msgid "sadece_baslangic_degistir"
+msgstr ""
+
+msgid "sadece_simdi_baslat"
+msgstr ""
+
+msgid "sadece_simdi_durdur"
+msgstr ""
+
+msgid "saniye_kazan"
+msgstr ""
+
+msgid "search_placeholder"
+msgstr ""
+
+msgid "sec_gained_lbl"
+msgstr ""
+
+msgid "sec_lbl"
+msgstr ""
+
+msgid "secilen_servis_yok"
+msgstr ""
+
+msgid "secileni_geri_yukle"
+msgstr ""
+
+msgid "secileni_sil"
+msgstr ""
+
+msgid "services"
+msgstr ""
+
+msgid "side_analiz"
+msgstr ""
+
+msgid "side_autostart"
+msgstr ""
+
+msgid "side_hizmetler"
+msgstr ""
+
+msgid "side_profiller"
+msgstr ""
+
+msgid "side_title_sub"
+msgstr ""
+
+msgid "sifre_placeholder"
+msgstr ""
+
+msgid "sifreyi_goster"
+msgstr ""
+
+msgid "sil_onay_app"
+msgstr ""
+
+msgid "silme_hatasi"
+msgstr ""
+
+msgid "simdi_baslat"
+msgstr ""
+
+msgid "simdi_baslat_ve_etkinlestir"
+msgstr ""
+
+msgid "simdi_durdur"
+msgstr ""
+
+msgid "simdiki_durum"
+msgstr ""
+
+msgid "sistem_baslangic_analizi"
+msgstr ""
+
+msgid "sistem_bilgileri"
+msgstr ""
+
+msgid "sistem_geri_yukleme_noktalari"
+msgstr ""
+
+msgid "sistem_optimize_edilmis"
+msgstr ""
+
+msgid "sistem_uygun_durumda"
+msgstr ""
+
+msgid "ssh_desc"
+msgstr ""
+
+msgid "statik_sabit"
+msgstr ""
+
+msgid "su_an_calisiyor"
+msgstr ""
+
+msgid "su_an_durduruldu"
+msgstr ""
+
+msgid "subtitle"
+msgstr ""
+
+msgid "sys_kernel"
+msgstr ""
+
+msgid "sys_os"
+msgstr ""
+
+msgid "sys_ram"
+msgstr ""
+
+msgid "sys_uptime"
+msgstr ""
+
+msgid "tab_analiz"
+msgstr ""
+
+msgid "tab_custom_command"
+msgstr ""
+
+msgid "tab_desktop_apps"
+msgstr ""
+
+msgid "tab_hizmetler"
+msgstr ""
+
+msgid "tab_uygulamalar"
+msgstr ""
+
+msgid "tab_yedek"
+msgstr ""
+
+msgid "tahmini_kazanc"
+msgstr ""
+
+msgid "tarih_saat"
+msgstr ""
+
+msgid "tip_all"
+msgstr ""
+
+msgid "tip_critical"
+msgstr ""
+
+msgid "tip_required"
+msgstr ""
+
+msgid "tip_suggestion"
+msgstr ""
+
+msgid "title"
+msgstr ""
+
+msgid "toplam_acilis"
+msgstr ""
+
+msgid "tum_onerilenleri_kapat"
+msgstr ""
+
+msgid "tur"
+msgstr ""
+
+msgid "userspace"
+msgstr ""
+
+msgid "uyg_ekle_ad_bos"
+msgstr ""
+
+msgid "uyg_ekle_komut_bos"
+msgstr ""
+
+msgid "uygula"
+msgstr ""
+
+msgid "uygulama_adi"
+msgstr ""
+
+msgid "uygulama_aktiflik_guncellendi"
+msgstr ""
+
+msgid "uygulama_duzenle"
+msgstr ""
+
+msgid "uygulama_kaldirildi"
+msgstr ""
+
+msgid "ve_daha_fazla_hizmet"
+msgstr ""
+
+msgid "view_devices"
+msgstr ""
+
+msgid "view_others"
+msgstr ""
+
+msgid "view_services"
+msgstr ""
+
+msgid "yazici_kullanimi"
+msgstr ""
+
+msgid "yazilim_guncelleme"
+msgstr ""
+
+msgid "yedek_adi_girin"
+msgstr ""
+
+msgid "yedek_basarili"
+msgstr ""
+
+msgid "yedek_bulunamadi"
+msgstr ""
+
+msgid "yedek_don_aciklama"
+msgstr ""
+
+msgid "yedek_don_soru"
+msgstr ""
+
+msgid "yedek_geri_yukleniyor"
+msgstr ""
+
+msgid "yedek_noktalari"
+msgstr ""
+
+msgid "yedek_noktasi_silindi"
+msgstr ""
+
+msgid "yedek_olustur"
+msgstr ""
+
+msgid "yedek_olusturuldu"
+msgstr ""
+
+msgid "yedek_sil_soru"
+msgstr ""
+
+msgid "yedek_silindi"
+msgstr ""
+
+msgid "yedek_yukleniyor_bekleyin"
+msgstr ""
+
+msgid "yeni_ozel_profil_btn"
+msgstr ""
+
+msgid "yeni_profil_adi_girin"
+msgstr ""
+
+msgid "yeni_uygulama_ekle_btn"
+msgstr ""
+
+msgid "yeni_uygulamalar"
+msgstr ""
+
+msgid "yeni_yedek_noktasi_btn"
+msgstr ""
+
+msgid "yenile"
+msgstr ""
+
+msgid "yetki_alt_bilgi"
+msgstr ""
+
+msgid "yetki_gerekiyor"
+msgstr ""
+
+msgid "yetki_iptal"
+msgstr ""
+
+msgid "yetki_yok"
+msgstr ""
+
+msgid "yetkilendir"
+msgstr ""
+
+msgid "yetkilendirildi"
+msgstr ""
+

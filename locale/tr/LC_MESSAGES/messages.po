@@ -1,0 +1,747 @@
+# Turkish translations for Pardus Boot Analyzer.
+# Copyright (C) 2026 İbrahim Hakkı Ergin
+# This file is distributed under the same license as the pardus-boot-analyzer package.
+# İbrahim Hakkı Ergin <ibrahimh.ergin@gmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pardus-boot-analyzer 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-10 21:00+0300\n"
+"PO-Revision-Date: 2026-07-10 21:00+0300\n"
+"Last-Translator: İbrahim Hakkı Ergin <ibrahimh.ergin@gmail.com>\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "about"
+msgstr "Hakkında"
+
+msgid "about_comments"
+msgstr "Pardus Başlangıç Analiz ve Optimizasyon Aracı"
+
+msgid "aciklama"
+msgstr "Açıklama"
+
+msgid "aciklama_yok"
+msgstr "Açıklama mevcut değil."
+
+msgid "acilis_ayari"
+msgstr "Açılış Ayarı"
+
+msgid "acilis_calisacak"
+msgstr "Açılışta Çalışacak"
+
+msgid "acilis_calismayacak"
+msgstr "Açılışta Çalışmayacak"
+
+msgid "acilis_calistir"
+msgstr "Açılışta Çalıştır"
+
+msgid "acilis_calistirma"
+msgstr "Açılışta Çalıştırma"
+
+msgid "acilis_kapatma_dep"
+msgstr "Bu hizmeti açılışta kapatmak, ona bağımlı şu hizmetleri etkileyebilir:\n\n{dep_list_str}\n\nDevam etmek istiyor musunuz?"
+
+msgid "acilis_kapatma_soru"
+msgstr "Hizmetini Açılışta Kapatmak İstiyor musunuz?"
+
+msgid "acilis_suresi"
+msgstr "Açılış Süresi"
+
+msgid "acilis_suresi_ozeti"
+msgstr "Açılış Süresi Özeti"
+
+msgid "adi"
+msgstr "Adı"
+
+msgid "analiz_alt_bilgi"
+msgstr "Sisteminizin açılış süresini ve kapatılması güvenli olan önerilen hizmetleri yönetin."
+
+msgid "autostart_subtitle"
+msgstr "Kullanıcı oturumu başladığında otomatik olarak çalışacak uygulamaları yönetin."
+
+msgid "avahi_desc"
+msgstr "Yerel Ağ Keşfi (Avahi)"
+
+msgid "bagimliliklar"
+msgstr "Bağımlılıklar"
+
+msgid "basariyla_kapatildi"
+msgstr "başarıyla kapatıldı."
+
+msgid "baslangic_optimizasyonu"
+msgstr "Başlangıç Optimizasyonu"
+
+msgid "baslangica_eklendi"
+msgstr "başlangıç uygulamalarına eklendi."
+
+msgid "baslatma_sorusu"
+msgstr "hizmetini şu anki oturumda başlatıyorsunuz.\nBu hizmet başlangıçta otomatik çalışacak şekilde ayarlanmamış.\n\nHem şimdi başlatıp hem de sonraki açılışlarda otomatik başlamasını (etkinleştirilmesini) ister misiniz?"
+
+msgid "bellek"
+msgstr "Bellek"
+
+msgid "bilgi_ipucu"
+msgstr "<b>Bilgi:</b> <i>Açılış Ayarı</i> servisin bilgisayar açılırken otomatik çalışıp çalışmayacağını; <i>Şimdiki Durum</i> ise servisin şu saniyede arka planda aktif (RAM/İşlemci tüketiyor) olup olmadığını belirler."
+
+msgid "bluetooth_desc"
+msgstr "Bluetooth Desteği"
+
+msgid "cekirdek_surumu"
+msgstr "Çekirdek Sürümü"
+
+msgid "cift_yon_baslatma"
+msgstr "Çift Yönlü İşlem Önerisi (Başlatma)"
+
+msgid "cift_yon_durdurma"
+msgstr "Çift Yönlü İşlem Önerisi (Durdurma)"
+
+msgid "cift_yon_etkinlestirme"
+msgstr "Çift Yönlü İşlem Önerisi (Etkinleştirme)"
+
+msgid "cift_yon_kapatma"
+msgstr "Çift Yönlü İşlem Önerisi (Kapatma)"
+
+msgid "comp_firmware"
+msgstr "Donanım (Firmware)"
+
+msgid "comp_initrd"
+msgstr "Başlangıç Arayüzü (Initrd)"
+
+msgid "comp_kernel"
+msgstr "Çekirdek (Kernel)"
+
+msgid "comp_loader"
+msgstr "Önyükleyici (Loader)"
+
+msgid "comp_userspace"
+msgstr "Kullanıcı Alanı (Userspace)"
+
+msgid "cups_browsed_desc"
+msgstr "Ağ Yazıcısı Bulucu"
+
+msgid "cups_service_desc"
+msgstr "Yazıcı Servisi (CUPS)"
+
+msgid "degistirilemez"
+msgstr "Değiştirilemez"
+
+msgid "devices"
+msgstr "Cihazlar"
+
+msgid "diger_islemler"
+msgstr "Diğer İşlemler"
+
+msgid "dolayli_indirekt"
+msgstr "Dolaylı (İndirekt)"
+
+msgid "durdurma_sorusu"
+msgstr "hizmetini şu anki oturumda durduruyorsunuz.\nBu hizmet başlangıçta otomatik çalışacak şekilde ayarlanmış.\n\nHem şu an durdurup hem de bir sonraki açılışlarda çalışmamasını (devre dışı bırakılmasını) ister misiniz?"
+
+msgid "durum"
+msgstr "Durum"
+
+msgid "durum_bilinmiyor"
+msgstr "Durum bilinmiyor"
+
+msgid "etkinlestirme_sorusu"
+msgstr "hizmetinin açılışta otomatik başlamasını etkinleştiriyorsunuz.\nBu hizmet şu an arka planda çalışmıyor.\n\nAçılışta etkinleştirirken aynı zamanda şu anki oturumda hemen başlatmak ister misiniz?"
+
+msgid "filter_active"
+msgstr "Aktif"
+
+msgid "filter_all"
+msgstr "Tüm Durumlar"
+
+msgid "filter_disabled"
+msgstr "Devre Dışı"
+
+msgid "filter_inactive"
+msgstr "Pasif"
+
+msgid "filter_masked"
+msgstr "Maskeli"
+
+msgid "firmware"
+msgstr "Donanım (Firmware)"
+
+msgid "gecikme"
+msgstr "Gecikme"
+
+msgid "gecikme_guncellendi"
+msgstr "Gecikme süresi güncellendi."
+
+msgid "gecis_yapiyor"
+msgstr "Geçiş Yapıyor"
+
+msgid "geri_yukle"
+msgstr "Geri Yükle"
+
+msgid "geri_yukleme_basarili"
+msgstr "Seçilen yedek başarıyla geri yüklendi. Sistemi yeniden başlatmanız gerekebilir."
+
+msgid "goz_at"
+msgstr "Göz At"
+
+msgid "guncelleme_denetle"
+msgstr "Güncelleştirmeleri Denetle"
+
+msgid "gunluk_kaydi"
+msgstr "Günlük Kaydı"
+
+msgid "hata"
+msgstr "Hata"
+
+msgid "hata_dosya_yok"
+msgstr "Hata: Dosya adı belirtilmedi."
+
+msgid "hata_log_yetki"
+msgstr "Logları görüntülemek için yetkilendirme gerekiyor..."
+
+msgid "hizlandirma_potansiyeli"
+msgstr "Hızlandırma Potansiyeli"
+
+msgid "hizmet_adi"
+msgstr "Hizmet Adı"
+
+msgid "hizmet_kapatiliyor"
+msgstr "hizmeti kapatılıyor..."
+
+msgid "hizmet_kapatma_dep"
+msgstr "Bu hizmeti kapatmak, ona bağımlı çalışan şu hizmetleri etkileyebilir:\n\n{dep_list_str}\n\nDevam etmek istiyor musunuz?"
+
+msgid "hizmet_kapatma_soru"
+msgstr "Hizmetini Kapatmak İstiyor musunuz?"
+
+msgid "hizmet_kurali"
+msgstr "hizmet kuralı"
+
+msgid "hizmet_kurallari_lbl"
+msgstr "Hizmet Kuralları:"
+
+msgid "hizmet_kurallari_sub"
+msgstr "Açık = Etkinleştirilir, Kapalı = Devre dışı bırakılır"
+
+msgid "hizmet_listesi_guncellendi"
+msgstr "Hizmet listesi güncellendi."
+
+msgid "hizmet_sayisi"
+msgstr "servis"
+
+msgid "hizmet_secilmedi"
+msgstr "Hizmet Seçilmedi"
+
+msgid "hizmet_secilmedi_desc"
+msgstr "Detayları görmek için listeden bir hizmet seçin."
+
+msgid "hizmetin_yedegi"
+msgstr "hizmetin yedeği"
+
+msgid "hizmetler_uygun_detay"
+msgstr "Hizmetlerin başlangıç durumları zaten bu profile uygun."
+
+msgid "ikisini_de_kapat"
+msgstr "İkisini de Kapat (Önerilen)"
+
+msgid "iptal"
+msgstr "İptal"
+
+msgid "islemci"
+msgstr "İşlemci"
+
+msgid "isletim_sistemi"
+msgstr "İşletim Sistemi"
+
+msgid "kap_hizmet_yok"
+msgstr "Kapatılacak hizmet bulunamadı."
+
+msgid "kapatma_sorusu"
+msgstr "hizmetinin açılışta otomatik başlamasını kapatıyorsunuz.\nBu hizmet şu an arka planda aktif/çalışır durumda.\n\nHem açılış ayarını kapatıp hem de çalışan süreci şimdi durdurmak ister misiniz?"
+
+msgid "kaydet"
+msgstr "Kaydet"
+
+msgid "kaydetme_hatasi"
+msgstr "Kaydetme hatası: "
+
+msgid "kernel"
+msgstr "Çekirdek (Kernel)"
+
+msgid "komut"
+msgstr "Komut"
+
+msgid "kritik_hizmet"
+msgstr "KRİTİK HİZMET"
+
+msgid "kritik_maske_uyarisi"
+msgstr "Bu hizmet sistem için KRİTİK olarak işaretlenmiştir. Maskelemeniz sistemin kararsız çalışmasına veya açılmamasına yol açabilir!"
+
+msgid "kritik_uyari"
+msgstr "Bu hizmet sistem için KRİTİK olarak işaretlenmiştir. Maskelemeniz sistemin kararsız çalışmasına veya açılmamasına yol açabilir!"
+
+msgid "kullanici_onerisi"
+msgstr "KULLANICI ÖNERİSİ"
+
+msgid "kullanici_ozel_profilleri"
+msgstr "Kullanıcı Özel Profilleri"
+
+msgid "lisans"
+msgstr "Lisans: GPLv3"
+
+msgid "loader"
+msgstr "Önyükleyici (Loader)"
+
+msgid "log_bulunamadi"
+msgstr "Bu hizmet için herhangi bir log kaydı bulunamadı."
+
+msgid "maske_sorusu"
+msgstr "hizmetini maskelemek istiyor musunuz?"
+
+msgid "maskele"
+msgstr "Maskele"
+
+msgid "maskelenmis_kapali"
+msgstr "Maskelenmiş (Kapalı)"
+
+msgid "maskeyi_kaldir"
+msgstr "Maskeyi Kaldır"
+
+msgid "mevcut_durumu_kaydet"
+msgstr "Mevcut Durumu Profil Olarak Kaydet"
+
+msgid "modem_desc"
+msgstr "Hücresel Modem Kontrolü"
+
+msgid "mysql_desc"
+msgstr "MySQL / MariaDB Veritabanı"
+
+msgid "no_autostart_apps"
+msgstr "Otomatik başlatılan uygulama bulunamadı."
+
+msgid "no_backups_found"
+msgstr "Oluşturulmuş geri yükleme noktası bulunamadı."
+
+msgid "no_custom_profiles"
+msgstr "Kayıtlı özel profil bulunamadı."
+
+msgid "oneri"
+msgstr "Öneri"
+
+msgid "onerilenler_kapatiliyor_bekleyin"
+msgstr "Önerilen hizmetler kapatılıyor, lütfen bekleyin..."
+
+msgid "opt_alt_bilgi"
+msgstr "Açılışı geciktiren ve kapatılması güvenli olan hizmetleri tek tıkla kapatarak hız kazanın."
+
+msgid "other"
+msgstr "Diğer"
+
+msgid "ozel_profil_olusturuldu"
+msgstr "Özel profil '{}' başarıyla oluşturuldu."
+
+msgid "ozel_profil_silindi"
+msgstr "Özel profil silindi."
+
+msgid "ozel_profilim"
+msgstr "Özel Profilim"
+
+msgid "pdf_acilis_ozeti"
+msgstr "1. Açılış Süresi Özeti"
+
+msgid "pdf_baslik"
+msgstr "Pardus Açılış Analiz Raporu"
+
+msgid "pdf_donanim_bilgileri"
+msgstr "2. Sistem Donanım ve Sürüm Bilgileri"
+
+msgid "pdf_footer"
+msgstr "Pardus Başlangıç Yöneticisi — Sistem Analiz Raporu"
+
+msgid "pdf_hatasi"
+msgstr "PDF Hatası: "
+
+msgid "pdf_kaydedildi"
+msgstr "PDF Raporu başarıyla oluşturuldu:"
+
+msgid "pdf_no_opt"
+msgstr "Aktif olarak kapatılması önerilen gereksiz hizmet bulunamadı. Sisteminiz en iyi durumda!"
+
+msgid "pdf_olustur"
+msgstr "PDF Raporu Oluştur"
+
+msgid "pdf_olusturuluyor"
+msgstr "PDF Raporu oluşturuluyor..."
+
+msgid "pdf_opt_onerileri"
+msgstr "4. Başlangıç Optimizasyonu Önerileri"
+
+msgid "pdf_sayfa_1_1"
+msgstr "Sayfa 1 / 1"
+
+msgid "pdf_sistem_ozeti"
+msgstr "1. Sistem Özeti"
+
+msgid "pdf_tamamlanamadi"
+msgstr "PDF oluşturma işlemi tamamlanamadı."
+
+msgid "pdf_tarih"
+msgstr "Oluşturulma Tarihi"
+
+msgid "pdf_yavas_hizmetler"
+msgstr "3. En Yavaş Başlayan 5 Hizmet"
+
+msgid "postgresql_desc"
+msgstr "PostgreSQL Veritabanı"
+
+msgid "prof_dev_desc"
+msgstr "Yazılım geliştiriciler için hazırlandı. Docker, SSH ve veritabanı servisleri otomatik olarak etkinleştirilir. Yazıcı gibi gereksiz servisler kapatılır."
+
+msgid "prof_dev_name"
+msgstr "Yazılımcı Modu"
+
+msgid "prof_min_desc"
+msgstr "Sistemi en hızlı ve hafif şekilde başlatmak için. Ağ ve temel sistem güvenliği dışındaki tüm ek servisler kapatılır. Pil tasarrufu sağlar."
+
+msgid "prof_min_name"
+msgstr "Minimum Servis Modu"
+
+msgid "prof_office_desc"
+msgstr "Ofis işleri ve günlük kullanım için ideal ayarlar. Yazıcı, bluetooth, ağ servisleri açık kalır."
+
+msgid "prof_office_name"
+msgstr "Ofis Modu"
+
+msgid "profil_adi_girin_hata"
+msgstr "Lütfen profil adı girin."
+
+msgid "profil_adi_lbl"
+msgstr "Profil Adı:"
+
+msgid "profil_adi_placeholder"
+msgstr "Örn: Yazılım & Ofis Karışık"
+
+msgid "profil_bagimlilik_uyarisi"
+msgstr "Profil Uygulama Bağımlılık Uyarısı"
+
+msgid "profil_basariyla_uygulandi"
+msgstr "Profil Başarıyla Uygulandı!"
+
+msgid "profil_okuma_hatasi"
+msgstr "Profil okuma hatası: "
+
+msgid "profil_uygula_aciklama"
+msgstr "Bu işlem sistem servislerinin başlangıç durumlarını toplu olarak düzenleyecektir."
+
+msgid "profil_uygula_bagimlilik_mesaji"
+msgstr "Bu profili uygulamak aşağıdaki aktif hizmetleri ve onlara bağlı servisleri etkileyebilir:"
+
+msgid "profil_uygula_soru"
+msgstr "profilini uygulamak istiyor musunuz?"
+
+msgid "profil_uygulama_hatasi"
+msgstr "Profil Uygulanırken Hata Oluştu"
+
+msgid "profil_uygulaniyor"
+msgstr "Profil Uygulanıyor"
+
+msgid "profil_uygulaniyor_bekleyin"
+msgstr "Hizmet profili uygulanıyor, lütfen bekleyin..."
+
+msgid "profil_zaten_uygulanmis"
+msgstr "Profil Zaten Uygulanmış"
+
+msgid "profili_kaydedildi"
+msgstr "profili kaydedildi."
+
+msgid "profili_kaydet_title"
+msgstr "Profili Kaydet"
+
+msgid "profili_uygula"
+msgstr "Profili Uygula"
+
+msgid "sadece_acilis_etkinlestir"
+msgstr "Sadece Başlangıçta Etkinleştir"
+
+msgid "sadece_baslangic_degistir"
+msgstr "Sadece Başlangıç Ayarını Değiştir"
+
+msgid "sadece_simdi_baslat"
+msgstr "Sadece Şimdi Başlat"
+
+msgid "sadece_simdi_durdur"
+msgstr "Sadece Şimdiki Süreci Durdur"
+
+msgid "saniye_kazan"
+msgstr "sn Kazan"
+
+msgid "search_placeholder"
+msgstr "Ara..."
+
+msgid "sec_gained_lbl"
+msgstr "saniye kazanılabilir!"
+
+msgid "sec_lbl"
+msgstr "saniye"
+
+msgid "secilen_servis_yok"
+msgstr "Bir servis seçin."
+
+msgid "secileni_geri_yukle"
+msgstr "Seçileni Geri Yükle"
+
+msgid "secileni_sil"
+msgstr "Seçileni Sil"
+
+msgid "services"
+msgstr "Hizmetler"
+
+msgid "side_analiz"
+msgstr "Başlangıç Analizi"
+
+msgid "side_autostart"
+msgstr "Otomatik Uygulamalar"
+
+msgid "side_hizmetler"
+msgstr "Sistem Hizmetleri"
+
+msgid "side_profiller"
+msgstr "Hizmet Profilleri"
+
+msgid "side_title_sub"
+msgstr "Başlangıç Yöneticisi"
+
+msgid "sifre_placeholder"
+msgstr "Yönetici şifresi"
+
+msgid "sifreyi_goster"
+msgstr "Şifreyi Göster"
+
+msgid "sil_onay_app"
+msgstr "Seçilen uygulamayı silmek istiyor musunuz?"
+
+msgid "silme_hatasi"
+msgstr "Silme hatası: "
+
+msgid "simdi_baslat"
+msgstr "Şimdi Başlat"
+
+msgid "simdi_baslat_ve_etkinlestir"
+msgstr "Şimdi Başlat ve Açılışta Etkinleştir"
+
+msgid "simdi_durdur"
+msgstr "Şimdi Durdur"
+
+msgid "simdiki_durum"
+msgstr "Şimdiki Durum"
+
+msgid "sistem_baslangic_analizi"
+msgstr "Sistem Başlangıç Analizi"
+
+msgid "sistem_bilgileri"
+msgstr "Sistem Bilgileri"
+
+msgid "sistem_geri_yukleme_noktalari"
+msgstr "Sistem Geri Yükleme Noktaları"
+
+msgid "sistem_optimize_edilmis"
+msgstr "Sisteminiz Zaten Optimize Edilmiş"
+
+msgid "sistem_uygun_durumda"
+msgstr "Sistem zaten bu profile uygun durumda."
+
+msgid "ssh_desc"
+msgstr "SSH Uzaktan Erişim"
+
+msgid "statik_sabit"
+msgstr "Statik (Sabit Ayar)"
+
+msgid "su_an_calisiyor"
+msgstr "Şu An Çalışıyor"
+
+msgid "su_an_durduruldu"
+msgstr "Şu An Durduruldu"
+
+msgid "subtitle"
+msgstr "Sistem Açılış Analiz ve Optimizasyon Aracı"
+
+msgid "sys_kernel"
+msgstr "Çekirdek:"
+
+msgid "sys_os"
+msgstr "Sistem:"
+
+msgid "sys_ram"
+msgstr "Bellek:"
+
+msgid "sys_uptime"
+msgstr "Çalışma:"
+
+msgid "tab_analiz"
+msgstr "Başlangıç Analizi"
+
+msgid "tab_custom_command"
+msgstr "Özel Komut Ekle"
+
+msgid "tab_desktop_apps"
+msgstr "Masaüstü Uygulamaları"
+
+msgid "tab_hizmetler"
+msgstr "Hizmet Yönetimi"
+
+msgid "tab_uygulamalar"
+msgstr "Uygulama Başlangıcı"
+
+msgid "tab_yedek"
+msgstr "Geri Yükleme Noktası"
+
+msgid "tahmini_kazanc"
+msgstr "Tahmini Kazanç"
+
+msgid "tarih_saat"
+msgstr "Tarih / Saat"
+
+msgid "tip_all"
+msgstr "Tüm Kategoriler"
+
+msgid "tip_critical"
+msgstr "Kapatılmamalı"
+
+msgid "tip_required"
+msgstr "Gerekli"
+
+msgid "tip_suggestion"
+msgstr "Kapatılabilir"
+
+msgid "title"
+msgstr "Pardus Başlangıç Yöneticisi"
+
+msgid "toplam_acilis"
+msgstr "Toplam Açılış Süresi"
+
+msgid "tum_onerilenleri_kapat"
+msgstr "Tüm Önerilenleri Kapat"
+
+msgid "tur"
+msgstr "Tür"
+
+msgid "userspace"
+msgstr "Kullanıcı Alanı (Userspace)"
+
+msgid "uyg_ekle_ad_bos"
+msgstr "Hata: Uygulama adı boş olamaz."
+
+msgid "uyg_ekle_komut_bos"
+msgstr "Hata: Komut alanı boş olamaz."
+
+msgid "uygula"
+msgstr "Uygula"
+
+msgid "uygulama_adi"
+msgstr "Uygulama Adı"
+
+msgid "uygulama_aktiflik_guncellendi"
+msgstr "Uygulama aktiflik durumu güncellendi."
+
+msgid "uygulama_duzenle"
+msgstr "Uygulama Düzenle"
+
+msgid "uygulama_kaldirildi"
+msgstr "Uygulama listeden kaldırıldı."
+
+msgid "ve_daha_fazla_hizmet"
+msgstr "ve {} hizmet daha..."
+
+msgid "view_devices"
+msgstr "Aygıt Birimleri (.device)"
+
+msgid "view_others"
+msgstr "Diğerleri (Socket, Target, Mount)"
+
+msgid "view_services"
+msgstr "Servisler (.service)"
+
+msgid "yazici_kullanimi"
+msgstr "Yazıcı kullanmıyorsanız kapatılabilir."
+
+msgid "yazilim_guncelleme"
+msgstr "Yazılım güncellemeleri kontrol ediliyor..."
+
+msgid "yedek_adi_girin"
+msgstr "Geri yükleme noktası adı girin:"
+
+msgid "yedek_basarili"
+msgstr "Geri yükleme noktası başarıyla oluşturuldu."
+
+msgid "yedek_bulunamadi"
+msgstr "Yedek bulunamadı."
+
+msgid "yedek_don_aciklama"
+msgstr "Bu işlem sistem servislerinin başlangıç durumlarını yedeğin alındığı tarihteki durumuna geri yükleyecektir."
+
+msgid "yedek_don_soru"
+msgstr "Yedek Noktasına Dönmek İstiyor musunuz?"
+
+msgid "yedek_geri_yukleniyor"
+msgstr "Yedek Geri Yükleniyor"
+
+msgid "yedek_noktalari"
+msgstr "Geri Yükleme Noktaları"
+
+msgid "yedek_noktasi_silindi"
+msgstr "Yedek noktası silindi."
+
+msgid "yedek_olustur"
+msgstr "Geri Yükleme Noktası Oluştur"
+
+msgid "yedek_olusturuldu"
+msgstr "Geri yükleme noktası oluşturuldu."
+
+msgid "yedek_sil_soru"
+msgstr "Yedek Noktasını Silmek İstiyor musunuz?"
+
+msgid "yedek_silindi"
+msgstr "Seçilen yedek başarıyla silindi."
+
+msgid "yedek_yukleniyor_bekleyin"
+msgstr "Sistem yedeği geri yükleniyor, lütfen bekleyin..."
+
+msgid "yeni_ozel_profil_btn"
+msgstr "Yeni Özel Profil Oluştur"
+
+msgid "yeni_profil_adi_girin"
+msgstr "Yeni profil adı girin:"
+
+msgid "yeni_uygulama_ekle_btn"
+msgstr "+ Uygulama Ekle"
+
+msgid "yeni_uygulamalar"
+msgstr "Yeni Uygulama Ekle"
+
+msgid "yeni_yedek_noktasi_btn"
+msgstr "Yeni Geri Yükleme Noktası Oluştur"
+
+msgid "yenile"
+msgstr "Yenile"
+
+msgid "yetki_alt_bilgi"
+msgstr "Sistem hizmetlerini yönetmek için yönetici (sudo) şifrenizi girin."
+
+msgid "yetki_gerekiyor"
+msgstr "Yönetici Yetkisi Gerekiyor"
+
+msgid "yetki_iptal"
+msgstr "Yetkilendirme iptal edildi."
+
+msgid "yetki_yok"
+msgstr "Logları okuma yetkiniz bulunmuyor.\n\nLogları görüntülemek için yönetici şifrenizi girmeniz gerekmektedir."
+
+msgid "yetkilendir"
+msgstr "Yetkilendir"
+
+msgid "yetkilendirildi"
+msgstr "Yetkilendirildi, loglar yükleniyor..."
+

@@ -14,6 +14,7 @@ mkdir -p "$APP_DIR/usr/share/icons/hicolor/48x48/apps"
 cp -r main.py "$APP_DIR/usr/share/$PKG_NAME/"
 cp -r src "$APP_DIR/usr/share/$PKG_NAME/"
 cp -r ui "$APP_DIR/usr/share/$PKG_NAME/"
+cp -r locale "$APP_DIR/usr/share/$PKG_NAME/"
 cp pardus-boot-analyzer.svg "$APP_DIR/usr/share/$PKG_NAME/"
 
 # Remove pycache

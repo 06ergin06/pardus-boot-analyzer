@@ -435,22 +435,28 @@ class Controller:
         sidebar_box.pack_start(self.sidebar_listbox, False, False, 0)
 
         items = [
-            ("📊  " + tr("side_analiz"), "analiz"),
-            ("🚀  " + tr("side_autostart"), "autostart"),
-            ("⚙️  " + tr("side_hizmetler"), "hizmetler"),
-            ("👤  " + tr("side_profiller"), "profiller")
+            ("utilities-system-monitor-symbolic", tr("side_analiz"), "analiz"),
+            ("system-run-symbolic", tr("side_autostart"), "autostart"),
+            ("preferences-system-symbolic", tr("side_hizmetler"), "hizmetler"),
+            ("avatar-default-symbolic", tr("side_profiller"), "profiller")
         ]
         
-        for text, name in items:
+        for icon_name, text, name in items:
             row = Gtk.ListBoxRow()
             row.get_style_context().add_class("sidebar-row")
             
-            box_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+            box_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            
+            img = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.MENU)
+            img.set_valign(Gtk.Align.CENTER)
+            box_row.pack_start(img, False, False, 0)
+            
             lbl = Gtk.Label(xalign=0)
             lbl.get_style_context().add_class("sidebar-item-label")
             lbl.set_text(text)
-            
+            lbl.set_valign(Gtk.Align.CENTER)
             box_row.pack_start(lbl, True, True, 0)
+            
             row.add(box_row)
             self.sidebar_listbox.add(row)
 

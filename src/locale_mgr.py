@@ -36,7 +36,7 @@ def save_lang_pref(lang):
     except Exception:
         pass
 
-TRANSLATIONS = {
+FALLBACK_DICT = {
     "tr": {
         "title": "Pardus Başlangıç Yöneticisi",
         "subtitle": "Sistem Açılış Analiz ve Optimizasyon Aracı",
@@ -529,7 +529,34 @@ TRANSLATIONS = {
     }
 }
 
+# Initialize gettext
+import gettext
+current_dir = os.path.dirname(os.path.abspath(__file__))
+locale_dir = os.path.join(os.path.dirname(current_dir), "locale")
+
+try:
+    # Load translation catalog
+    translation = gettext.translation("messages", localedir=locale_dir, languages=[LANG], fallback=True)
+    _tr = translation.gettext
+except Exception:
+    _tr = lambda x: x
+
 def tr(key):
-    lang_dict = TRANSLATIONS.get(LANG, TRANSLATIONS["tr"])
-    val = lang_dict.get(key, TRANSLATIONS["tr"].get(key, key))
-    return val
+    try:
+        val = _tr(key)
+        # If translation key itself was returned, fallback to built-in static dictionary
+        if val == key:
+            lang_dict = FALLBACK_DICT.get(LANG, FALLBACK_DICT["tr"])
+            return lang_dict.get(key, FALLBACK_DICT["tr"].get(key, key))
+            
+        # Dynamically restore leading/trailing newlines to match fallback catalog expectations
+        orig_val = FALLBACK_DICT["tr"].get(key, "")
+        if orig_val:
+            if orig_val.startswith("\n") and not val.startswith("\n"):
+                val = "\n" + val
+            if orig_val.endswith("\n") and not val.endswith("\n"):
+                val = val + "\n"
+        return val
+    except Exception:
+        lang_dict = FALLBACK_DICT.get(LANG, FALLBACK_DICT["tr"])
+        return lang_dict.get(key, FALLBACK_DICT["tr"].get(key, key))

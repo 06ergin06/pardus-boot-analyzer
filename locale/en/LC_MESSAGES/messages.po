@@ -1,0 +1,747 @@
+# English translations for Pardus Boot Analyzer.
+# Copyright (C) 2026 İbrahim Hakkı Ergin
+# This file is distributed under the same license as the pardus-boot-analyzer package.
+# İbrahim Hakkı Ergin <ibrahimh.ergin@gmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pardus-boot-analyzer 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-10 21:00+0300\n"
+"PO-Revision-Date: 2026-07-10 21:00+0300\n"
+"Last-Translator: İbrahim Hakkı Ergin <ibrahimh.ergin@gmail.com>\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "about"
+msgstr "About"
+
+msgid "about_comments"
+msgstr "Pardus Boot Analyzer and Optimization Tool"
+
+msgid "aciklama"
+msgstr "Description"
+
+msgid "aciklama_yok"
+msgstr "No description available."
+
+msgid "acilis_ayari"
+msgstr "Boot Config"
+
+msgid "acilis_calisacak"
+msgstr "Will Start at Boot"
+
+msgid "acilis_calismayacak"
+msgstr "Will Not Start at Boot"
+
+msgid "acilis_calistir"
+msgstr "Start at Boot"
+
+msgid "acilis_calistirma"
+msgstr "Don't Start"
+
+msgid "acilis_kapatma_dep"
+msgstr "Disabling this service at boot might affect the following dependent services:\n\n{dep_list_str}\n\nDo you want to proceed?"
+
+msgid "acilis_kapatma_soru"
+msgstr "Do you want to disable this service at boot?"
+
+msgid "acilis_suresi"
+msgstr "Boot Time"
+
+msgid "acilis_suresi_ozeti"
+msgstr "Boot Time Summary"
+
+msgid "adi"
+msgstr "Name"
+
+msgid "analiz_alt_bilgi"
+msgstr "Analyze your system boot time and manage recommended services safely."
+
+msgid "autostart_subtitle"
+msgstr "Manage applications configured to start automatically when your session begins."
+
+msgid "avahi_desc"
+msgstr "Local Network Discovery (Avahi)"
+
+msgid "bagimliliklar"
+msgstr "Dependencies"
+
+msgid "basariyla_kapatildi"
+msgstr "successfully disabled."
+
+msgid "baslangic_optimizasyonu"
+msgstr "Boot Optimization"
+
+msgid "baslangica_eklendi"
+msgstr "added to startup applications."
+
+msgid "baslatma_sorusu"
+msgstr "starting this service in the current session.\nThis service is not configured to run at boot.\n\nDo you want to both start it now and enable it for future boots?"
+
+msgid "bellek"
+msgstr "Memory"
+
+msgid "bilgi_ipucu"
+msgstr "<b>Info:</b> <i>Boot Setup</i> determines if the service runs automatically when the computer starts; <i>Current State</i> indicates if it is currently active in the background."
+
+msgid "bluetooth_desc"
+msgstr "Bluetooth Support"
+
+msgid "cekirdek_surumu"
+msgstr "Kernel Version"
+
+msgid "cift_yon_baslatma"
+msgstr "Dual Action Suggestion (Start)"
+
+msgid "cift_yon_durdurma"
+msgstr "Dual Action Suggestion (Stop)"
+
+msgid "cift_yon_etkinlestirme"
+msgstr "Dual Action Suggestion (Enable)"
+
+msgid "cift_yon_kapatma"
+msgstr "Dual Action Suggestion (Disable)"
+
+msgid "comp_firmware"
+msgstr "Firmware"
+
+msgid "comp_initrd"
+msgstr "Initrd (Early Boot)"
+
+msgid "comp_kernel"
+msgstr "Kernel"
+
+msgid "comp_loader"
+msgstr "Loader"
+
+msgid "comp_userspace"
+msgstr "Userspace"
+
+msgid "cups_browsed_desc"
+msgstr "Network Printer Discoverer"
+
+msgid "cups_service_desc"
+msgstr "Printer Service (CUPS)"
+
+msgid "degistirilemez"
+msgstr "Immutable"
+
+msgid "devices"
+msgstr "Devices"
+
+msgid "diger_islemler"
+msgstr "Other Operations"
+
+msgid "dolayli_indirekt"
+msgstr "Indirect"
+
+msgid "durdurma_sorusu"
+msgstr "stopping this service in the current session.\nThis service is configured to run at boot.\n\nDo you want to both stop it now and disable it for future boots?"
+
+msgid "durum"
+msgstr "State"
+
+msgid "durum_bilinmiyor"
+msgstr "Unknown state"
+
+msgid "etkinlestirme_sorusu"
+msgstr "enabling autostart for this service.\nThis service is not currently running.\n\nDo you want to both enable it and start it now?"
+
+msgid "filter_active"
+msgstr "Active"
+
+msgid "filter_all"
+msgstr "All States"
+
+msgid "filter_disabled"
+msgstr "Disabled"
+
+msgid "filter_inactive"
+msgstr "Inactive"
+
+msgid "filter_masked"
+msgstr "Masked"
+
+msgid "firmware"
+msgstr "Hardware (Firmware)"
+
+msgid "gecikme"
+msgstr "Delay"
+
+msgid "gecikme_guncellendi"
+msgstr "Delay time updated."
+
+msgid "gecis_yapiyor"
+msgstr "Transitioning"
+
+msgid "geri_yukle"
+msgstr "Restore"
+
+msgid "geri_yukleme_basarili"
+msgstr "Selected backup successfully restored. You may need to restart the system."
+
+msgid "goz_at"
+msgstr "Browse"
+
+msgid "guncelleme_denetle"
+msgstr "Check for Updates"
+
+msgid "gunluk_kaydi"
+msgstr "Logs"
+
+msgid "hata"
+msgstr "Error"
+
+msgid "hata_dosya_yok"
+msgstr "Error: Filename not specified."
+
+msgid "hata_log_yetki"
+msgstr "Authentication required to view logs..."
+
+msgid "hizlandirma_potansiyeli"
+msgstr "Speed-up Potential"
+
+msgid "hizmet_adi"
+msgstr "Service Name"
+
+msgid "hizmet_kapatiliyor"
+msgstr "service is disabling..."
+
+msgid "hizmet_kapatma_dep"
+msgstr "Disabling this service might affect the following dependent services:\n\n{dep_list_str}\n\nDo you want to proceed?"
+
+msgid "hizmet_kapatma_soru"
+msgstr "Do you want to disable this service?"
+
+msgid "hizmet_kurali"
+msgstr "service rules"
+
+msgid "hizmet_kurallari_lbl"
+msgstr "Service Rules:"
+
+msgid "hizmet_kurallari_sub"
+msgstr "On = Enabled, Off = Disabled"
+
+msgid "hizmet_listesi_guncellendi"
+msgstr "Service list updated."
+
+msgid "hizmet_sayisi"
+msgstr "services"
+
+msgid "hizmet_secilmedi"
+msgstr "No Service Selected"
+
+msgid "hizmet_secilmedi_desc"
+msgstr "Select a service from the list to view details."
+
+msgid "hizmetin_yedegi"
+msgstr "services backed up"
+
+msgid "hizmetler_uygun_detay"
+msgstr "The services startup configuration already matches this profile."
+
+msgid "ikisini_de_kapat"
+msgstr "Close Both (Recommended)"
+
+msgid "iptal"
+msgstr "Cancel"
+
+msgid "islemci"
+msgstr "Processor"
+
+msgid "isletim_sistemi"
+msgstr "Operating System"
+
+msgid "kap_hizmet_yok"
+msgstr "No services to disable found."
+
+msgid "kapatma_sorusu"
+msgstr "disabling autostart for this service.\nThis service is currently running in the background.\n\nDo you want to both disable it at boot and stop it now?"
+
+msgid "kaydet"
+msgstr "Save"
+
+msgid "kaydetme_hatasi"
+msgstr "Saving error: "
+
+msgid "kernel"
+msgstr "Kernel"
+
+msgid "komut"
+msgstr "Command"
+
+msgid "kritik_hizmet"
+msgstr "CRITICAL SERVICE"
+
+msgid "kritik_maske_uyarisi"
+msgstr "This service is marked as CRITICAL for the system. Masking it might lead to system instability or boot failure!"
+
+msgid "kritik_uyari"
+msgstr "This service is marked as CRITICAL for the system. Masking it might make your system unstable or unbootable!"
+
+msgid "kullanici_onerisi"
+msgstr "USER SUGGESTION"
+
+msgid "kullanici_ozel_profilleri"
+msgstr "User Custom Profiles"
+
+msgid "lisans"
+msgstr "License: GPLv3"
+
+msgid "loader"
+msgstr "Bootloader (Loader)"
+
+msgid "log_bulunamadi"
+msgstr "No log records found for this service."
+
+msgid "maske_sorusu"
+msgstr "Do you want to mask this service?"
+
+msgid "maskele"
+msgstr "Mask"
+
+msgid "maskelenmis_kapali"
+msgstr "Masked (Off)"
+
+msgid "maskeyi_kaldir"
+msgstr "Unmask"
+
+msgid "mevcut_durumu_kaydet"
+msgstr "Save Current State as Profile"
+
+msgid "modem_desc"
+msgstr "Cellular Modem Controller"
+
+msgid "mysql_desc"
+msgstr "MySQL / MariaDB Database"
+
+msgid "no_autostart_apps"
+msgstr "No startup applications found."
+
+msgid "no_backups_found"
+msgstr "No restore points found."
+
+msgid "no_custom_profiles"
+msgstr "No custom profiles found."
+
+msgid "oneri"
+msgstr "Suggestion"
+
+msgid "onerilenler_kapatiliyor_bekleyin"
+msgstr "Disabling recommended services, please wait..."
+
+msgid "opt_alt_bilgi"
+msgstr "Speed up boot by disabling unnecessary services with a single click."
+
+msgid "other"
+msgstr "Other"
+
+msgid "ozel_profil_olusturuldu"
+msgstr "Custom profile '{}' successfully created."
+
+msgid "ozel_profil_silindi"
+msgstr "Custom profile deleted."
+
+msgid "ozel_profilim"
+msgstr "My Custom Profile"
+
+msgid "pdf_acilis_ozeti"
+msgstr "1. Boot Time Summary"
+
+msgid "pdf_baslik"
+msgstr "Pardus Boot Analysis Report"
+
+msgid "pdf_donanim_bilgileri"
+msgstr "2. System Hardware and Version Info"
+
+msgid "pdf_footer"
+msgstr "Pardus Boot Manager — System Analysis Report"
+
+msgid "pdf_hatasi"
+msgstr "PDF Error: "
+
+msgid "pdf_kaydedildi"
+msgstr "PDF Report successfully generated at:"
+
+msgid "pdf_no_opt"
+msgstr "No active unnecessary services recommended to disable. Your system is in optimal state!"
+
+msgid "pdf_olustur"
+msgstr "Generate PDF Report"
+
+msgid "pdf_olusturuluyor"
+msgstr "Generating PDF Report..."
+
+msgid "pdf_opt_onerileri"
+msgstr "4. Boot Optimization Suggestions"
+
+msgid "pdf_sayfa_1_1"
+msgstr "Page 1 / 1"
+
+msgid "pdf_sistem_ozeti"
+msgstr "1. System Summary"
+
+msgid "pdf_tamamlanamadi"
+msgstr "PDF generation could not be completed."
+
+msgid "pdf_tarih"
+msgstr "Generation Date"
+
+msgid "pdf_yavas_hizmetler"
+msgstr "3. Top 5 Slowest Services"
+
+msgid "postgresql_desc"
+msgstr "PostgreSQL Database"
+
+msgid "prof_dev_desc"
+msgstr "Designed for software developers. Docker, SSH, and database services are automatically enabled. Unnecessary services like printers are disabled."
+
+msgid "prof_dev_name"
+msgstr "Developer Mode"
+
+msgid "prof_min_desc"
+msgstr "To boot the system as fast and lightweight as possible. Disables all additional services except network and basic system security. Saves laptop battery."
+
+msgid "prof_min_name"
+msgstr "Minimum Services"
+
+msgid "prof_office_desc"
+msgstr "Ideal settings for office tasks and daily use. Printer, Bluetooth, and network services remain enabled."
+
+msgid "prof_office_name"
+msgstr "Office Mode"
+
+msgid "profil_adi_girin_hata"
+msgstr "Please enter a profile name."
+
+msgid "profil_adi_lbl"
+msgstr "Profile Name:"
+
+msgid "profil_adi_placeholder"
+msgstr "e.g., Code & Office Mix"
+
+msgid "profil_bagimlilik_uyarisi"
+msgstr "Profile Application Dependency Warning"
+
+msgid "profil_basariyla_uygulandi"
+msgstr "Profile Applied Successfully!"
+
+msgid "profil_okuma_hatasi"
+msgstr "Profile reading error: "
+
+msgid "profil_uygula_aciklama"
+msgstr "This action will apply boot configuration presets to multiple system services."
+
+msgid "profil_uygula_bagimlilik_mesaji"
+msgstr "Applying this profile might affect the following active and dependent services:"
+
+msgid "profil_uygula_soru"
+msgstr "profile?"
+
+msgid "profil_uygulama_hatasi"
+msgstr "Error Occurred While Applying Profile"
+
+msgid "profil_uygulaniyor"
+msgstr "Applying Profile"
+
+msgid "profil_uygulaniyor_bekleyin"
+msgstr "Applying service profile, please wait..."
+
+msgid "profil_zaten_uygulanmis"
+msgstr "Profile Already Applied"
+
+msgid "profili_kaydedildi"
+msgstr "profile saved."
+
+msgid "profili_kaydet_title"
+msgstr "Save Profile"
+
+msgid "profili_uygula"
+msgstr "Apply Profile"
+
+msgid "sadece_acilis_etkinlestir"
+msgstr "Only Enable at Boot"
+
+msgid "sadece_baslangic_degistir"
+msgstr "Only Change Boot Config"
+
+msgid "sadece_simdi_baslat"
+msgstr "Only Start Now"
+
+msgid "sadece_simdi_durdur"
+msgstr "Only Stop Current Runtime"
+
+msgid "saniye_kazan"
+msgstr "sec Gain"
+
+msgid "search_placeholder"
+msgstr "Search..."
+
+msgid "sec_gained_lbl"
+msgstr "seconds can be saved!"
+
+msgid "sec_lbl"
+msgstr "seconds"
+
+msgid "secilen_servis_yok"
+msgstr "Select a service."
+
+msgid "secileni_geri_yukle"
+msgstr "Restore Selected"
+
+msgid "secileni_sil"
+msgstr "Delete Selected"
+
+msgid "services"
+msgstr "Services"
+
+msgid "side_analiz"
+msgstr "Boot Analysis"
+
+msgid "side_autostart"
+msgstr "Startup Applications"
+
+msgid "side_hizmetler"
+msgstr "System Services"
+
+msgid "side_profiller"
+msgstr "Service Profiles"
+
+msgid "side_title_sub"
+msgstr "Boot Manager"
+
+msgid "sifre_placeholder"
+msgstr "Administrator password"
+
+msgid "sifreyi_goster"
+msgstr "Show Password"
+
+msgid "sil_onay_app"
+msgstr "Are you sure you want to delete the selected application?"
+
+msgid "silme_hatasi"
+msgstr "Deletion error: "
+
+msgid "simdi_baslat"
+msgstr "Start Now"
+
+msgid "simdi_baslat_ve_etkinlestir"
+msgstr "Start Now & Enable at Boot"
+
+msgid "simdi_durdur"
+msgstr "Stop Now"
+
+msgid "simdiki_durum"
+msgstr "Current State"
+
+msgid "sistem_baslangic_analizi"
+msgstr "System Boot Analysis"
+
+msgid "sistem_bilgileri"
+msgstr "System Information"
+
+msgid "sistem_geri_yukleme_noktalari"
+msgstr "System Restore Points"
+
+msgid "sistem_optimize_edilmis"
+msgstr "Your System is Already Optimized"
+
+msgid "sistem_uygun_durumda"
+msgstr "The system boot configuration already matches this profile."
+
+msgid "ssh_desc"
+msgstr "SSH Remote Access"
+
+msgid "statik_sabit"
+msgstr "Static (Fixed)"
+
+msgid "su_an_calisiyor"
+msgstr "Running"
+
+msgid "su_an_durduruldu"
+msgstr "Stopped"
+
+msgid "subtitle"
+msgstr "System Boot Analysis and Optimization Tool"
+
+msgid "sys_kernel"
+msgstr "Kernel:"
+
+msgid "sys_os"
+msgstr "OS:"
+
+msgid "sys_ram"
+msgstr "RAM:"
+
+msgid "sys_uptime"
+msgstr "Uptime:"
+
+msgid "tab_analiz"
+msgstr "Boot Analysis"
+
+msgid "tab_custom_command"
+msgstr "Add Custom Command"
+
+msgid "tab_desktop_apps"
+msgstr "Desktop Applications"
+
+msgid "tab_hizmetler"
+msgstr "Service Management"
+
+msgid "tab_uygulamalar"
+msgstr "Startup Applications"
+
+msgid "tab_yedek"
+msgstr "Restore Point"
+
+msgid "tahmini_kazanc"
+msgstr "Estimated Savings"
+
+msgid "tarih_saat"
+msgstr "Date / Time"
+
+msgid "tip_all"
+msgstr "All Categories"
+
+msgid "tip_critical"
+msgstr "Do Not Disable"
+
+msgid "tip_required"
+msgstr "Required"
+
+msgid "tip_suggestion"
+msgstr "Can Be Disabled"
+
+msgid "title"
+msgstr "Pardus Boot Manager"
+
+msgid "toplam_acilis"
+msgstr "Total Boot Time"
+
+msgid "tum_onerilenleri_kapat"
+msgstr "Disable All Recommended"
+
+msgid "tur"
+msgstr "Type"
+
+msgid "userspace"
+msgstr "Userspace"
+
+msgid "uyg_ekle_ad_bos"
+msgstr "Error: Application name cannot be empty."
+
+msgid "uyg_ekle_komut_bos"
+msgstr "Error: Command field cannot be empty."
+
+msgid "uygula"
+msgstr "Apply"
+
+msgid "uygulama_adi"
+msgstr "Application Name"
+
+msgid "uygulama_aktiflik_guncellendi"
+msgstr "Application autostart state updated."
+
+msgid "uygulama_duzenle"
+msgstr "Edit Application"
+
+msgid "uygulama_kaldirildi"
+msgstr "Application removed from list."
+
+msgid "ve_daha_fazla_hizmet"
+msgstr "and {} more services..."
+
+msgid "view_devices"
+msgstr "Device Units (.device)"
+
+msgid "view_others"
+msgstr "Others (Socket, Target, Mount)"
+
+msgid "view_services"
+msgstr "Services (.service)"
+
+msgid "yazici_kullanimi"
+msgstr "Can be disabled if you do not use a printer."
+
+msgid "yazilim_guncelleme"
+msgstr "Checking for software updates..."
+
+msgid "yedek_adi_girin"
+msgstr "Enter restore point name:"
+
+msgid "yedek_basarili"
+msgstr "Restore point successfully created."
+
+msgid "yedek_bulunamadi"
+msgstr "No backups found."
+
+msgid "yedek_don_aciklama"
+msgstr "This action will restore system services configuration to the exact state when the backup was created."
+
+msgid "yedek_don_soru"
+msgstr "Do you want to restore to this backup point?"
+
+msgid "yedek_geri_yukleniyor"
+msgstr "Restoring Backup"
+
+msgid "yedek_noktalari"
+msgstr "Restore Points"
+
+msgid "yedek_noktasi_silindi"
+msgstr "Restore point deleted."
+
+msgid "yedek_olustur"
+msgstr "Create Restore Point"
+
+msgid "yedek_olusturuldu"
+msgstr "Restore point created."
+
+msgid "yedek_sil_soru"
+msgstr "Are you sure you want to delete this restore point?"
+
+msgid "yedek_silindi"
+msgstr "Selected backup successfully deleted."
+
+msgid "yedek_yukleniyor_bekleyin"
+msgstr "Restoring system backup, please wait..."
+
+msgid "yeni_ozel_profil_btn"
+msgstr "Create New Custom Profile"
+
+msgid "yeni_profil_adi_girin"
+msgstr "Enter new profile name:"
+
+msgid "yeni_uygulama_ekle_btn"
+msgstr "+ Add Application"
+
+msgid "yeni_uygulamalar"
+msgstr "Add New Application"
+
+msgid "yeni_yedek_noktasi_btn"
+msgstr "Create New Restore Point"
+
+msgid "yenile"
+msgstr "Refresh"
+
+msgid "yetki_alt_bilgi"
+msgstr "Please enter your administrator (sudo) password to manage system services."
+
+msgid "yetki_gerekiyor"
+msgstr "Administrator Privileges Required"
+
+msgid "yetki_iptal"
+msgstr "Authorization cancelled."
+
+msgid "yetki_yok"
+msgstr "You do not have permission to read logs.\n\nYou must enter your administrator password to view logs."
+
+msgid "yetkilendir"
+msgstr "Authorize"
+
+msgid "yetkilendirildi"
+msgstr "Authorized, loading logs..."
+
