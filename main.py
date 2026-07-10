@@ -115,9 +115,7 @@ class PardusBootManager:
         except Exception:
             img_logo = Gtk.Image.new_from_icon_name("utilities-system-monitor", Gtk.IconSize.MENU)
             
-        img_logo.set_margin_start(10)
-        img_logo.set_margin_end(6)
-        hb.pack_start(img_logo)
+        hb.set_custom_title(img_logo)
         
         # Add About button to HeaderBar
         btn_about = Gtk.Button()
