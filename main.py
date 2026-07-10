@@ -92,5 +92,32 @@ class PardusBootManager:
         os.execv(sys.executable, [sys.executable] + sys.argv)
 
 if __name__ == "__main__":
+    # If the system has no GTK theme configured (falls back to Raleigh or Default),
+    # force the built-in Adwaita theme to ensure a clean layout on minimal platforms (Hyprland, i3, etc.).
+    try:
+        settings = Gtk.Settings.get_default()
+        if settings:
+            theme_name = settings.get_property("gtk-theme-name")
+            if not theme_name or theme_name.lower() in ("raleigh", "default"):
+                is_dark = False
+                try:
+                    import subprocess
+                    out = subprocess.check_output(
+                        ["dbus-send", "--print-reply", "--dest=org.freedesktop.portal.Desktop",
+                         "/org/freedesktop/portal/desktop", "org.freedesktop.portal.Settings.Read",
+                         "string:org.freedesktop.appearance", "string:color-scheme"],
+                        stderr=subprocess.DEVNULL, timeout=1
+                    ).decode("utf-8")
+                    if "uint32 1" in out:
+                        is_dark = True
+                except Exception:
+                    pass
+                
+                settings.set_property("gtk-theme-name", "Adwaita")
+                if is_dark:
+                    settings.set_property("gtk-application-prefer-dark-theme", True)
+    except Exception:
+        pass
+
     app = PardusBootManager()
     Gtk.main()
