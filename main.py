@@ -95,12 +95,6 @@ class PardusBootManager:
         current_dir = os.path.dirname(os.path.abspath(__file__))
         icon_path = os.path.join(current_dir, "pardus-boot-analyzer.svg")
         
-        # Set window icon (taskbar/dock/window manager icon)
-        try:
-            self.window.set_icon_from_file(icon_path)
-        except Exception:
-            pass
-        
         # Construct HeaderBar matching native Pardus design
         hb = Gtk.HeaderBar()
         hb.set_show_close_button(True)
@@ -108,14 +102,16 @@ class PardusBootManager:
         # instead displaying the logo as the main branding element on the top left.
         self.window.set_titlebar(hb)
         
-        # Load logo for HeaderBar using Pixbuf to handle SVG scaling cleanly
+        # Load logo for HeaderBar using Pixbuf to handle SVG scaling cleanly and pack on the left
         try:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(icon_path, 28, 28, True)
             img_logo = Gtk.Image.new_from_pixbuf(pixbuf)
         except Exception:
             img_logo = Gtk.Image.new_from_icon_name("utilities-system-monitor", Gtk.IconSize.MENU)
             
-        hb.set_custom_title(img_logo)
+        img_logo.set_margin_start(6)
+        img_logo.set_margin_end(6)
+        hb.pack_start(img_logo)
         
         # Add About button to HeaderBar
         btn_about = Gtk.Button()
