@@ -435,7 +435,7 @@ class Controller:
         sidebar_box.pack_start(self.sidebar_listbox, False, False, 0)
 
         items = [
-            ("utilities-system-monitor-symbolic", tr("side_analiz"), "analiz"),
+            ("dialog-information-symbolic", tr("side_analiz"), "analiz"),
             ("system-run-symbolic", tr("side_autostart"), "autostart"),
             ("preferences-system-symbolic", tr("side_hizmetler"), "hizmetler"),
             ("avatar-default-symbolic", tr("side_profiller"), "profiller")
