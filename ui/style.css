@@ -15,7 +15,7 @@ window {
 .sidebar-title {
     font-size: 14pt;
     font-weight: 800;
-    color: @theme_selected_bg_color;
+    color: #f1b82d;
     margin-bottom: 2px;
 }
 
