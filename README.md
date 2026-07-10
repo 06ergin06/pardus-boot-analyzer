@@ -8,6 +8,13 @@ Pardus Başlangıç Yöneticisi, sisteminizin açılış süresini analiz etmek,
 
 Pardus Boot Analyzer is a desktop application developed to analyze your system's boot time and optimize unnecessary services and applications running at startup.
 
+### Proje Hakkında / About the Project
+*TR:* Bu uygulama, bağımsız bir geliştirici tarafından 2026 TEKNOFEST Pardus Hata Yakalama ve Öneri Yarışması kapsamında Geliştirme Kategorisi için hazırlanmıştır.
+*EN:* This application was developed independently for the 2026 TEKNOFEST Pardus Bug Catching and Suggestion Competition under the Development Category.
+
+### Geliştirici / Developer
+* [**İbrahim Hakkı Ergin**](https://github.com/06ergin06)
+
 ### Ekran Görüntüleri / Screenshots
 
 | Sayfa / Page | Açık Tema (Light Mode) | Koyu Tema (Dark Mode) |
@@ -140,3 +147,6 @@ To compile and package the project:
 ./build_deb.sh
 ./build_appimage.sh
 ```
+
+### Lisans / License
+Bu proje [GPL-3.0 Lisansı](LICENSE) altında lisanslanmıştır. / This project is licensed under the [GPL-3.0 License](LICENSE).
