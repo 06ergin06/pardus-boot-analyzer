@@ -10,10 +10,12 @@ Pardus Boot Analyzer is a desktop application developed to analyze your system's
 
 ### Ekran Görüntüleri / Screenshots
 
-| Açık Tema (Light Mode) | Koyu Tema (Dark Mode) |
-| :---: | :---: |
-| ![Light Mode Entry](screenshots/light%20mode%20entry.png) | ![Dark Mode Entry](screenshots/dark%20mode%20entry.png) |
-| ![Light Mode Services](screenshots/light%20mode%20services.png) | ![Dark Mode Services](screenshots/dark%20mode%20services.png) |
+| Sayfa / Page | Açık Tema (Light Mode) | Koyu Tema (Dark Mode) |
+| :---: | :---: | :---: |
+| **Analiz (Dashboard)** | ![Dashboard Light](screenshots/shared/l1.png) | ![Dashboard Dark](screenshots/shared/d1.png) |
+| **Başlangıç (Autostart)** | ![Autostart Light](screenshots/shared/l2.png) | ![Autostart Dark](screenshots/shared/d2.png) |
+| **Hizmetler (Services)** | ![Services Light](screenshots/shared/l3.png) | ![Services Dark](screenshots/shared/d3.png) |
+| **Profiller (Profiles)** | ![Profiles Light](screenshots/shared/l4.png) | ![Profiles Dark](screenshots/shared/d4.png) |
 
 ---
 
