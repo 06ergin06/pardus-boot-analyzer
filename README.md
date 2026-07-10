@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="pardus-boot-analyzer.svg" width="128" height="128" alt="Pardus Boot Analyzer Logo">
+</p>
+
 # Pardus Başlangıç Yöneticisi / Pardus Boot Analyzer
 
 Pardus Başlangıç Yöneticisi, sisteminizin açılış süresini analiz etmek, başlangıçta çalışan gereksiz servisleri ve uygulamaları optimize etmek amacıyla geliştirilmiş bir masaüstü uygulamasıdır.
