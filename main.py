@@ -10,7 +10,7 @@ class PardusAboutDialog(Gtk.AboutDialog):
         self.set_program_name(tr("title"))
         self.set_version("1.0.0")
         self.set_comments(tr("about_comments"))
-        self.set_copyright("© 2026 TÜBİTAK BİLGEM")
+        self.set_copyright("© 2026 İbrahim Hakkı Ergin")
         self.set_website("https://github.com/06ergin06/pardus-boot-analyzer")
         self.set_website_label("Website")
         
