@@ -55,7 +55,7 @@ except Exception:
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, GdkPixbuf
 from src.controller import Controller
 from src.locale_mgr import tr
 
@@ -90,22 +90,32 @@ class PardusBootManager:
         self.window.set_default_size(1050, 720)
         self.window.set_position(Gtk.WindowPosition.CENTER)
         
+        # Load the custom SVG logo path safely
+        import os
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(current_dir, "pardus-boot-analyzer.svg")
+        
+        # Set window icon (taskbar/dock/window manager icon)
+        try:
+            self.window.set_icon_from_file(icon_path)
+        except Exception:
+            pass
+        
         # Construct HeaderBar matching native Pardus design
         hb = Gtk.HeaderBar()
         hb.set_show_close_button(True)
-        hb.set_title(tr("title"))
-        hb.set_subtitle(tr("subtitle"))
+        # Note: We do not set text title/subtitle in the headerbar,
+        # instead displaying the logo as the main branding element on the top left.
         self.window.set_titlebar(hb)
         
-        # Sol üst köşede Pardus logosu
-        icon_theme = Gtk.IconTheme.get_default()
-        if icon_theme.has_icon("pardus-symbolic"):
-            img_logo = Gtk.Image.new_from_icon_name("pardus-symbolic", Gtk.IconSize.MENU)
-        elif icon_theme.has_icon("pardus"):
-            img_logo = Gtk.Image.new_from_icon_name("pardus", Gtk.IconSize.MENU)
-        else:
-            img_logo = Gtk.Image.new_from_icon_name("preferences-system-symbolic", Gtk.IconSize.MENU)
-        img_logo.set_margin_start(6)
+        # Load logo for HeaderBar using Pixbuf to handle SVG scaling cleanly
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(icon_path, 28, 28, True)
+            img_logo = Gtk.Image.new_from_pixbuf(pixbuf)
+        except Exception:
+            img_logo = Gtk.Image.new_from_icon_name("utilities-system-monitor", Gtk.IconSize.MENU)
+            
+        img_logo.set_margin_start(10)
         img_logo.set_margin_end(6)
         hb.pack_start(img_logo)
         

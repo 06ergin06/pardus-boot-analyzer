@@ -11,10 +11,10 @@ mkdir -p "$APP_DIR/usr/share/$PKG_NAME"
 mkdir -p "$APP_DIR/usr/share/applications"
 mkdir -p "$APP_DIR/usr/share/icons/hicolor/48x48/apps"
 
-echo "Copying application files..."
 cp -r main.py "$APP_DIR/usr/share/$PKG_NAME/"
 cp -r src "$APP_DIR/usr/share/$PKG_NAME/"
 cp -r ui "$APP_DIR/usr/share/$PKG_NAME/"
+cp pardus-boot-analyzer.svg "$APP_DIR/usr/share/$PKG_NAME/"
 
 # Remove pycache
 find "$APP_DIR" -type d -name "__pycache__" -exec rm -rf {} + || true
@@ -27,7 +27,7 @@ Name[en]=Pardus Boot Analyzer
 Comment=Sistem açılış süresini analiz et ve başlangıç programlarını yönet
 Comment[en]=Analyze system boot time and manage startup applications
 Exec=pardus-boot-analyzer
-Icon=utilities-system-monitor
+Icon=pardus-boot-analyzer
 Terminal=false
 Type=Application
 Categories=System;Settings;GTK;
@@ -37,29 +37,13 @@ EOF
 # Copy desktop file to root of AppDir
 cp "$APP_DIR/usr/share/applications/$PKG_NAME.desktop" "$APP_DIR/"
 
-echo "Locating and copying icon..."
-ICON_SRC=""
-# Try standard icon paths
-for path in \
-    "/usr/share/icons/AdwaitaLegacy/48x48/legacy/utilities-system-monitor.png" \
-    "/usr/share/icons/HighContrast/48x48/apps/utilities-system-monitor.png" \
-    "/usr/share/icons/hicolor/48x48/apps/utilities-system-monitor.png"; do
-    if [ -f "$path" ]; then
-        ICON_SRC="$path"
-        break
-    fi
-done
+echo "Copying custom SVG icon..."
+mkdir -p "$APP_DIR/usr/share/icons/hicolor/scalable/apps"
+cp pardus-boot-analyzer.svg "$APP_DIR/usr/share/icons/hicolor/scalable/apps/pardus-boot-analyzer.svg"
+cp pardus-boot-analyzer.svg "$APP_DIR/pardus-boot-analyzer.svg"
+# Also make a copy with the app ID name at root for appimagetool compatibility
+cp pardus-boot-analyzer.svg "$APP_DIR/.DirIcon"
 
-if [ -z "$ICON_SRC" ]; then
-    echo "Warning: utilities-system-monitor.png not found. Using generic fallback icon."
-    # Create a dummy image or copy another standard one
-    ICON_SRC="/usr/share/icons/AdwaitaLegacy/16x16/legacy/utilities-system-monitor.png"
-fi
-
-if [ -f "$ICON_SRC" ]; then
-    cp "$ICON_SRC" "$APP_DIR/usr/share/icons/hicolor/48x48/apps/utilities-system-monitor.png"
-    cp "$ICON_SRC" "$APP_DIR/utilities-system-monitor.png"
-fi
 
 echo "Creating AppRun entrypoint..."
 cat << 'EOF' > "$APP_DIR/AppRun"

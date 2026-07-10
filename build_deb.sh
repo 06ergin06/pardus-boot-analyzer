@@ -16,11 +16,16 @@ mkdir -p "$BUILD_DIR/DEBIAN"
 mkdir -p "$BUILD_DIR/usr/bin"
 mkdir -p "$BUILD_DIR/usr/share/$PKG_NAME"
 mkdir -p "$BUILD_DIR/usr/share/applications"
+mkdir -p "$BUILD_DIR/usr/share/pixmaps"
+mkdir -p "$BUILD_DIR/usr/share/icons/hicolor/scalable/apps"
 
 echo "Copying application files..."
 cp -r main.py "$BUILD_DIR/usr/share/$PKG_NAME/"
 cp -r src "$BUILD_DIR/usr/share/$PKG_NAME/"
 cp -r ui "$BUILD_DIR/usr/share/$PKG_NAME/"
+cp pardus-boot-analyzer.svg "$BUILD_DIR/usr/share/$PKG_NAME/"
+cp pardus-boot-analyzer.svg "$BUILD_DIR/usr/share/pixmaps/"
+cp pardus-boot-analyzer.svg "$BUILD_DIR/usr/share/icons/hicolor/scalable/apps/"
 
 # Remove pycache if any
 find "$BUILD_DIR" -type d -name "__pycache__" -exec rm -rf {} + || true
@@ -39,7 +44,7 @@ cat << EOF > "$BUILD_DIR/usr/share/applications/$PKG_NAME.desktop"
 Name=Pardus Başlangıç Yöneticisi
 Comment=Sistem açılış süresini analiz et ve başlangıç programlarını yönet
 Exec=$PKG_NAME
-Icon=utilities-system-monitor
+Icon=pardus-boot-analyzer
 Terminal=false
 Type=Application
 Categories=System;Settings;GTK;
