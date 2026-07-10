@@ -118,19 +118,27 @@ class SystemManager:
             return False
 
     def _run_auth(self, args):
+        cmd_args = ["--no-pager", "--no-ask-password"] + args
         if not self.password:
             # Fallback: direct systemctl
-            result = subprocess.run(
-                ["systemctl"] + args,
-                capture_output=True, text=True
-            )
-            return result.returncode == 0, result.stderr or result.stdout
+            try:
+                result = subprocess.run(
+                    ["systemctl"] + cmd_args,
+                    capture_output=True, text=True,
+                    timeout=15
+                )
+                return result.returncode == 0, result.stderr or result.stdout
+            except subprocess.TimeoutExpired:
+                return False, "İşlem zaman aşımına uğradı (servis yanıt vermiyor)."
+            except Exception as e:
+                return False, str(e)
             
         try:
             result = subprocess.run(
-                ["sudo", "-S", "systemctl"] + args,
+                ["sudo", "-S", "systemctl"] + cmd_args,
                 input=self.password + "\n",
-                capture_output=True, text=True
+                capture_output=True, text=True,
+                timeout=15
             )
             if result.returncode == 0:
                 return True, "İşlem başarılı."
@@ -139,6 +147,8 @@ class SystemManager:
                 if "incorrect password" in err.lower() or "şifre" in err.lower():
                     self.password = None
                 return False, err
+        except subprocess.TimeoutExpired:
+            return False, "İşlem zaman aşımına uğradı (şifre yanlış veya servis yanıt vermiyor)."
         except Exception as e:
             return False, str(e)
 
