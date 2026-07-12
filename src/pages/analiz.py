@@ -9,6 +9,12 @@ import re
 from src.locale_mgr import tr
 from src.utils import parse_blame_time, SAFE_TO_DISABLE_ONERI_SERVICES
 from src.service_db import get_description
+try:
+    from gi.repository import Pango
+except ImportError:
+    class PangoFallback:
+        EllipsizeMode = type('EllipsizeMode', (), {'END': 3})
+    Pango = PangoFallback()
 
 class AnalizPage:
     def __init__(self, controller):
