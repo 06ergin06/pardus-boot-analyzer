@@ -118,7 +118,8 @@ class SystemManager:
             result = subprocess.run(
                 ["sudo", "-S", "-v"],
                 input=password + "\n",
-                capture_output=True, text=True
+                capture_output=True, text=True,
+                timeout=10
             )
             return result.returncode == 0
         except Exception:

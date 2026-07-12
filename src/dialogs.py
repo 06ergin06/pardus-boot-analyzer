@@ -196,22 +196,35 @@ class PasswordDialog(Gtk.Dialog):
         self.entry_pwd.set_visibility(widget.get_active())
 
     def _on_auth_clicked(self, button):
+        import threading
         pwd = self.entry_pwd.get_text()
         self.lbl_error.set_text("")
         
+        # Disable UI and show spinner while verifying in background thread
         self.set_sensitive(False)
-        while Gtk.events_pending():
-            Gtk.main_iteration()
-            
-        valid = self.manager.verify_sudo_password(pwd)
+        self.btn_auth.set_label(tr("yetkilendiriliyor"))
+        
+        def verify():
+            valid = self.manager.verify_sudo_password(pwd)
+            GLib.idle_add(self._on_auth_done, valid, pwd)
+        
+        threading.Thread(target=verify, daemon=True).start()
+
+    def _on_auth_done(self, valid, pwd):
         self.set_sensitive(True)
+        self.btn_auth.set_label(tr("yetkilendir"))
         
         if valid:
             self.success = True
             self.entered_password = pwd
             self.response(Gtk.ResponseType.OK)
         else:
-            self.lbl_error.set_markup("<span foreground='#dc3545'>Hatalı şifre! Lütfen tekrar deneyin.</span>")
+            self.lbl_error.set_markup(
+                f"<span foreground='#dc3545'>{tr('hatali_sifre')}</span>"
+            )
+        return False
+
+
 
 
 class ProfileCreatorDialog(Gtk.Dialog):
