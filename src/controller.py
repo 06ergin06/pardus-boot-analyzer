@@ -445,9 +445,10 @@ class Controller:
             row = Gtk.ListBoxRow()
             row.get_style_context().add_class("sidebar-row")
             
-            box_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            box_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
             
             img = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.MENU)
+            img.set_pixel_size(20)
             img.set_valign(Gtk.Align.CENTER)
             box_row.pack_start(img, False, False, 0)
             
