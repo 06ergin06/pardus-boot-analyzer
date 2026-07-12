@@ -55,25 +55,24 @@ VIEW_MAP = {
     2: "devices",
 }
 
-SAFE_TO_DISABLE_ONERI_SERVICES = {
-    "NetworkManager-wait-online.service",
-    "bluetooth.service",
-    "cups.service",
-    "cups-browsed.service",
-    "avahi-daemon.service",
-    "ModemManager.service",
-    "colord.service",
-    "lm-sensors.service",
-    "smartmontools.service"
-}
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+_json_path = os.path.join(_current_dir, "profiles_data.json")
+try:
+    with open(_json_path, "r", encoding="utf-8") as _f:
+        _config_data = json.load(_f)
+except Exception:
+    _config_data = {
+        "profiles": {},
+        "safe_to_disable_services": [],
+        "profile_service_labels": {}
+    }
 
-PROFILE_SERVICE_LABELS = {
-    "cups.service": tr("cups_service_desc"),
-    "bluetooth.service": tr("bluetooth_desc"),
-    "docker.service": "Docker Konteyner",
-    "postgresql.service": "PostgreSQL Servisi",
-    "ssh.service": tr("ssh_desc"),
-}
+SAFE_TO_DISABLE_ONERI_SERVICES = set(_config_data.get("safe_to_disable_services", []))
+
+PROFILE_SERVICE_LABELS = {}
+for k, v in _config_data.get("profile_service_labels", {}).items():
+    PROFILE_SERVICE_LABELS[k] = tr(v)
+
 
 def parse_blame_time(time_str):
     if not time_str:
@@ -2262,65 +2261,14 @@ class Controller:
         grid = Gtk.Grid(column_spacing=16, row_spacing=16)
         box.pack_start(grid, False, False, 0)
         
-        self.profiles_data = {
-            "ofis": {
-                "name": tr("prof_office_name"),
-                "icon": "document-open",
-                "desc": tr("prof_office_desc"),
-                "services": {
-                    "cups.service": "enable",
-                    "cups-browsed.service": "enable",
-                    "bluetooth.service": "enable",
-                    "docker.service": "disable",
-                    "postgresql.service": "disable",
-                    "mysql.service": "disable",
-                    "ssh.service": "disable",
-                    "sshd.service": "disable",
-                    "avahi-daemon.service": "enable",
-                    "ModemManager.service": "disable",
-                    "NetworkManager-wait-online.service": "disable"
-                }
-            },
-            "yazilimci": {
-                "name": tr("prof_dev_name"),
-                "icon": "utilities-terminal",
-                "desc": tr("prof_dev_desc"),
-                "services": {
-                    "cups.service": "disable",
-                    "cups-browsed.service": "disable",
-                    "bluetooth.service": "enable",
-                    "docker.service": "enable",
-                    "postgresql.service": "enable",
-                    "mysql.service": "enable",
-                    "ssh.service": "enable",
-                    "sshd.service": "enable",
-                    "avahi-daemon.service": "disable",
-                    "ModemManager.service": "disable",
-                    "NetworkManager-wait-online.service": "disable"
-                }
-            },
-            "minimum": {
-                "name": tr("prof_min_name"),
-                "icon": "battery",
-                "desc": tr("prof_min_desc"),
-                "services": {
-                    "cups.service": "disable",
-                    "cups-browsed.service": "disable",
-                    "bluetooth.service": "disable",
-                    "docker.service": "disable",
-                    "postgresql.service": "disable",
-                    "mysql.service": "disable",
-                    "ssh.service": "disable",
-                    "sshd.service": "disable",
-                    "avahi-daemon.service": "disable",
-                    "ModemManager.service": "disable",
-                    "NetworkManager-wait-online.service": "disable",
-                    "colord.service": "disable",
-                    "lm-sensors.service": "disable",
-                    "smartmontools.service": "disable"
-                }
+        self.profiles_data = {}
+        for p_id, p_info in _config_data.get("profiles", {}).items():
+            self.profiles_data[p_id] = {
+                "name": tr(p_info["name_tr_key"]),
+                "icon": p_info["icon"],
+                "desc": tr(p_info["desc_tr_key"]),
+                "services": p_info["services"]
             }
-        }
         
         col = 0
         for p_id, p_info in self.profiles_data.items():
