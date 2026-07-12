@@ -525,6 +525,7 @@ class Controller:
         self.card_boot.pack_start(lbl_boot_title, False, False, 0)
         
         vbox_circle = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        vbox_circle.set_size_request(160, 160)
         vbox_circle.get_style_context().add_class("boot-circle-container")
         vbox_circle.set_valign(Gtk.Align.CENTER)
         vbox_circle.set_halign(Gtk.Align.CENTER)
