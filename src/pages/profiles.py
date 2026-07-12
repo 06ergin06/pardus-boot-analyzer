@@ -286,7 +286,8 @@ class ProfilesPage:
         )
         dlg.format_secondary_text(tr("yedek_don_aciklama"))
         resp = dlg.run()
-        dlg.destroy()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
         if resp != Gtk.ResponseType.YES:
             return
             
@@ -332,7 +333,8 @@ class ProfilesPage:
             message_format=tr("yedek_sil_soru")
         )
         resp = dlg.run()
-        dlg.destroy()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
         if resp == Gtk.ResponseType.YES:
             try:
                 os.remove(fpath)
@@ -354,7 +356,8 @@ class ProfilesPage:
         )
         dlg.format_secondary_text(tr("profil_uygula_aciklama"))
         resp = dlg.run()
-        dlg.destroy()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
         if resp != Gtk.ResponseType.YES:
             return
             
@@ -385,7 +388,8 @@ class ProfilesPage:
             )
             info.format_secondary_text(tr("hizmetler_uygun_detay"))
             info.run()
-            info.destroy()
+            info.hide()
+            GLib.idle_add(info.destroy)
             return
             
         all_deps = {}
@@ -409,7 +413,8 @@ class ProfilesPage:
             )
             dep_dlg.format_secondary_text(dep_msg + "\nDevam etmek istiyor musunuz?")
             dep_resp = dep_dlg.run()
-            dep_dlg.destroy()
+            dep_dlg.hide()
+            GLib.idle_add(dep_dlg.destroy)
             if dep_resp != Gtk.ResponseType.YES:
                 return
             
@@ -434,7 +439,8 @@ class ProfilesPage:
             message_format=f"'{p_info['name']}' " + tr("profil_uygula_soru")
         )
         resp = dlg.run()
-        dlg.destroy()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
         if resp != Gtk.ResponseType.YES:
             return
             
@@ -481,7 +487,8 @@ class ProfilesPage:
             )
             dep_dlg.format_secondary_text(dep_msg + "\nDevam etmek istiyor musunuz?")
             dep_resp = dep_dlg.run()
-            dep_dlg.destroy()
+            dep_dlg.hide()
+            GLib.idle_add(dep_dlg.destroy)
             if dep_resp != Gtk.ResponseType.YES:
                 return
             
@@ -527,7 +534,8 @@ class ProfilesPage:
                     message_format=tr("profil_basariyla_uygulandi")
                 )
                 info.run()
-                info.destroy()
+                info.hide()
+                GLib.idle_add(info.destroy)
                 self.load_all()
             else:
                 err = Gtk.MessageDialog(
@@ -537,7 +545,8 @@ class ProfilesPage:
                 )
                 err.format_secondary_text(msg)
                 err.run()
-                err.destroy()
+                err.hide()
+                GLib.idle_add(err.destroy)
                 
         threading.Thread(target=task, daemon=True).start()
 

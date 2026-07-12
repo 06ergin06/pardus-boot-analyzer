@@ -315,7 +315,8 @@ class AnalysisPage:
         )
         dlg.format_secondary_text("Bu işlem hizmeti devre dışı bırakacak (disable) ve durduracaktır (stop).")
         resp = dlg.run()
-        dlg.destroy()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
         
         if resp == Gtk.ResponseType.YES:
             if not self._ensure_auth():
@@ -356,7 +357,8 @@ class AnalysisPage:
         )
         
         resp = dlg.run()
-        dlg.destroy()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
         
         if resp != Gtk.ResponseType.YES:
             return
@@ -404,7 +406,8 @@ class AnalysisPage:
                 )
                 info.format_secondary_text("Önerilen tüm gereksiz hizmetler başarıyla kapatıldı.")
                 info.run()
-                info.destroy()
+                info.hide()
+                GLib.idle_add(info.destroy)
                 self.load_all()
                 self.load_analysis_page()
             else:
@@ -415,7 +418,8 @@ class AnalysisPage:
                 )
                 err.format_secondary_text(msg)
                 err.run()
-                err.destroy()
+                err.hide()
+                GLib.idle_add(err.destroy)
                 
         threading.Thread(target=task, daemon=True).start()
 

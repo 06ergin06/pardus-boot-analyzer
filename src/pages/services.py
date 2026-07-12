@@ -619,7 +619,8 @@ class ServicesPage:
                 
                 dlg.format_secondary_text(sec_text)
                 resp = dlg.run()
-                dlg.destroy()
+                dlg.hide()
+                GLib.idle_add(dlg.destroy)
                 
                 if resp == 2:
                     self._run_systemctl_batch(["disable", "stop"], name, self.load_all)
@@ -641,7 +642,8 @@ class ServicesPage:
                         tr("disable_boot_stopped_dep").format(name, dep_list_str)
                     )
                     resp = dlg.run()
-                    dlg.destroy()
+                    dlg.hide()
+                    GLib.idle_add(dlg.destroy)
                     if resp != Gtk.ResponseType.YES:
                         return
                 self._run_systemctl("disable", name, self.load_all)
@@ -660,7 +662,8 @@ class ServicesPage:
                     tr("enable_boot_stopped_sec").format(name)
                 )
                 resp = dlg.run()
-                dlg.destroy()
+                dlg.hide()
+                GLib.idle_add(dlg.destroy)
                 
                 if resp == 2:
                     self._run_systemctl_batch(["enable", "start"], name, self.load_all)
@@ -698,7 +701,8 @@ class ServicesPage:
                     tr("stop_enabled_sec").format(name)
                 )
                 resp = dlg.run()
-                dlg.destroy()
+                dlg.hide()
+                GLib.idle_add(dlg.destroy)
                 
                 if resp == 2:
                     self._run_systemctl_batch(["disable", "stop"], name, self.load_all)
@@ -725,7 +729,8 @@ class ServicesPage:
                     tr("start_disabled_sec").format(name)
                 )
                 resp = dlg.run()
-                dlg.destroy()
+                dlg.hide()
+                GLib.idle_add(dlg.destroy)
                 
                 if resp == 2:
                     self._run_systemctl_batch(["enable", "start"], name, self.load_all)
@@ -759,7 +764,8 @@ class ServicesPage:
             if warn:
                 dlg.format_secondary_text(warn)
             resp = dlg.run()
-            dlg.destroy()
+            dlg.hide()
+            GLib.idle_add(dlg.destroy)
             if resp != Gtk.ResponseType.YES:
                 return
 

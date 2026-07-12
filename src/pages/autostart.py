@@ -135,7 +135,8 @@ class AutostartPage:
         dlg = AddAutostartDialog(self.window, self.manager)
         resp = dlg.run()
         res = dlg.get_result()
-        dlg.destroy()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
         
         if resp == Gtk.ResponseType.OK and res:
             self.manager.add_autostart_entry(
