@@ -10,7 +10,7 @@ from src.utils import (
     parse_blame_time, make_status_markup
 )
 
-class HizmetlerPage:
+class ServicesPage:
     def __init__(self, controller):
         self.controller = controller
         self.window = controller.window
@@ -26,7 +26,7 @@ class HizmetlerPage:
         self._all_data = []
         self._all_data_map = {}
 
-    def build_page_hizmetler(self):
+    def build_page_services(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         
         lbl_title = Gtk.Label(xalign=0)

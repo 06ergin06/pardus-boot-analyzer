@@ -14,10 +14,10 @@ try:
 except ImportError:
     from src.locale_mgr import tr
 from src.dialogs import AddAutostartDialog, PasswordDialog, ProfileCreatorDialog
-from src.pages.analiz import AnalizPage
+from src.pages.analysis import AnalysisPage
 from src.pages.autostart import AutostartPage
-from src.pages.hizmetler import HizmetlerPage
-from src.pages.profiller import ProfillerPage
+from src.pages.services import ServicesPage
+from src.pages.profiles import ProfilesPage
 
 
 from src.utils import (
@@ -178,14 +178,14 @@ class Controller:
         self.stack.set_transition_duration(200)
         self.content_box.pack_start(self.stack, True, True, 0)
 
-        self.analiz_page = AnalizPage(self)
-        self.stack.add_named(self.analiz_page.build_page_analiz(), "analiz")
+        self.analysis_page = AnalysisPage(self)
+        self.stack.add_named(self.analysis_page.build_page_analysis(), "analiz")
         self.autostart_page = AutostartPage(self)
         self.stack.add_named(self.autostart_page.build_page_autostart(), "autostart")
-        self.hizmetler_page = HizmetlerPage(self)
-        self.stack.add_named(self.hizmetler_page.build_page_hizmetler(), "hizmetler")
-        self.profiller_page = ProfillerPage(self)
-        self.stack.add_named(self.profiller_page.build_page_profiller(), "profiller")
+        self.services_page = ServicesPage(self)
+        self.stack.add_named(self.services_page.build_page_services(), "hizmetler")
+        self.profiles_page = ProfilesPage(self)
+        self.stack.add_named(self.profiles_page.build_page_profiles(), "profiller")
 
         self.sidebar_listbox.select_row(self.sidebar_listbox.get_row_at_index(0))
 
@@ -236,14 +236,14 @@ class Controller:
         self.sidebar_listbox.show_all()
         
         # 5. Rebuild pages
-        self.analiz_page = AnalizPage(self)
-        self.stack.add_named(self.analiz_page.build_page_analiz(), "analiz")
+        self.analysis_page = AnalysisPage(self)
+        self.stack.add_named(self.analysis_page.build_page_analysis(), "analiz")
         self.autostart_page = AutostartPage(self)
         self.stack.add_named(self.autostart_page.build_page_autostart(), "autostart")
-        self.hizmetler_page = HizmetlerPage(self)
-        self.stack.add_named(self.hizmetler_page.build_page_hizmetler(), "hizmetler")
-        self.profiller_page = ProfillerPage(self)
-        self.stack.add_named(self.profiller_page.build_page_profiller(), "profiller")
+        self.services_page = ServicesPage(self)
+        self.stack.add_named(self.services_page.build_page_services(), "hizmetler")
+        self.profiles_page = ProfilesPage(self)
+        self.stack.add_named(self.profiles_page.build_page_profiles(), "profiller")
         
         # 6. Reload data to populate widgets
         self.load_all()
@@ -256,7 +256,7 @@ class Controller:
         idx = row.get_index()
         if idx == 0:
             self.stack.set_visible_child_name("analiz")
-            self.analiz_page.load_analysis_page()
+            self.analysis_page.load_analysis_page()
         elif idx == 1:
             self.stack.set_visible_child_name("autostart")
             self.autostart_page.load_autostart_page()
@@ -264,7 +264,7 @@ class Controller:
             self.stack.set_visible_child_name("hizmetler")
         elif idx == 3:
             self.stack.set_visible_child_name("profiller")
-            self.profiller_page.load_profiles_page()
+            self.profiles_page.load_profiles_page()
 
     def _calculate_profile_savings(self, p_info):
         try:
@@ -283,39 +283,39 @@ class Controller:
         return savings
 
     def load_all(self, *args):
-        self.analiz_page.load_analysis_page()
+        self.analysis_page.load_analysis_page()
         self.autostart_page.load_autostart_page()
-        self.hizmetler_page.load_all()
-        self.profiller_page.load_profiles_page()
+        self.services_page.load_all()
+        self.profiles_page.load_profiles_page()
 
-    # Expose HizmetlerPage properties for backward compatibility
+    # Expose ServicesPage properties for backward compatibility
     @property
     def liststore(self):
-        return self.hizmetler_page.liststore
+        return self.services_page.liststore
 
     @property
     def selection(self):
-        return self.hizmetler_page.selection
+        return self.services_page.selection
 
     @property
     def treeview(self):
-        return self.hizmetler_page.treeview
+        return self.services_page.treeview
 
     @property
     def view_combo(self):
-        return self.hizmetler_page.view_combo
+        return self.services_page.view_combo
 
     @property
     def filter_combo(self):
-        return self.hizmetler_page.filter_combo
+        return self.services_page.filter_combo
 
     @property
     def tip_combo(self):
-        return self.hizmetler_page.tip_combo
+        return self.services_page.tip_combo
 
     @property
     def search_entry(self):
-        return self.hizmetler_page.search_entry
+        return self.services_page.search_entry
 
 try:
     from gi.repository import Pango

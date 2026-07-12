@@ -8,7 +8,7 @@ from src.locale_mgr import tr
 from src.dialogs import ProfileCreatorDialog
 from src.utils import parse_blame_time, PROFILE_SERVICE_LABELS, _config_data
 
-class ProfillerPage:
+class ProfilesPage:
     def __init__(self, controller):
         self.controller = controller
         self.window = controller.window
@@ -17,7 +17,7 @@ class ProfillerPage:
         self._ensure_auth = controller._ensure_auth
         self._calculate_profile_savings = controller._calculate_profile_savings
 
-    def build_page_profiller(self):
+    def build_page_profiles(self):
         main_scrolled = Gtk.ScrolledWindow()
         main_scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         

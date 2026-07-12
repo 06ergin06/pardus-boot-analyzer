@@ -16,7 +16,7 @@ except ImportError:
         EllipsizeMode = type('EllipsizeMode', (), {'END': 3})
     Pango = PangoFallback()
 
-class AnalizPage:
+class AnalysisPage:
     def __init__(self, controller):
         self.controller = controller
         self.window = controller.window
@@ -26,7 +26,7 @@ class AnalizPage:
         self.load_all = controller.load_all
         self._format_time = controller._format_time
 
-    def build_page_analiz(self):
+    def build_page_analysis(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         
         lbl_title = Gtk.Label(xalign=0)
