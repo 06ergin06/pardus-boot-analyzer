@@ -25,6 +25,7 @@ class ServicesPage:
         self._updating_widgets = False
         self._all_data = []
         self._all_data_map = {}
+        self._debounce_id = None
 
     def build_page_services(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
