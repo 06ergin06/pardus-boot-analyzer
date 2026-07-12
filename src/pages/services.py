@@ -609,16 +609,12 @@ class ServicesPage:
                 dlg.add_button(tr("sadece_baslangic_degistir"), 1)
                 dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
                 
-                sec_text = (
-                    f"'{name}' hizmetinin açılışta otomatik başlamasını kapatıyorsunuz.\n"
-                    "Bu hizmet şu an arka planda aktif/çalışır durumda.\n\n"
-                    "Hem açılış ayarını kapatıp hem de çalışan süreci şimdi durdurmak ister misiniz?"
-                )
+                sec_text = tr("disable_boot_running_sec").format(name)
                 if deps:
                     dep_list_str = "\n".join(f"- {dep}" for dep in deps[:8])
                     if len(deps) > 8:
-                        dep_list_str += f"\n- ve {len(deps) - 8} hizmet daha..."
-                    sec_text += f"\n\n⚠️ DİKKAT: Bu hizmeti kapatmak, bağımlı çalışan şu hizmetleri etkileyebilir:\n{dep_list_str}"
+                        dep_list_str += f"\n- {tr('ve_daha_fazla_hizmet').format(len(deps) - 8).strip()}"
+                    sec_text += "\n\n" + tr("action_dep_uyari").format(dep_list_str)
                 
                 dlg.format_secondary_text(sec_text)
                 resp = dlg.run()
@@ -635,13 +631,13 @@ class ServicesPage:
                     dlg = Gtk.MessageDialog(
                         parent=self.window, flags=Gtk.DialogFlags.MODAL,
                         type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.YES_NO,
-                        message_format=f"'{name}' Hizmetini Açılışta Kapatmak İstiyor musunuz?"
+                        message_format=tr("disable_boot_stopped_title").format(name)
                     )
                     dep_list_str = "\n".join(f"- {dep}" for dep in deps[:8])
                     if len(deps) > 8:
-                        dep_list_str += f"\n- ve {len(deps) - 8} hizmet daha..."
+                        dep_list_str += f"\n- {tr('ve_daha_fazla_hizmet').format(len(deps) - 8).strip()}"
                     dlg.format_secondary_text(
-                        f"Bu hizmeti açılışta kapatmak, ona bağımlı şu hizmetleri etkileyebilir:\n\n{dep_list_str}\n\nDevam etmek istiyor musunuz?"
+                        tr("disable_boot_stopped_dep").format(name, dep_list_str)
                     )
                     resp = dlg.run()
                     dlg.destroy()
@@ -660,9 +656,7 @@ class ServicesPage:
                 dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
                 
                 dlg.format_secondary_text(
-                    f"'{name}' hizmetinin açılışta otomatik başlamasını etkinleştiriyorsunuz.\n"
-                    "Bu hizmet şu an arka planda çalışmıyor.\n\n"
-                    "Açılışta etkinleştirirken aynı zamanda şu anki oturumda hemen başlatmak ister misiniz?"
+                    tr("enable_boot_stopped_sec").format(name)
                 )
                 resp = dlg.run()
                 dlg.destroy()
@@ -700,9 +694,7 @@ class ServicesPage:
                 dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
                 
                 dlg.format_secondary_text(
-                    f"'{name}' hizmetini şu anki oturumda durduruyorsunuz.\n"
-                    "Bu hizmet başlangıçta otomatik çalışacak şekilde ayarlanmış.\n\n"
-                    "Hem şu an durdurup hem de bir sonraki açılışlarda çalışmamasını (devre dışı bırakılmasını) ister misiniz?"
+                    tr("stop_enabled_sec").format(name)
                 )
                 resp = dlg.run()
                 dlg.destroy()
@@ -729,9 +721,7 @@ class ServicesPage:
                 dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
                 
                 dlg.format_secondary_text(
-                    f"'{name}' hizmetini şu anki oturumda başlatıyorsunuz.\n"
-                    "Bu hizmet başlangıçta otomatik çalışacak şekilde ayarlanmamış.\n\n"
-                    "Hem şimdi başlatıp hem de sonraki açılışlarda otomatik başlamasını (etkinleştirilmesini) ister misiniz?"
+                    tr("start_disabled_sec").format(name)
                 )
                 resp = dlg.run()
                 dlg.destroy()
@@ -775,15 +765,21 @@ class ServicesPage:
         self._run_systemctl(action, name, self.load_all)
 
     def _run_systemctl(self, action, name, cb):
-        action_tr = {"enable": "Etkinleştirme", "disable": "Devre dışı bırakma",
-                     "start": "Başlatma", "stop": "Durdurma",
-                     "mask": "Maskeleme", "unmask": "Maske kaldırma"}.get(action, action)
+        action_map = {
+            "enable": tr("action_acilis_ac"),
+            "disable": tr("action_acilis_kapat"),
+            "start": tr("action_simdi_baslat"),
+            "stop": tr("action_simdi_durdur"),
+            "mask": tr("action_maskele"),
+            "unmask": tr("action_maskeyi_kaldir")
+        }
+        action_tr = action_map.get(action, action)
                      
         if not self._ensure_auth():
             self.set_status(tr("yetki_iptal"))
             return
             
-        self.set_status(f"'{name}' için {action_tr} eylemi başlatıldı...")
+        self.set_status(tr("action_baslatildi").format(name, action_tr))
         
         def task():
             try:
@@ -796,7 +792,10 @@ class ServicesPage:
                     "unmask": self.manager.unmask_service
                 }
                 fn = m.get(action)
-                ok, msg = fn(name) if fn else (False, f"Bilinmeyen eylem: {action}")
+                if fn:
+                    ok, msg = fn(name)
+                else:
+                    ok, msg = False, tr("action_bilinmiyor").format(action)
                 GLib.idle_add(self._on_cmd_done, ok, msg, cb)
             except Exception as e:
                 GLib.idle_add(self._on_cmd_done, False, str(e), cb)
@@ -804,21 +803,21 @@ class ServicesPage:
         threading.Thread(target=task, daemon=True).start()
 
     def _run_systemctl_batch(self, actions, name, cb):
-        action_names_tr = {
-            "enable": "Açılışta Etkinleştirme",
-            "disable": "Açılışta Kapatma",
-            "start": "Şimdi Başlatma",
-            "stop": "Şimdi Durdurma",
-            "mask": "Maskeleme",
-            "unmask": "Maske Kaldırma"
+        action_map = {
+            "enable": tr("action_acilis_ac"),
+            "disable": tr("action_acilis_kapat"),
+            "start": tr("action_simdi_baslat"),
+            "stop": tr("action_simdi_durdur"),
+            "mask": tr("action_maskele"),
+            "unmask": tr("action_maskeyi_kaldir")
         }
         
         if not self._ensure_auth():
             self.set_status(tr("yetki_iptal"))
             return
             
-        actions_str = " ve ".join(action_names_tr.get(a, a) for a in actions)
-        self.set_status(f"'{name}' için {actions_str} eylemleri başlatıldı...")
+        actions_str = " + ".join(action_map.get(a, a) for a in actions)
+        self.set_status(tr("action_batch_baslatildi").format(name, actions_str))
         
         def task():
             try:
@@ -835,12 +834,16 @@ class ServicesPage:
                 final_msg = ""
                 for action in actions:
                     fn = m.get(action)
-                    ok, msg = fn(name) if fn else (False, f"Bilinmeyen eylem: {action}")
+                    aname = action_map.get(action, action)
+                    if fn:
+                        ok, msg = fn(name)
+                    else:
+                        ok, msg = False, tr("action_bilinmiyor").format(action)
                     if not ok:
                         success = False
-                        final_msg += f"[{action_names_tr.get(action, action)} Hatası: {msg}] "
+                        final_msg += tr("action_hata").format(aname, msg) + " "
                     else:
-                        final_msg += f"[{action_names_tr.get(action, action)} başarılı] "
+                        final_msg += tr("action_basarili").format(aname) + " "
                 
                 GLib.idle_add(self._on_cmd_done, success, final_msg.strip(), cb)
             except Exception as e:
@@ -849,19 +852,22 @@ class ServicesPage:
         threading.Thread(target=task, daemon=True).start()
 
     def _on_cmd_done(self, ok, msg, cb):
-        self.set_status(msg)
-        if ok and cb:
-            cb()
+        try:
+            self.set_status(msg or "")
+            if ok and cb:
+                cb()
+        except Exception:
+            pass
 
     def _on_show_log(self, *args):
         n = self._get_selected_name()
         if not n:
-            self.set_status("Bir servis seçin.")
+            self.set_status(tr("select_service_first"))
             return
             
-        dialog = Gtk.Dialog(title=f"Log: {n}", parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        dialog = Gtk.Dialog(title=tr("log_dialog_title").format(n), parent=self.window, flags=Gtk.DialogFlags.MODAL)
         dialog.set_default_size(750, 480)
-        dialog.add_button("Kapat", Gtk.ResponseType.CLOSE)
+        dialog.add_button(tr("dialog_close"), Gtk.ResponseType.CLOSE)
         
         content = dialog.get_content_area()
         content.set_margin_start(10)
@@ -879,7 +885,7 @@ class ServicesPage:
         scrolled.add(txt_view)
         
         buf = txt_view.get_buffer()
-        buf.set_text("Loglar yükleniyor, lütfen bekleyin...")
+        buf.set_text(tr("log_loading"))
         
         dialog.show_all()
         
@@ -895,7 +901,7 @@ class ServicesPage:
                         log = tr("log_bulunamadi")
                 GLib.idle_add(buf.set_text, log)
             except Exception as e:
-                GLib.idle_add(buf.set_text, f"Hata: {e}")
+                GLib.idle_add(buf.set_text, tr("log_error").format(e))
                 
         def prompt_auth():
             buf.set_text(tr("hata_log_yetki"))
@@ -903,10 +909,7 @@ class ServicesPage:
                 buf.set_text(tr("yetkilendirildi"))
                 threading.Thread(target=task, daemon=True).start()
             else:
-                buf.set_text(
-                    "Logları okuma yetkiniz bulunmuyor.\n\n"
-                    "Logları görüntülemek için yönetici şifrenizi girmeniz gerekmektedir."
-                )
+                buf.set_text(tr("log_no_perm"))
                 
         threading.Thread(target=task, daemon=True).start()
         
@@ -917,12 +920,12 @@ class ServicesPage:
     def _on_show_dependencies(self, button):
         n = self._get_selected_name()
         if not n:
-            self.set_status("Bir servis seçin.")
+            self.set_status(tr("select_service_first"))
             return
             
-        dialog = Gtk.Dialog(title=f"Bağımlılıklar: {n}", parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        dialog = Gtk.Dialog(title=tr("dep_dialog_title").format(n), parent=self.window, flags=Gtk.DialogFlags.MODAL)
         dialog.set_default_size(550, 450)
-        dialog.add_button("Kapat", Gtk.ResponseType.CLOSE)
+        dialog.add_button(tr("dialog_close"), Gtk.ResponseType.CLOSE)
         
         content = dialog.get_content_area()
         content.set_margin_start(10)
@@ -931,7 +934,7 @@ class ServicesPage:
         content.set_margin_bottom(10)
         
         lbl_info = Gtk.Label(xalign=0)
-        lbl_info.set_markup(f"<b>{n}</b> hizmetinin diğer sistem birimleriyle olan bağımlılık ilişkileri:")
+        lbl_info.set_markup(tr("dep_info_lbl").format(n))
         content.pack_start(lbl_info, False, False, 6)
         
         scrolled = Gtk.ScrolledWindow()
@@ -944,16 +947,16 @@ class ServicesPage:
         scrolled.add(txt_view)
         
         buf = txt_view.get_buffer()
-        buf.set_text("Bağımlılık ağacı yükleniyor...")
+        buf.set_text(tr("dep_loading"))
         
         dialog.show_all()
         
         def task():
             try:
                 deps = self.manager.get_dependencies(n)
-                GLib.idle_add(buf.set_text, deps or "Bağımlılık bilgisi bulunamadı.")
+                GLib.idle_add(buf.set_text, deps or tr("dep_not_found"))
             except Exception as e:
-                GLib.idle_add(buf.set_text, f"Hata: {e}")
+                GLib.idle_add(buf.set_text, tr("dep_error").format(e))
                 
         threading.Thread(target=task, daemon=True).start()
         

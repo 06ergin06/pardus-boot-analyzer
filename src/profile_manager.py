@@ -1,5 +1,6 @@
 import os
 import json
+from src.locale_mgr import tr
 import subprocess
 
 class ProfileManager:
@@ -54,7 +55,7 @@ class ProfileManager:
             filepath = os.path.join(backup_dir, f"backup_{date_str}.json")
             data = {
                 "timestamp": date_str,
-                "name": f"Geri Dönüş Noktası ({pretty_date})",
+                "name": tr("restore_point_name").format(pretty_date),
                 "services": states
             }
             
