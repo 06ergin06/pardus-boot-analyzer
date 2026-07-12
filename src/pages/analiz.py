@@ -18,6 +18,7 @@ class AnalizPage:
         self.set_status = controller.set_status
         self._ensure_auth = controller._ensure_auth
         self.load_all = controller.load_all
+        self._format_time = controller._format_time
 
     def build_page_analiz(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
