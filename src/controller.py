@@ -1338,7 +1338,39 @@ class Controller:
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         box.pack_start(scrolled, True, True, 0)
         
+        from gi.repository import Pango
+        
         self.liststore = Gtk.ListStore(str, str, str, str, str, str, str, str)
+        
+        # Define custom sort function for column 3 (Time column)
+        def time_sort_func(model, iter1, iter2, user_data):
+            val1 = model.get_value(iter1, 3)
+            val2 = model.get_value(iter2, 3)
+            
+            def parse_to_ms(s):
+                if not s or s == "--" or s == "":
+                    return -1.0
+                s = s.strip()
+                try:
+                    if s.endswith("ms"):
+                        return float(s[:-2])
+                    elif s.endswith("s"):
+                        return float(s[:-1]) * 1000.0
+                except ValueError:
+                    pass
+                return 0.0
+                
+            ms1 = parse_to_ms(val1)
+            ms2 = parse_to_ms(val2)
+            
+            if ms1 < ms2:
+                return -1
+            elif ms1 > ms2:
+                return 1
+            return 0
+            
+        self.liststore.set_sort_func(3, time_sort_func)
+        
         self.treeview = Gtk.TreeView(model=self.liststore)
         self.treeview.set_rules_hint(True)
         scrolled.add(self.treeview)
@@ -1346,15 +1378,19 @@ class Controller:
         col_name = Gtk.TreeViewColumn(tr("hizmet_adi"))
         col_name.set_resizable(True)
         col_name.set_expand(True)
-        col_name.set_min_width(200)
+        col_name.set_min_width(220)
+        col_name.set_sort_column_id(0)
         renderer_name = Gtk.CellRendererText()
+        renderer_name.set_property("ellipsize", Pango.EllipsizeMode.END)
         col_name.pack_start(renderer_name, True)
         col_name.add_attribute(renderer_name, "text", 0)
         self.treeview.append_column(col_name)
         
         col_status = Gtk.TreeViewColumn(tr("durum"))
         col_status.set_resizable(True)
-        col_status.set_fixed_width(120)
+        col_status.set_min_width(110)
+        col_status.set_expand(False)
+        col_status.set_sort_column_id(7) # Sort by raw status string in column 7
         renderer_status = Gtk.CellRendererText()
         col_status.pack_start(renderer_status, True)
         col_status.add_attribute(renderer_status, "markup", 1)
@@ -1362,7 +1398,9 @@ class Controller:
         
         col_sub = Gtk.TreeViewColumn(tr("alt_durum"))
         col_sub.set_resizable(True)
-        col_sub.set_fixed_width(100)
+        col_sub.set_min_width(110)
+        col_sub.set_expand(False)
+        col_sub.set_sort_column_id(2)
         renderer_sub = Gtk.CellRendererText()
         col_sub.pack_start(renderer_sub, True)
         col_sub.add_attribute(renderer_sub, "text", 2)
@@ -1370,7 +1408,9 @@ class Controller:
         
         col_blame = Gtk.TreeViewColumn(tr("sure"))
         col_blame.set_resizable(True)
-        col_blame.set_fixed_width(90)
+        col_blame.set_min_width(90)
+        col_blame.set_expand(False)
+        col_blame.set_sort_column_id(3)
         renderer_blame = Gtk.CellRendererText()
         col_blame.pack_start(renderer_blame, True)
         col_blame.add_attribute(renderer_blame, "text", 3)
