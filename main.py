@@ -140,15 +140,23 @@ class PardusBootManager:
         GLib.idle_add(dlg.destroy)
 
     def _on_lang_clicked(self, button):
-        from src.locale_mgr import LANG, save_lang_pref
-        import sys
-        import os
+        from src.locale_mgr import LANG, save_lang_pref, tr
         
         new_lang = "en" if LANG == "tr" else "tr"
         save_lang_pref(new_lang)
         
-        # Restart process instantly to apply language settings
-        os.execv(sys.executable, [sys.executable] + sys.argv)
+        # 1. Update HeaderBar button label and tooltip
+        button.set_label("EN" if new_lang == "tr" else "TR")
+        self.window.set_title(tr("title"))
+        
+        # 2. Update About button tooltip text
+        for child in self.window.get_titlebar().get_children():
+            if isinstance(child, Gtk.Button) and child != button:
+                # This must be the about button
+                child.set_tooltip_text(tr("about"))
+        
+        # 3. Dynamic UI Rebuilding on Controller
+        self.controller.rebuild_ui_for_language()
 
 if __name__ == "__main__":
     # If the system has no GTK theme configured (falls back to Raleigh or Default),

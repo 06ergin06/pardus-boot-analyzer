@@ -34,6 +34,7 @@ def save_lang_pref(lang):
             json.dump({"lang": lang}, f)
     except Exception:
         pass
+    init_locale(lang)
 
 FALLBACK_DICT = {   'en': {   'about': 'About',
               'about_comments': 'Pardus Boot Analyzer and Optimization Tool',
@@ -616,13 +617,19 @@ FALLBACK_DICT = {   'en': {   'about': 'About',
 import gettext
 current_dir = os.path.dirname(os.path.abspath(__file__))
 locale_dir = os.path.join(os.path.dirname(current_dir), "locale")
+_tr = lambda x: x
 
-try:
-    # Load translation catalog
-    translation = gettext.translation("messages", localedir=locale_dir, languages=[LANG], fallback=True)
-    _tr = translation.gettext
-except Exception:
-    _tr = lambda x: x
+def init_locale(lang=None):
+    global LANG, _tr
+    if lang:
+        LANG = lang
+    try:
+        translation = gettext.translation("messages", localedir=locale_dir, languages=[LANG], fallback=True)
+        _tr = translation.gettext
+    except Exception:
+        _tr = lambda x: x
+
+init_locale()
 
 def tr(key):
     try:

@@ -495,6 +495,63 @@ class Controller:
         self.sidebar_listbox.select_row(self.sidebar_listbox.get_row_at_index(0))
 
     # --- Page 1: Analiz (Dashboard) ---
+
+    def rebuild_ui_for_language(self):
+        # 1. Store current selected sidebar index
+        selected_row = self.sidebar_listbox.get_selected_row()
+        selected_index = selected_row.get_index() if selected_row else 0
+        
+        # 2. Clear old pages from Gtk.Stack
+        for child in self.stack.get_children():
+            self.stack.remove(child)
+            child.destroy()
+            
+        # 3. Clear old sidebar items
+        for child in self.sidebar_listbox.get_children():
+            self.sidebar_listbox.remove(child)
+            child.destroy()
+            
+        # 4. Rebuild sidebar rows with new translations
+        items = [
+            ("dialog-information-symbolic", tr("side_analiz"), "analiz"),
+            ("system-run-symbolic", tr("side_autostart"), "autostart"),
+            ("preferences-system-symbolic", tr("side_hizmetler"), "hizmetler"),
+            ("avatar-default-symbolic", tr("side_profiller"), "profiller")
+        ]
+        
+        for icon_name, text, name in items:
+            row = Gtk.ListBoxRow()
+            row.get_style_context().add_class("sidebar-row")
+            box_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+            
+            img = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.MENU)
+            img.set_pixel_size(20)
+            img.set_valign(Gtk.Align.CENTER)
+            box_row.pack_start(img, False, False, 0)
+            
+            lbl = Gtk.Label(xalign=0)
+            lbl.get_style_context().add_class("sidebar-item-label")
+            lbl.set_text(text)
+            lbl.set_valign(Gtk.Align.CENTER)
+            box_row.pack_start(lbl, True, True, 0)
+            
+            row.add(box_row)
+            self.sidebar_listbox.add(row)
+            
+        self.sidebar_listbox.show_all()
+        
+        # 5. Rebuild pages
+        self.stack.add_named(self.build_page_analiz(), "analiz")
+        self.stack.add_named(self.build_page_autostart(), "autostart")
+        self.stack.add_named(self.build_page_hizmetler(), "hizmetler")
+        self.stack.add_named(self.build_page_profiller(), "profiller")
+        
+        # 6. Reload data to populate widgets
+        self.load_all()
+        
+        # 7. Restore sidebar selection
+        self.sidebar_listbox.select_row(self.sidebar_listbox.get_row_at_index(selected_index))
+
     def build_page_analiz(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         
