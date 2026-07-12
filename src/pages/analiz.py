@@ -8,6 +8,7 @@ import re
 
 from src.locale_mgr import tr
 from src.utils import parse_blame_time, SAFE_TO_DISABLE_ONERI_SERVICES
+from src.service_db import get_description
 
 class AnalizPage:
     def __init__(self, controller):
