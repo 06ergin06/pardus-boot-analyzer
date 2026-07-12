@@ -33,14 +33,15 @@ window {
 
 .sidebar-row {
     border-radius: 6px;
-    margin-bottom: 3px;
-    padding: 8px 12px;
+    margin-bottom: 4px;
+    padding: 10px 14px;
     background-color: transparent;
     color: @theme_fg_color;
+    transition: all 120ms ease-in-out;
 }
 
 .sidebar-row:hover {
-    background-color: alpha(@theme_fg_color, 0.05);
+    background-color: alpha(@theme_fg_color, 0.07);
 }
 
 .sidebar-row:selected {
@@ -53,8 +54,8 @@ window {
 }
 
 .sidebar-item-label {
-    font-size: 10pt;
-    font-weight: 500;
+    font-size: 10.5pt;
+    font-weight: 600;
 }
 
 /* Content Area */
