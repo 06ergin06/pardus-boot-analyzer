@@ -4,6 +4,12 @@ from gi.repository import Gtk, Gdk, GLib
 
 from src.locale_mgr import tr
 from src.dialogs import AddAutostartDialog
+try:
+    from gi.repository import Pango
+except ImportError:
+    class PangoFallback:
+        EllipsizeMode = type('EllipsizeMode', (), {'END': 3})
+    Pango = PangoFallback()
 
 class AutostartPage:
     def __init__(self, controller):
