@@ -311,9 +311,9 @@ class AnalysisPage:
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
-            message_format=f"'{name}' hizmetini kapatmak istiyor musunuz?"
+            message_format=tr("disable_single_confirm").format(name)
         )
-        dlg.format_secondary_text("Bu işlem hizmeti devre dışı bırakacak (disable) ve durduracaktır (stop).")
+        dlg.format_secondary_text(tr("disable_single_sec"))
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
@@ -322,11 +322,12 @@ class AnalysisPage:
             if not self._ensure_auth():
                 self.set_status(tr("yetki_iptal"))
                 return
-            self.set_status(f"'{name}' hizmeti kapatılıyor...")
+            self.set_status(tr("disable_single_doing").format(name))
             def task():
                 ok1, msg1 = self.manager.disable_service(name)
                 ok2, msg2 = self.manager.stop_service(name)
-                GLib.idle_add(done, ok1 and ok2, f"'{name}' başarıyla kapatıldı." if ok1 and ok2 else f"Hata: {msg1} {msg2}")
+                msg = tr("disable_single_done").format(name) if ok1 and ok2 else tr("disable_single_err").format(msg1, msg2)
+                GLib.idle_add(done, ok1 and ok2, msg)
                 
             def done(ok, msg):
                 self.set_status(msg)
@@ -346,15 +347,11 @@ class AnalysisPage:
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
-            message_format="Önerilen Tüm Hizmetleri Kapatmak İstiyor musunuz?"
+            message_format=tr("quick_optimize_title")
         )
         
         svc_list_str = "\n".join(f"- {s}" for s in services_to_disable)
-        dlg.format_secondary_text(
-            "Aşağıdaki gereksiz hizmetler devre dışı bırakılacak ve durdurulacaktır:\n\n"
-            f"{svc_list_str}\n\n"
-            "Bu işlem sisteminizin açılışını hızlandıracaktır. Yetkilendirme şifresi istenecektir."
-        )
+        dlg.format_secondary_text(tr("quick_optimize_sec").format(svc_list_str))
         
         resp = dlg.run()
         dlg.hide()
@@ -370,7 +367,7 @@ class AnalysisPage:
         self._run_quick_optimize_batch(services_to_disable)
 
     def _run_quick_optimize_batch(self, services_to_disable):
-        loader = Gtk.Dialog(title="Sistem Optimize Ediliyor", parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        loader = Gtk.Dialog(title=tr("quick_optimize_loader_title"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
         loader.set_default_size(320, 140)
         
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -396,15 +393,16 @@ class AnalysisPage:
             
         def done(ok, msg):
             spinner.stop()
-            loader.destroy()
+            loader.hide()
+            GLib.idle_add(loader.destroy)
             self.set_status(msg)
             if ok:
                 info = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
-                    message_format="Optimizasyon Tamamlandı!"
+                    message_format=tr("quick_optimize_done_title")
                 )
-                info.format_secondary_text("Önerilen tüm gereksiz hizmetler başarıyla kapatıldı.")
+                info.format_secondary_text(tr("quick_optimize_done_sec"))
                 info.run()
                 info.hide()
                 GLib.idle_add(info.destroy)
@@ -414,7 +412,7 @@ class AnalysisPage:
                 err = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
-                    message_format="Optimizasyon Sırasında Hata Oluştu",
+                    message_format=tr("quick_optimize_err_title"),
                 )
                 err.format_secondary_text(msg)
                 err.run()
@@ -426,23 +424,24 @@ class AnalysisPage:
     # --- PDF Report Generation (Cairo) ---
     def _on_pdf_clicked(self, button):
         dialog = Gtk.FileChooserDialog(
-            title="PDF Raporu Kaydet", parent=self.window,
+            title=tr("pdf_title"), parent=self.window,
             action=Gtk.FileChooserAction.SAVE,
             buttons=(tr("iptal"), Gtk.ResponseType.CANCEL, tr("kaydet"), Gtk.ResponseType.ACCEPT)
         )
         dialog.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("primary")
         
         filter_pdf = Gtk.FileFilter()
-        filter_pdf.set_name("PDF Dosyaları")
+        filter_pdf.set_name(tr("pdf_filter_name"))
         filter_pdf.add_mime_type("application/pdf")
         filter_pdf.add_pattern("*.pdf")
         dialog.add_filter(filter_pdf)
         
-        dialog.set_current_name("Pardus_Baslangic_Raporu.pdf")
+        dialog.set_current_name(tr("pdf_default_filename"))
         
         resp = dialog.run()
         path = dialog.get_filename()
-        dialog.destroy()
+        dialog.hide()
+        GLib.idle_add(dialog.destroy)
         
         if resp == Gtk.ResponseType.ACCEPT and path:
             if not path.lower().endswith(".pdf"):
@@ -463,15 +462,16 @@ class AnalysisPage:
                 try:
                     result = print_op.run(Gtk.PrintOperationAction.EXPORT, self.window)
                     if result == Gtk.PrintOperationResult.APPLY:
-                        self.set_status(f"PDF Raporu kaydedildi: {path}")
+                        self.set_status(tr("pdf_saved").format(path))
                         info = Gtk.MessageDialog(
                             parent=self.window, flags=Gtk.DialogFlags.MODAL,
                             type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
-                            message_format="PDF Raporu Oluşturuldu!"
+                            message_format=tr("pdf_done_title")
                         )
-                        info.format_secondary_text(f"Sistem başlangıç raporunuz başarıyla kaydedildi:\n\n{path}")
+                        info.format_secondary_text(tr("pdf_done_sec").format(path))
                         info.run()
-                        info.destroy()
+                        info.hide()
+                        GLib.idle_add(info.destroy)
                     else:
                         self.set_status(tr("pdf_tamamlanamadi"))
                 except Exception as e:

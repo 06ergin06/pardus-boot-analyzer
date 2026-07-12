@@ -321,8 +321,8 @@ class ServicesPage:
                     "seconds": parse_blame_time(item["time"]),
                 }
         except Exception as e:
-            self.set_status(f"Yükleme hatası: {str(e)}")
-            self.service_count_label.set_text("Hata")
+            self.set_status(f"{tr('yukleme_hatasi')}{str(e)}")
+            self.service_count_label.set_text(tr("hata"))
             return False
 
         self._all_data = []
