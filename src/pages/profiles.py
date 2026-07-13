@@ -87,11 +87,12 @@ class ProfilesPage:
             # Calculate and display estimated savings
             savings = self._calculate_profile_savings(p_info)
             lbl_saving = Gtk.Label()
-            lbl_saving.get_style_context().add_class("dim-label")
             if savings > 0.05:
-                lbl_saving.set_markup(f"<span foreground='#2ec27e'><b>{tr('tahmini_kazanc')}: ~{savings:.1f}s</b></span>")
+                lbl_saving.get_style_context().add_class("success-text")
+                lbl_saving.set_markup(f"<b>{tr('tahmini_kazanc')}: ~{savings:.1f}s</b>")
             else:
-                lbl_saving.set_markup(f"<span foreground='#888888'>{tr('tahmini_kazanc')}: &lt; 0.1s</span>")
+                lbl_saving.get_style_context().add_class("dim-label")
+                lbl_saving.set_text(f"{tr('tahmini_kazanc')}: < 0.1s")
             lbl_saving.set_margin_bottom(4)
             card.pack_start(lbl_saving, False, False, 0)
             
@@ -164,7 +165,8 @@ class ProfilesPage:
         if not files:
             row = Gtk.ListBoxRow()
             lbl = Gtk.Label()
-            lbl.set_markup(f"<span foreground='#888888'>{tr('no_custom_profiles')}</span>")
+            lbl.set_text(tr('no_custom_profiles'))
+            lbl.get_style_context().add_class("dim-label")
             lbl.set_margin_top(16)
             lbl.set_margin_bottom(16)
             row.add(lbl)
@@ -192,7 +194,8 @@ class ProfilesPage:
                     
                     count = len(p_info["services"])
                     lbl_desc = Gtk.Label(xalign=0)
-                    lbl_desc.set_markup(f"<span size='small' foreground='#666666'>{count} {tr('hizmet_kurali')}</span>")
+                    lbl_desc.set_text(f"{count} {tr('hizmet_kurali')}")
+                    lbl_desc.get_style_context().add_class("dim-label")
                     v_box.pack_start(lbl_desc, False, False, 0)
                     
                     h_box.pack_start(v_box, True, True, 0)
@@ -224,7 +227,8 @@ class ProfilesPage:
         if not backups:
             row = Gtk.ListBoxRow()
             lbl = Gtk.Label()
-            lbl.set_markup(f"<span foreground='#888888'>{tr('no_backups_found')}</span>")
+            lbl.set_text(tr('no_backups_found'))
+            lbl.get_style_context().add_class("dim-label")
             lbl.set_margin_top(16)
             lbl.set_margin_bottom(16)
             row.add(lbl)
@@ -248,14 +252,15 @@ class ProfilesPage:
                 
                 count = len(b["services"])
                 lbl_desc = Gtk.Label(xalign=0)
-                lbl_desc.set_markup(f"<span size='small' foreground='#666666'>{count} {tr('hizmetin_yedegi')}</span>")
+                lbl_desc.set_text(f"{count} {tr('hizmetin_yedegi')}")
+                lbl_desc.get_style_context().add_class("dim-label")
                 v_box.pack_start(lbl_desc, False, False, 0)
                 
                 h_box.pack_start(v_box, True, True, 0)
                 
                 btn_restore = Gtk.Button(label=tr("geri_yukle"))
                 btn_restore.set_valign(Gtk.Align.CENTER)
-                btn_restore.get_style_context().add_class("warning")
+                btn_restore.get_style_context().add_class("suggested-action")
                 btn_restore.connect("clicked", self._on_restore_backup_clicked, fpath)
                 h_box.pack_start(btn_restore, False, False, 6)
                 

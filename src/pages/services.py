@@ -483,12 +483,12 @@ class ServicesPage:
         if oneri:
             if tip == "kritik":
                 self.detail_suggestion.set_markup(
-                    f"<span foreground='#dc3545' weight='bold'>⚠ {tr('kritik_hizmet')}: </span>"
+                    f"<span foreground='#e01b24' weight='bold'>⚠ {tr('kritik_hizmet')}: </span>"
                     f"<span>{oneri}</span>"
                 )
             elif tip == "oneri":
                 self.detail_suggestion.set_markup(
-                    f"<span foreground='#198754' weight='bold'>💡 {tr('kullanici_onerisi')}: </span>"
+                    f"<span foreground='#2ec27e' weight='bold'>💡 {tr('kullanici_onerisi')}: </span>"
                     f"<span>{oneri}</span>"
                 )
             else:

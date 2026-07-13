@@ -111,10 +111,9 @@ class PardusBootManager:
         icon_path = os.path.join(current_dir, "pardus-boot-analyzer.svg")
         
         # Construct HeaderBar matching native Pardus design
-        hb = Gtk.HeaderBar()
+        self.hb = hb = Gtk.HeaderBar()
         hb.set_show_close_button(True)
-        # Note: We do not set text title/subtitle in the headerbar,
-        # instead displaying the logo as the main branding element on the top left.
+        hb.set_title(tr("title"))
         self.window.set_titlebar(hb)
         
         # Load logo for HeaderBar using Pixbuf to handle SVG scaling cleanly and pack on the left
@@ -163,6 +162,7 @@ class PardusBootManager:
         # 1. Update HeaderBar button label and tooltip
         button.set_label("EN" if new_lang == "tr" else "TR")
         self.window.set_title(tr("title"))
+        self.hb.set_title(tr("title"))
         
         # 2. Update About button tooltip text
         for child in self.window.get_titlebar().get_children():

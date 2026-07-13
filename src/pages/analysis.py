@@ -115,7 +115,8 @@ class AnalysisPage:
         self.card_optimize.pack_start(lbl_opt_title, False, False, 0)
         
         lbl_opt_desc = Gtk.Label(xalign=0)
-        lbl_opt_desc.set_markup(f"<span size='small' foreground='#565f89'>{tr('opt_alt_bilgi')}</span>")
+        lbl_opt_desc.set_text(tr('opt_alt_bilgi'))
+        lbl_opt_desc.get_style_context().add_class("dim-label")
         lbl_opt_desc.set_line_wrap(True)
         self.card_optimize.pack_start(lbl_opt_desc, False, False, 0)
         
@@ -257,7 +258,8 @@ class AnalysisPage:
                     vbox_info.pack_start(btn_go, False, False, 0)
                     
                     lbl_oneri = Gtk.Label(xalign=0)
-                    lbl_oneri.set_markup(f"<span size='small' foreground='#888888'>{oneri_text}</span>")
+                    lbl_oneri.set_text(oneri_text)
+                    lbl_oneri.get_style_context().add_class("dim-label")
                     lbl_oneri.set_line_wrap(True)
                     vbox_info.pack_start(lbl_oneri, False, False, 0)
                     
@@ -268,7 +270,7 @@ class AnalysisPage:
                     btn_disable_one = Gtk.Button()
                     img_dis = Gtk.Image.new_from_icon_name("media-playback-stop", Gtk.IconSize.BUTTON)
                     btn_disable_one.set_image(img_dis)
-                    btn_disable_one.get_style_context().add_class("danger")
+                    btn_disable_one.get_style_context().add_class("destructive-action")
                     btn_disable_one.set_tooltip_text("Sadece bu hizmeti devre dışı bırak ve durdur")
                     btn_disable_one.connect("clicked", lambda b, n=name: self._disable_single_service(n))
                     row_box.pack_start(btn_disable_one, False, False, 0)
@@ -276,7 +278,8 @@ class AnalysisPage:
                     self.opt_list_box.pack_start(row_box, False, False, 0)
             else:
                 lbl_empty = Gtk.Label()
-                lbl_empty.set_markup("<span foreground='#6c757d'>Kapatılması önerilen aktif bir hizmet bulunamadı. Sisteminiz en iyi durumda!</span>")
+                lbl_empty.set_text("Kapatılması önerilen aktif bir hizmet bulunamadı. Sisteminiz en iyi durumda!")
+                lbl_empty.get_style_context().add_class("dim-label")
                 lbl_empty.set_line_wrap(True)
                 lbl_empty.set_margin_top(16)
                 self.opt_list_box.pack_start(lbl_empty, False, False, 0)
