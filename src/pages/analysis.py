@@ -194,8 +194,10 @@ class AnalysisPage:
             }
             
             row = 0
+            time_pattern = r"(\d+(?:\.\d+)?\s*(?:s|ms|min|m|h)(?:\s+\d+(?:\.\d+)?\s*(?:s|ms|min|m|h))*)"
             for key, name in components.items():
-                match = re.search(r"([\d.]+(?:s|ms|min))\s*\((Donanım|Önyükleyici|Çekirdek|Başlangıç Arayüzü|Kullanıcı Alanı|" + key + r")\)", full_text) or re.search(r"([\d.]+(?:s|ms|min))\s*\(" + key + r"\)", full_text)
+                match = re.search(time_pattern + r"\s*\((?:Donanım|Önyükleyici|Çekirdek|Başlangıç Arayüzü|Kullanıcı Alanı|" + key + r")\)", full_text) or \
+                        re.search(time_pattern + r"\s*\(" + key + r"\)", full_text)
                 if match:
                     val = match.group(1)
                     
