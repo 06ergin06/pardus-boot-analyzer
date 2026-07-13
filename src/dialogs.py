@@ -12,7 +12,7 @@ class AddAutostartDialog(Gtk.Dialog):
         
         self.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
         self.btn_ok = self.add_button(tr("ekle"), Gtk.ResponseType.OK)
-        self.btn_ok.get_style_context().add_class("primary")
+        self.btn_ok.get_style_context().add_class("suggested-action")
         
         content = self.get_content_area()
         content.set_margin_start(12)
@@ -149,7 +149,7 @@ class PasswordDialog(Gtk.Dialog):
         
         # Yetkilendir button triggers click handler directly (doesn't auto-close)
         self.btn_auth = Gtk.Button(label=tr("yetkilendir"))
-        self.btn_auth.get_style_context().add_class("primary")
+        self.btn_auth.get_style_context().add_class("suggested-action")
         self.btn_auth.connect("clicked", self._on_auth_clicked)
         self.get_action_area().pack_end(self.btn_auth, False, False, 0)
         
@@ -235,7 +235,7 @@ class ProfileCreatorDialog(Gtk.Dialog):
         # Add buttons
         self.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
         btn_save = self.add_button(tr("kaydet"), Gtk.ResponseType.OK)
-        btn_save.get_style_context().add_class("primary")
+        btn_save.get_style_context().add_class("suggested-action")
         
         # Main layout
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)

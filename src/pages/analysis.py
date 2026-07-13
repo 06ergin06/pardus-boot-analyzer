@@ -100,7 +100,7 @@ class AnalysisPage:
         self.card_sysinfo.pack_start(self.sysinfo_grid, False, False, 4)
         
         self.btn_pdf = Gtk.Button(label=tr("pdf_olustur"))
-        self.btn_pdf.get_style_context().add_class("primary")
+        self.btn_pdf.get_style_context().add_class("suggested-action")
         self.btn_pdf.connect("clicked", self._on_pdf_clicked)
         self.card_sysinfo.pack_start(self.btn_pdf, False, False, 4)
         
@@ -428,7 +428,7 @@ class AnalysisPage:
             action=Gtk.FileChooserAction.SAVE,
             buttons=(tr("iptal"), Gtk.ResponseType.CANCEL, tr("kaydet"), Gtk.ResponseType.ACCEPT)
         )
-        dialog.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("primary")
+        dialog.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("suggested-action")
         
         filter_pdf = Gtk.FileFilter()
         filter_pdf.set_name(tr("pdf_filter_name"))
