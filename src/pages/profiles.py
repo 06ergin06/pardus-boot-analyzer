@@ -87,16 +87,16 @@ class ProfilesPage:
             # Calculate and display estimated savings
             savings = self._calculate_profile_savings(p_info)
             lbl_saving = Gtk.Label()
-            lbl_saving.get_style_context().add_class("dim-label")
             if savings > 0.05:
-                lbl_saving.set_markup(f"<span foreground='#2ec27e'><b>{tr('tahmini_kazanc')}: ~{savings:.1f}s</b></span>")
+                lbl_saving.get_style_context().add_class("success-text")
+                lbl_saving.set_markup(f"<b>{tr('tahmini_kazanc')}: ~{savings:.1f}s</b>")
             else:
-                lbl_saving.set_markup(f"<span foreground='#888888'>{tr('tahmini_kazanc')}: &lt; 0.1s</span>")
+                lbl_saving.get_style_context().add_class("dim-label")
+                lbl_saving.set_text(f"{tr('tahmini_kazanc')}: < 0.1s")
             lbl_saving.set_margin_bottom(4)
             card.pack_start(lbl_saving, False, False, 0)
             
             btn_apply = Gtk.Button(label=tr("profili_uygula"))
-            btn_apply.get_style_context().add_class("suggested-action")
             btn_apply.connect("clicked", self._on_apply_profile_clicked, p_id)
             card.pack_start(btn_apply, False, False, 0)
             
@@ -118,7 +118,6 @@ class ProfilesPage:
         h_custom_bar.pack_start(btn_save_curr, False, False, 0)
         
         btn_create_custom = Gtk.Button(label=tr("yeni_ozel_profil_btn"))
-        btn_create_custom.get_style_context().add_class("suggested-action")
         btn_create_custom.connect("clicked", self._on_create_custom_profile_clicked)
         h_custom_bar.pack_start(btn_create_custom, False, False, 0)
         
@@ -164,7 +163,8 @@ class ProfilesPage:
         if not files:
             row = Gtk.ListBoxRow()
             lbl = Gtk.Label()
-            lbl.set_markup(f"<span foreground='#888888'>{tr('no_custom_profiles')}</span>")
+            lbl.set_text(tr('no_custom_profiles'))
+            lbl.get_style_context().add_class("dim-label")
             lbl.set_margin_top(16)
             lbl.set_margin_bottom(16)
             row.add(lbl)
@@ -192,14 +192,14 @@ class ProfilesPage:
                     
                     count = len(p_info["services"])
                     lbl_desc = Gtk.Label(xalign=0)
-                    lbl_desc.set_markup(f"<span size='small' foreground='#666666'>{count} {tr('hizmet_kurali')}</span>")
+                    lbl_desc.set_text(f"{count} {tr('hizmet_kurali')}")
+                    lbl_desc.get_style_context().add_class("dim-label")
                     v_box.pack_start(lbl_desc, False, False, 0)
                     
                     h_box.pack_start(v_box, True, True, 0)
                     
                     btn_apply = Gtk.Button(label=tr("uygula"))
                     btn_apply.set_valign(Gtk.Align.CENTER)
-                    btn_apply.get_style_context().add_class("suggested-action")
                     btn_apply.connect("clicked", self._on_apply_custom_profile_clicked, fpath)
                     h_box.pack_start(btn_apply, False, False, 6)
                     
@@ -207,7 +207,6 @@ class ProfilesPage:
                     btn_del.set_valign(Gtk.Align.CENTER)
                     img_del = Gtk.Image.new_from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON)
                     btn_del.set_image(img_del)
-                    btn_del.get_style_context().add_class("destructive-action")
                     btn_del.connect("clicked", self._on_delete_custom_profile_clicked, fpath)
                     h_box.pack_start(btn_del, False, False, 0)
                     
@@ -224,7 +223,8 @@ class ProfilesPage:
         if not backups:
             row = Gtk.ListBoxRow()
             lbl = Gtk.Label()
-            lbl.set_markup(f"<span foreground='#888888'>{tr('no_backups_found')}</span>")
+            lbl.set_text(tr('no_backups_found'))
+            lbl.get_style_context().add_class("dim-label")
             lbl.set_margin_top(16)
             lbl.set_margin_bottom(16)
             row.add(lbl)
@@ -248,14 +248,14 @@ class ProfilesPage:
                 
                 count = len(b["services"])
                 lbl_desc = Gtk.Label(xalign=0)
-                lbl_desc.set_markup(f"<span size='small' foreground='#666666'>{count} {tr('hizmetin_yedegi')}</span>")
+                lbl_desc.set_text(f"{count} {tr('hizmetin_yedegi')}")
+                lbl_desc.get_style_context().add_class("dim-label")
                 v_box.pack_start(lbl_desc, False, False, 0)
                 
                 h_box.pack_start(v_box, True, True, 0)
                 
                 btn_restore = Gtk.Button(label=tr("geri_yukle"))
                 btn_restore.set_valign(Gtk.Align.CENTER)
-                btn_restore.get_style_context().add_class("warning")
                 btn_restore.connect("clicked", self._on_restore_backup_clicked, fpath)
                 h_box.pack_start(btn_restore, False, False, 6)
                 
@@ -263,7 +263,6 @@ class ProfilesPage:
                 btn_del.set_valign(Gtk.Align.CENTER)
                 img_del = Gtk.Image.new_from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON)
                 btn_del.set_image(img_del)
-                btn_del.get_style_context().add_class("destructive-action")
                 btn_del.connect("clicked", self._on_delete_backup_clicked, fpath)
                 h_box.pack_start(btn_del, False, False, 0)
                 

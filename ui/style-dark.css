@@ -1,67 +1,47 @@
 /*
- * Pardus Boot Analyzer — Dark Theme Overrides
- * Extends style.css with dark-specific adjustments.
- *
- * This file is loaded IN ADDITION to style.css when a dark GTK theme is active.
- * All base styles use @theme_* tokens so most things adapt automatically.
- * This file only overrides values that need explicit dark-mode tuning.
+ * Pardus Boot Analyzer — Dark Mode Overrides
+ * Loaded on top of style.css only when a dark theme is active.
+ * Most dark adaptation is automatic via @theme_* tokens.
+ * This file only tweaks values that need explicit dark-mode adjustments.
  */
 
-/* ─── Dark-specific card borders (slightly more visible) ─── */
-.card {
-    border-color: shade(@theme_bg_color, 0.78);
+/* Slightly more visible card borders in dark */
+.card,
+.profile-card,
+.autostart-row,
+.group-frame {
+    border-color: shade(@theme_bg_color, 0.72);
 }
 
-.profile-card {
-    border-color: shade(@theme_bg_color, 0.78);
-}
-
-.autostart-row {
-    border-color: shade(@theme_bg_color, 0.78);
-}
-
-/* ─── Sidebar darker separation in dark mode ─── */
+/* Sidebar separator slightly brighter in dark */
 .sidebar {
-    background-color: shade(@theme_bg_color, 0.93);
-    border-right-color: shade(@theme_bg_color, 0.78);
+    border-right-color: shade(@theme_bg_color, 0.72);
 }
 
-/* ─── Treeview header in dark ─── */
-treeview header button {
-    background-color: shade(@theme_bg_color, 0.95);
-    border-bottom-color: shade(@theme_bg_color, 0.78);
-}
-
-/* ─── Detail panel in dark ─── */
-.detail-panel {
-    background-color: shade(@theme_bg_color, 0.93);
-    border-top-color: shade(@theme_bg_color, 0.78);
-}
-
-/* ─── Status bar in dark ─── */
-.status-bar {
-    background-color: shade(@theme_bg_color, 0.93);
-    border-top-color: shade(@theme_bg_color, 0.78);
-}
-
-/* ─── Boot circle contrast in dark ─── */
+/* Boot circle in dark */
 .boot-circle-container {
-    background-color: shade(@theme_bg_color, 0.90);
-    border-color: shade(@theme_bg_color, 0.78);
+    border-color: shade(@theme_bg_color, 0.72);
 }
 
-/* ─── Search entry in dark ─── */
+/* Treeview header in dark */
+treeview header button {
+    background-color: shade(@theme_bg_color, 0.93);
+    border-bottom-color: shade(@theme_bg_color, 0.72);
+}
+
+/* Detail panel in dark */
+.detail-panel {
+    background-color: shade(@theme_bg_color, 0.90);
+    border-top-color: shade(@theme_bg_color, 0.72);
+}
+
+/* Search entry in dark */
 searchentry {
     background-color: shade(@theme_base_color, 1.05);
-    border-color: shade(@theme_bg_color, 0.78);
+    border-color: shade(@theme_bg_color, 0.72);
 }
 
-/* ─── Optimizable row accent in dark ─── */
+/* Optimizable row accent in dark — slightly more visible */
 .optimizable-row {
     background-color: alpha(@pardus_accent, 0.10);
-}
-
-/* ─── Badge in dark ─── */
-.badge-slow {
-    background-color: alpha(@theme_selected_bg_color, 0.20);
 }

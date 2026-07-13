@@ -90,175 +90,184 @@ class Controller:
     def _format_time(self, time_str):
         if not time_str:
             return "--"
-        match = re.match(r"([\d.]+)\s*([a-zA-Z]+)", time_str.strip())
-        if match:
+        time_str = time_str.strip()
+        # Find all occurrences of number + unit (e.g. 1min, 8.634s, 500ms)
+        parts = re.findall(r"([\d.]+)\s*([a-zA-Z]+)", time_str)
+        if not parts:
+            return time_str
+            
+        formatted_parts = []
+        for val_str, unit in parts:
             try:
-                val = float(match.group(1))
-                unit = match.group(2)
+                val = float(val_str)
                 if unit == "s":
-                    return f"{val:.1f}s"
+                    formatted_parts.append(f"{val:.1f}s")
                 elif unit == "ms":
-                    return f"{int(val)}ms"
-                return f"{val:.1f}{unit}"
+                    formatted_parts.append(f"{int(val)}ms")
+                elif unit in ("min", "m"):
+                    formatted_parts.append(f"{int(val)}min" if val.is_integer() else f"{val:.1f}min")
+                else:
+                    formatted_parts.append(f"{val:.1f}{unit}")
             except ValueError:
-                pass
-        return time_str
+                formatted_parts.append(f"{val_str}{unit}")
+                
+        return " ".join(formatted_parts)
 
     def _build_ui(self):
         main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.window.add(main_box)
 
-        # 1. Left Sidebar
-        sidebar_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        sidebar_box.set_size_request(240, -1)
+        # ── Sidebar ─────────────────────────────────────────────
+        sidebar_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        sidebar_box.set_size_request(220, -1)
         sidebar_box.get_style_context().add_class("sidebar")
         main_box.pack_start(sidebar_box, False, False, 0)
 
-        vbox_logo = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-        vbox_logo.set_margin_start(12)
-        vbox_logo.set_margin_top(8)
-        
+        # App title block
+        vbox_logo = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1)
+        vbox_logo.set_margin_start(16)
+        vbox_logo.set_margin_end(16)
+        vbox_logo.set_margin_top(16)
+        vbox_logo.set_margin_bottom(12)
+
         lbl_p = Gtk.Label(xalign=0)
         lbl_p.set_text("Pardus")
         lbl_p.get_style_context().add_class("sidebar-title")
         vbox_logo.pack_start(lbl_p, False, False, 0)
-        
+
         lbl_sub = Gtk.Label(xalign=0)
         lbl_sub.set_text(tr("side_title_sub"))
         lbl_sub.get_style_context().add_class("sidebar-subtitle")
         vbox_logo.pack_start(lbl_sub, False, False, 0)
-        
+
         sidebar_box.pack_start(vbox_logo, False, False, 0)
 
+        # Navigation list — use GTK's built-in .navigation-sidebar class
         self.sidebar_listbox = Gtk.ListBox()
-        self.sidebar_listbox.get_style_context().add_class("sidebar-list")
+        self.sidebar_listbox.get_style_context().add_class("navigation-sidebar")
+        self.sidebar_listbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
         self.sidebar_listbox.connect("row-selected", self._on_sidebar_row_selected)
         sidebar_box.pack_start(self.sidebar_listbox, False, False, 0)
 
         items = [
-            ("dialog-information-symbolic", tr("side_analiz"), "analiz"),
-            ("system-run-symbolic", tr("side_autostart"), "autostart"),
-            ("preferences-system-symbolic", tr("side_hizmetler"), "hizmetler"),
-            ("avatar-default-symbolic", tr("side_profiller"), "profiller")
+            ("dialog-information-symbolic",   tr("side_analiz"),    "analiz"),
+            ("system-run-symbolic",            tr("side_autostart"), "autostart"),
+            ("preferences-system-symbolic",    tr("side_hizmetler"),"hizmetler"),
+            ("avatar-default-symbolic",        tr("side_profiller"),"profiller"),
         ]
-        
+
         for icon_name, text, name in items:
             row = Gtk.ListBoxRow()
-            row.get_style_context().add_class("sidebar-row")
-            
-            box_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-            
+            row.set_name(name)
+
+            box_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            box_row.set_margin_start(8)
+            box_row.set_margin_end(8)
+            box_row.set_margin_top(8)
+            box_row.set_margin_bottom(8)
+
             img = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.MENU)
-            img.set_pixel_size(20)
+            img.set_pixel_size(16)
             img.set_valign(Gtk.Align.CENTER)
             box_row.pack_start(img, False, False, 0)
-            
+
             lbl = Gtk.Label(xalign=0)
-            lbl.get_style_context().add_class("sidebar-item-label")
             lbl.set_text(text)
             lbl.set_valign(Gtk.Align.CENTER)
             box_row.pack_start(lbl, True, True, 0)
-            
+
             row.add(box_row)
             self.sidebar_listbox.add(row)
 
+        # Push status label to bottom
         spacer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         sidebar_box.pack_start(spacer, True, True, 0)
 
         self.status_label = Gtk.Label(xalign=0)
-        self.status_label.get_style_context().add_class("status-label")
-        self.status_label.set_margin_start(12)
-        self.status_label.set_margin_end(12)
+        self.status_label.get_style_context().add_class("dim-label")
+        self.status_label.set_margin_start(16)
+        self.status_label.set_margin_end(16)
+        self.status_label.set_margin_bottom(12)
         self.status_label.set_ellipsize(Pango.EllipsizeMode.END)
-        self.status_label.set_max_width_chars(25)
-        sidebar_box.pack_start(self.status_label, False, False, 8)
+        self.status_label.set_max_width_chars(22)
+        sidebar_box.pack_start(self.status_label, False, False, 0)
 
-        sep = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-        main_box.pack_start(sep, False, False, 0)
-
+        # ── Content area ─────────────────────────────────────────
         self.content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.content_box.set_margin_start(20)
-        self.content_box.set_margin_end(20)
-        self.content_box.set_margin_top(18)
-        self.content_box.set_margin_bottom(18)
+        self.content_box.get_style_context().add_class("page-content")
         main_box.pack_start(self.content_box, True, True, 0)
 
         self.stack = Gtk.Stack()
         self.stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
-        self.stack.set_transition_duration(200)
+        self.stack.set_transition_duration(150)
         self.content_box.pack_start(self.stack, True, True, 0)
 
-        self.analysis_page = AnalysisPage(self)
-        self.stack.add_named(self.analysis_page.build_page_analysis(), "analiz")
+        self.analysis_page  = AnalysisPage(self)
+        self.stack.add_named(self.analysis_page.build_page_analysis(),    "analiz")
         self.autostart_page = AutostartPage(self)
-        self.stack.add_named(self.autostart_page.build_page_autostart(), "autostart")
-        self.services_page = ServicesPage(self)
-        self.stack.add_named(self.services_page.build_page_services(), "hizmetler")
-        self.profiles_page = ProfilesPage(self)
-        self.stack.add_named(self.profiles_page.build_page_profiles(), "profiller")
+        self.stack.add_named(self.autostart_page.build_page_autostart(),  "autostart")
+        self.services_page  = ServicesPage(self)
+        self.stack.add_named(self.services_page.build_page_services(),    "hizmetler")
+        self.profiles_page  = ProfilesPage(self)
+        self.stack.add_named(self.profiles_page.build_page_profiles(),    "profiller")
 
         self.sidebar_listbox.select_row(self.sidebar_listbox.get_row_at_index(0))
 
     # --- Page 1: Analiz (Dashboard) ---
 
     def rebuild_ui_for_language(self):
-        # 1. Store current selected sidebar index
         selected_row = self.sidebar_listbox.get_selected_row()
         selected_index = selected_row.get_index() if selected_row else 0
-        
-        # 2. Clear old pages from Gtk.Stack
+
         for child in self.stack.get_children():
             self.stack.remove(child)
             child.destroy()
-            
-        # 3. Clear old sidebar items
+
         for child in self.sidebar_listbox.get_children():
             self.sidebar_listbox.remove(child)
             child.destroy()
-            
-        # 4. Rebuild sidebar rows with new translations
+
         items = [
-            ("dialog-information-symbolic", tr("side_analiz"), "analiz"),
-            ("system-run-symbolic", tr("side_autostart"), "autostart"),
-            ("preferences-system-symbolic", tr("side_hizmetler"), "hizmetler"),
-            ("avatar-default-symbolic", tr("side_profiller"), "profiller")
+            ("dialog-information-symbolic",   tr("side_analiz"),    "analiz"),
+            ("system-run-symbolic",            tr("side_autostart"), "autostart"),
+            ("preferences-system-symbolic",    tr("side_hizmetler"), "hizmetler"),
+            ("avatar-default-symbolic",        tr("side_profiller"), "profiller"),
         ]
-        
+
         for icon_name, text, name in items:
             row = Gtk.ListBoxRow()
-            row.get_style_context().add_class("sidebar-row")
-            box_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-            
+            row.set_name(name)
+            box_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            box_row.set_margin_start(8)
+            box_row.set_margin_end(8)
+            box_row.set_margin_top(8)
+            box_row.set_margin_bottom(8)
+
             img = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.MENU)
-            img.set_pixel_size(20)
+            img.set_pixel_size(16)
             img.set_valign(Gtk.Align.CENTER)
             box_row.pack_start(img, False, False, 0)
-            
+
             lbl = Gtk.Label(xalign=0)
-            lbl.get_style_context().add_class("sidebar-item-label")
             lbl.set_text(text)
             lbl.set_valign(Gtk.Align.CENTER)
             box_row.pack_start(lbl, True, True, 0)
-            
+
             row.add(box_row)
             self.sidebar_listbox.add(row)
-            
+
         self.sidebar_listbox.show_all()
-        
-        # 5. Rebuild pages
-        self.analysis_page = AnalysisPage(self)
-        self.stack.add_named(self.analysis_page.build_page_analysis(), "analiz")
+
+        self.analysis_page  = AnalysisPage(self)
+        self.stack.add_named(self.analysis_page.build_page_analysis(),    "analiz")
         self.autostart_page = AutostartPage(self)
-        self.stack.add_named(self.autostart_page.build_page_autostart(), "autostart")
-        self.services_page = ServicesPage(self)
-        self.stack.add_named(self.services_page.build_page_services(), "hizmetler")
-        self.profiles_page = ProfilesPage(self)
-        self.stack.add_named(self.profiles_page.build_page_profiles(), "profiller")
-        
-        # 6. Reload data to populate widgets
+        self.stack.add_named(self.autostart_page.build_page_autostart(),  "autostart")
+        self.services_page  = ServicesPage(self)
+        self.stack.add_named(self.services_page.build_page_services(),    "hizmetler")
+        self.profiles_page  = ProfilesPage(self)
+        self.stack.add_named(self.profiles_page.build_page_profiles(),    "profiller")
+
         self.load_all()
-        
-        # 7. Restore sidebar selection
         self.sidebar_listbox.select_row(self.sidebar_listbox.get_row_at_index(selected_index))
     def _on_sidebar_row_selected(self, listbox, row):
         if not row:
