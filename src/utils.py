@@ -70,12 +70,16 @@ def parse_blame_time(time_str):
         return 0
     time_str = time_str.strip()
     if "min" in time_str:
-        m = re.match(r"([\d.]+)\s*min\s+([\d.]+)(ms|s)?", time_str)
+        m = re.match(r"([\d.]+)\s*min(?:\s+([\d.]+)(ms|s)?)?", time_str)
         if m:
             minutes = float(m.group(1))
-            val = float(m.group(2))
-            unit = m.group(3) or "s"
-            seconds = val / 1000 if unit == "ms" else val
+            val_str = m.group(2)
+            if val_str:
+                val = float(val_str)
+                unit = m.group(3) or "s"
+                seconds = val / 1000 if unit == "ms" else val
+            else:
+                seconds = 0.0
             return minutes * 60 + seconds
         return 0
     if time_str.endswith("us"):

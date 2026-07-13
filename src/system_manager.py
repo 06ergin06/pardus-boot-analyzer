@@ -82,16 +82,22 @@ class SystemManager:
         my_env["LC_ALL"] = "C"
         output = subprocess.check_output(["systemd-analyze"], text=True, env=my_env)
         
+        first_line = output.strip().splitlines()[0]
+        
         # If there is a "=", the total boot time is after "="
-        if "=" in output:
-            parts = output.split("=")
-            match = re.search(r"([\d.]+(?:s|ms|min))", parts[-1])
-            if match:
-                self._total_boot_time_cache = (match.group(1), output.strip())
-                return self._total_boot_time_cache
+        if "=" in first_line:
+            target = first_line.split("=")[-1].strip()
+        else:
+            # Otherwise, it is after "finished in"
+            if "finished in" in first_line:
+                target = first_line.split("finished in")[-1].strip()
+            else:
+                target = first_line
                 
-        match = re.search(r"([\d.]+(?:s|ms|min))", output)
-        res = match.group(1) if match else output.strip()
+        # Match time format from the target string (e.g. "1min 8.634s" or "35.473s")
+        match = re.search(r"(\d+(?:\.\d+)?\s*(?:s|ms|min|m|h)(?:\s+\d+(?:\.\d+)?\s*(?:s|ms|min|m|h))*)", target)
+        res = match.group(1) if match else target
+        
         self._total_boot_time_cache = (res, output.strip())
         return self._total_boot_time_cache
 

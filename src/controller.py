@@ -90,19 +90,28 @@ class Controller:
     def _format_time(self, time_str):
         if not time_str:
             return "--"
-        match = re.match(r"([\d.]+)\s*([a-zA-Z]+)", time_str.strip())
-        if match:
+        time_str = time_str.strip()
+        # Find all occurrences of number + unit (e.g. 1min, 8.634s, 500ms)
+        parts = re.findall(r"([\d.]+)\s*([a-zA-Z]+)", time_str)
+        if not parts:
+            return time_str
+            
+        formatted_parts = []
+        for val_str, unit in parts:
             try:
-                val = float(match.group(1))
-                unit = match.group(2)
+                val = float(val_str)
                 if unit == "s":
-                    return f"{val:.1f}s"
+                    formatted_parts.append(f"{val:.1f}s")
                 elif unit == "ms":
-                    return f"{int(val)}ms"
-                return f"{val:.1f}{unit}"
+                    formatted_parts.append(f"{int(val)}ms")
+                elif unit in ("min", "m"):
+                    formatted_parts.append(f"{int(val)}min" if val.is_integer() else f"{val:.1f}min")
+                else:
+                    formatted_parts.append(f"{val:.1f}{unit}")
             except ValueError:
-                pass
-        return time_str
+                formatted_parts.append(f"{val_str}{unit}")
+                
+        return " ".join(formatted_parts)
 
     def _build_ui(self):
         main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
