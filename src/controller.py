@@ -45,17 +45,27 @@ class Controller:
         self.load_all()
 
     def _load_css(self):
-        css_file = "ui/style-dark.css" if _is_dark_theme() else "ui/style.css"
-        provider = Gtk.CssProvider()
-        try:
-            provider.load_from_path(css_file)
-            Gtk.StyleContext.add_provider_for_screen(
-                Gdk.Screen.get_default(),
-                provider,
-                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-            )
-        except Exception:
-            pass
+        import os
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        
+        def _load_file(path):
+            provider = Gtk.CssProvider()
+            try:
+                provider.load_from_path(path)
+                Gtk.StyleContext.add_provider_for_screen(
+                    Gdk.Screen.get_default(),
+                    provider,
+                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                )
+            except Exception:
+                pass
+
+        # 1. Always load the base stylesheet (light + neutral tokens)
+        _load_file(os.path.join(base_dir, "ui", "style.css"))
+
+        # 2. Layer dark overrides on top if a dark theme is active
+        if _is_dark_theme():
+            _load_file(os.path.join(base_dir, "ui", "style-dark.css"))
 
     def set_status(self, text):
         self.status_label.set_text(text)
