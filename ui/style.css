@@ -228,49 +228,68 @@ headerbar button {
     color: mix(@theme_fg_color, @theme_bg_color, 0.5);
 }
 
+
 /* ═══════════════════════════════════════════════════════════
-   BUTTONS — GNOME HIG semantic classes
+   BUTTONS — semantic class overrides
+   We use suggested-action / destructive-action for correct
+   GTK/accessibility semantics, but visually reset Adwaita's
+   aggressive blue/red to fit our neutral theme.
    ═══════════════════════════════════════════════════════════ */
 
-/* suggested-action = positive / confirm */
-button.suggested-action {
-    background-color: @theme_selected_bg_color;
-    color: @theme_selected_fg_color;
-    border-radius: 6px;
+/* suggested-action: confirm / positive — neutral with subtle border accent */
+button.suggested-action,
+button.suggested-action:hover,
+button.suggested-action:focus {
+    background-color: @theme_bg_color;
+    background-image: none;
+    color: @theme_fg_color;
+    border: 1px solid shade(@theme_bg_color, 0.78);
+    border-top-color: shade(@theme_bg_color, 0.82);
+    box-shadow: none;
     font-weight: 600;
-    border: none;
-    padding: 6px 16px;
 }
 
 button.suggested-action:hover {
-    background-color: shade(@theme_selected_bg_color, 1.1);
+    background-color: shade(@theme_bg_color, 0.96);
+}
+
+button.suggested-action:active {
+    background-color: shade(@theme_bg_color, 0.92);
 }
 
 button.suggested-action:disabled {
     opacity: 0.5;
 }
 
-/* destructive-action = danger / delete */
-button.destructive-action {
-    background-color: @error_color;
-    color: white;
-    border-radius: 6px;
-    font-weight: 600;
-    border: none;
-    padding: 6px 16px;
+/* destructive-action: delete / danger — neutral, no red */
+button.destructive-action,
+button.destructive-action:hover,
+button.destructive-action:focus {
+    background-color: @theme_bg_color;
+    background-image: none;
+    color: @theme_fg_color;
+    border: 1px solid shade(@theme_bg_color, 0.78);
+    border-top-color: shade(@theme_bg_color, 0.82);
+    box-shadow: none;
+    font-weight: 500;
 }
 
 button.destructive-action:hover {
-    background-color: shade(@error_color, 1.1);
+    background-color: shade(@theme_bg_color, 0.96);
+}
+
+button.destructive-action:active {
+    background-color: shade(@theme_bg_color, 0.92);
 }
 
 button.destructive-action:disabled {
     opacity: 0.5;
 }
 
-/* Flat / text buttons */
+/* Flat / icon-only buttons */
 button.flat {
     background: transparent;
+    background-image: none;
     border: none;
     box-shadow: none;
     padding: 4px 8px;
