@@ -58,7 +58,8 @@ class AutostartPage:
         if not entries:
             row = Gtk.ListBoxRow()
             lbl = Gtk.Label()
-            lbl.set_markup(f"<span foreground='#888888'>{tr('no_autostart_apps')}</span>")
+            lbl.set_text(tr('no_autostart_apps'))
+            lbl.get_style_context().add_class("dim-label")
             lbl.set_margin_top(24)
             lbl.set_margin_bottom(24)
             row.add(lbl)
@@ -81,7 +82,8 @@ class AutostartPage:
                 v_box.pack_start(lbl_name, False, False, 0)
                 
                 lbl_cmd = Gtk.Label(xalign=0)
-                lbl_cmd.set_markup(f"<span size='small' foreground='#666666'>{entry['exec']}</span>")
+                lbl_cmd.set_text(entry['exec'])
+                lbl_cmd.get_style_context().add_class("dim-label")
                 lbl_cmd.set_ellipsize(Pango.EllipsizeMode.END if hasattr(Pango, 'EllipsizeMode') else 3)
                 v_box.pack_start(lbl_cmd, False, False, 0)
                 
