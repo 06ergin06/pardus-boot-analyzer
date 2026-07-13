@@ -1,54 +1,69 @@
 import os
 import sys
 
-# Force GTK to use the compiled-in Adwaita theme ONLY on minimal window managers (like Hyprland, Sway, i3)
-# where GTK theme engines are unconfigured or missing.
-try:
+def _detect_dark_preference():
+    """Returns True if user prefers dark mode — checks portal, env, settings.ini."""
+    # 1. GTK_THEME env var (highest priority)
+    val = (os.environ.get("GTK_THEME") or "").lower()
+    if "dark" in val or "black" in val or "night" in val:
+        return True
+
+    # 2. Freedesktop color-scheme portal (Wayland standard, KDE, GNOME)
+    try:
+        import subprocess
+        out = subprocess.check_output(
+            ["dbus-send", "--print-reply", "--dest=org.freedesktop.portal.Desktop",
+             "/org/freedesktop/portal/desktop", "org.freedesktop.portal.Settings.Read",
+             "string:org.freedesktop.appearance", "string:color-scheme"],
+            stderr=subprocess.DEVNULL, timeout=1
+        ).decode("utf-8")
+        if "uint32 1" in out:
+            return True
+    except Exception:
+        pass
+
+    # 3. gtk-3.0/settings.ini
+    try:
+        path = os.path.expanduser("~/.config/gtk-3.0/settings.ini")
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                content = f.read().lower()
+            if "gtk-application-prefer-dark-theme=1" in content or \
+               "gtk-application-prefer-dark-theme=true" in content:
+                return True
+            for line in content.splitlines():
+                if line.strip().startswith("gtk-theme-name"):
+                    if any(x in line for x in ("dark", "black", "night", "dracula")):
+                        return True
+    except Exception:
+        pass
+
+    return False
+
+def _needs_adwaita_fallback():
+    """
+    Returns True if we should force Adwaita.
+    We do NOT touch the theme on full desktop environments (GNOME, KDE, etc.)
+    — they have their own theme engines and the user has made their choice.
+    We only force Adwaita on minimal WMs or when GTK has no theme configured.
+    """
     desktop = (os.environ.get("XDG_CURRENT_DESKTOP") or "").lower()
-    is_minimal = any(wm in desktop for wm in ("hyprland", "sway", "i3", "openbox", "bspwm", "awesome")) or not desktop
-    
-    if is_minimal:
-        is_dark = False
-        # 1. Check existing env variables
-        for key in ("GTK_THEME", "THEME"):
-            val = (os.environ.get(key) or "").lower()
-            if "dark" in val or "black" in val or "night" in val:
-                is_dark = True
-                break
-                
-        # 2. Check portal color-scheme via dbus (KDE, Hyprland, Wayland standard)
-        if not is_dark:
-            try:
-                import subprocess
-                out = subprocess.check_output(
-                    ["dbus-send", "--print-reply", "--dest=org.freedesktop.portal.Desktop",
-                     "/org/freedesktop/portal/desktop", "org.freedesktop.portal.Settings.Read",
-                     "string:org.freedesktop.appearance", "string:color-scheme"],
-                    stderr=subprocess.DEVNULL, timeout=1
-                ).decode("utf-8")
-                if "uint32 1" in out:
-                    is_dark = True
-            except Exception:
-                pass
-                
-        # 3. Check settings.ini
-        if not is_dark:
-            try:
-                path = os.path.expanduser("~/.config/gtk-3.0/settings.ini")
-                if os.path.exists(path):
-                    with open(path, "r", encoding="utf-8") as f:
-                        content = f.read().lower()
-                        if "gtk-application-prefer-dark-theme=true" in content or "gtk-application-prefer-dark-theme=1" in content:
-                            is_dark = True
-                        else:
-                            for line in content.splitlines():
-                                if line.strip().startswith("gtk-theme-name"):
-                                    if any(x in line for x in ("dark", "black", "night", "tokyo", "dracula")):
-                                        is_dark = True
-                                        break
-            except Exception:
-                pass
-                
+    session = (os.environ.get("DESKTOP_SESSION") or "").lower()
+
+    # Full DEs — respect system theme completely
+    full_de_keywords = ("gnome", "kde", "plasma", "xfce", "cinnamon",
+                        "mate", "lxde", "lxqt", "pantheon", "budgie",
+                        "deepin", "unity", "enlightenment")
+    if any(kw in desktop or kw in session for kw in full_de_keywords):
+        return False
+
+    # No DE detected (bare WM: i3, Hyprland, Sway, openbox, etc.)
+    return True
+
+# Apply Adwaita only where needed — before GTK is imported
+try:
+    if _needs_adwaita_fallback():
+        is_dark = _detect_dark_preference()
         os.environ["GTK_THEME"] = "Adwaita:dark" if is_dark else "Adwaita"
 except Exception:
     pass
@@ -159,32 +174,5 @@ class PardusBootManager:
         self.controller.rebuild_ui_for_language()
 
 if __name__ == "__main__":
-    # If the system has no GTK theme configured (falls back to Raleigh or Default),
-    # force the built-in Adwaita theme to ensure a clean layout on minimal platforms (Hyprland, i3, etc.).
-    try:
-        settings = Gtk.Settings.get_default()
-        if settings:
-            theme_name = settings.get_property("gtk-theme-name")
-            if not theme_name or theme_name.lower() in ("raleigh", "default"):
-                is_dark = False
-                try:
-                    import subprocess
-                    out = subprocess.check_output(
-                        ["dbus-send", "--print-reply", "--dest=org.freedesktop.portal.Desktop",
-                         "/org/freedesktop/portal/desktop", "org.freedesktop.portal.Settings.Read",
-                         "string:org.freedesktop.appearance", "string:color-scheme"],
-                        stderr=subprocess.DEVNULL, timeout=1
-                    ).decode("utf-8")
-                    if "uint32 1" in out:
-                        is_dark = True
-                except Exception:
-                    pass
-                
-                settings.set_property("gtk-theme-name", "Adwaita")
-                if is_dark:
-                    settings.set_property("gtk-application-prefer-dark-theme", True)
-    except Exception:
-        pass
-
     app = PardusBootManager()
     Gtk.main()
