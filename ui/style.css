@@ -1,130 +1,129 @@
 /*
- * Pardus Boot Analyzer — UI Stylesheet
- * GNOME HIG compliant, system-token-based, cross-desktop compatible.
+ * Pardus Boot Analyzer — Native GNOME Style
  *
- * Design rules:
- *  - ALL colors come from GTK @theme_* tokens — no hardcoded hex (except brand accent)
- *  - Font sizes use em so system font size + accessibility scaling work correctly
- *  - Spacing follows GNOME HIG grid: 4 / 8 / 12 / 16 / 24 px
- *  - Dark mode: automatic via @theme_* (works with Adwaita:dark, Breeze-Dark, etc.)
- *  - Button semantics: use suggested-action / destructive-action — NOT custom "primary"
+ * Philosophy:
+ *  - Let Adwaita render almost everything natively
+ *  - Only override what absolutely must differ (sidebar branding, page padding)
+ *  - Use GTK's own .navigation-sidebar, .view, .background, .dim-label classes
+ *  - No hardcoded colors except the single Pardus brand accent
+ *  - em-based font sizes so accessibility / text-scaling works correctly
+ *
+ * Compatible: Adwaita, Adwaita:dark, Breeze-GTK, Yaru, Arc, any GTK3 theme
  */
 
-/* ─── Pardus brand accent (only hardcoded color allowed) ─── */
+/* ── Pardus brand accent (only hardcoded value) ── */
 @define-color pardus_accent #f1b82d;
-@define-color pardus_accent_dim alpha(#f1b82d, 0.18);
+
 
 /* ═══════════════════════════════════════════════════════════
-   ROOT WINDOW
+   WINDOW
    ═══════════════════════════════════════════════════════════ */
 window {
     background-color: @theme_bg_color;
-    color: @theme_fg_color;
 }
+
 
 /* ═══════════════════════════════════════════════════════════
-   HEADERBAR
-   ═══════════════════════════════════════════════════════════ */
-headerbar {
-    background-color: @theme_bg_color;
-    border-bottom: 1px solid shade(@theme_bg_color, 0.85);
-    min-height: 46px;
-    padding: 0 8px;
-}
-
-headerbar button {
-    border-radius: 6px;
-    padding: 4px 8px;
-    min-height: 28px;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   SIDEBAR  (matches GNOME Settings / Nautilus side panel)
+   SIDEBAR
+   Adwaita provides .navigation-sidebar on the ListBox itself.
+   We only add the outer container background + border.
    ═══════════════════════════════════════════════════════════ */
 .sidebar {
-    background-color: shade(@theme_bg_color, 0.97);
-    border-right: 1px solid shade(@theme_bg_color, 0.88);
-    padding: 12px 6px;
+    background-color: @sidebar_background_color;
+    border-right: 1px solid @borders;
+    min-width: 210px;
 }
 
-/* App name / branding in sidebar */
+/* Fallback if theme doesn't define @sidebar_background_color */
+@define-color sidebar_background_color shade(@theme_bg_color, 0.97);
+
+/* App branding label (Pardus / Boot Analyzer) */
 .sidebar-title {
-    font-size: 1.1em;
+    font-size: 1.05em;
     font-weight: 800;
     color: @pardus_accent;
-    margin-bottom: 2px;
 }
 
 .sidebar-subtitle {
-    font-size: 0.78em;
+    font-size: 0.8em;
     font-weight: 600;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.45);
-    margin-bottom: 16px;
+    opacity: 0.6;
+    margin-bottom: 6px;
 }
 
-/* Navigation ListBox */
-.sidebar-list {
+/*
+ * .navigation-sidebar is the native GTK class used by Nautilus, GNOME Settings, etc.
+ * Adwaita handles hover, selection, focus automatically — we do NOT override those.
+ * We only ensure the background is transparent so the outer .sidebar color shows.
+ */
+.navigation-sidebar {
     background-color: transparent;
     border: none;
+    padding: 4px;
 }
 
-/* Individual nav rows — GNOME NavigationView style */
-.sidebar-row {
+/* Individual rows inside navigation-sidebar — Adwaita styles these natively */
+.navigation-sidebar > row {
     border-radius: 6px;
-    margin-bottom: 2px;
-    padding: 9px 12px;
-    background-color: transparent;
+}
+
+.navigation-sidebar > row image {
     color: @theme_fg_color;
-    transition: background-color 100ms ease-in-out;
+    opacity: 0.75;
 }
 
-.sidebar-row:hover {
-    background-color: alpha(@theme_fg_color, 0.07);
-}
-
-.sidebar-row:selected,
-.sidebar-row:active {
-    background-color: @theme_selected_bg_color;
+.navigation-sidebar > row:selected image,
+.navigation-sidebar > row:focus:selected image {
     color: @theme_selected_fg_color;
+    opacity: 1;
 }
 
-.sidebar-row:selected label,
-.sidebar-row:active label {
-    color: @theme_selected_fg_color;
-}
-
-/* Nav icon inherits row color automatically */
-.sidebar-row image {
-    color: inherit;
-}
-
-.sidebar-item-label {
-    font-size: 0.95em;
-    font-weight: 600;
-}
 
 /* ═══════════════════════════════════════════════════════════
-   CONTENT AREA HEADERS
+   HEADER BAR
    ═══════════════════════════════════════════════════════════ */
-.content-title {
-    font-size: 1.35em;
+headerbar {
+    /* Let the theme handle everything — just ensure consistent height */
+    min-height: 46px;
+}
+
+headerbar button.flat {
+    border-radius: 6px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   CONTENT AREA — page-level padding
+   Applied per-page via a wrapper box with class .page-content
+   ═══════════════════════════════════════════════════════════ */
+.page-content {
+    padding: 24px;
+}
+
+/* Page title (h1 equivalent) */
+.page-title {
+    font-size: 1.3em;
     font-weight: 700;
     color: @theme_fg_color;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
-.content-subtitle {
+.page-subtitle {
     font-size: 0.88em;
     color: mix(@theme_fg_color, @theme_bg_color, 0.5);
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 
+
 /* ═══════════════════════════════════════════════════════════
-   CARDS  (GNOME Preferences Group style)
+   CARDS  — GNOME Preferences Group style
+   Use .card for any bordered content group.
+   Adwaita gives .card a native look automatically in GTK4;
+   in GTK3 we replicate it with @theme_base_color + border.
    ═══════════════════════════════════════════════════════════ */
 .card {
     background-color: @theme_base_color;
-    border: 1px solid shade(@theme_bg_color, 0.88);
+    border: 1px solid @borders;
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 12px;
@@ -137,31 +136,40 @@ headerbar button {
     margin-bottom: 8px;
 }
 
+/* Frame-style grouping (lighter alternative to card) */
+.group-frame {
+    border: 1px solid @borders;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+
 /* ═══════════════════════════════════════════════════════════
-   BOOT TIME CIRCLE  (Analysis page)
+   BOOT TIME CIRCLE  (Analysis dashboard)
    ═══════════════════════════════════════════════════════════ */
 .boot-circle-container {
-    background-color: shade(@theme_bg_color, 0.97);
-    border: 2px solid shade(@theme_bg_color, 0.88);
+    background-color: @theme_bg_color;
+    border: 2px solid @borders;
     border-radius: 84px;
-    min-width: 168px;
-    min-height: 168px;
+    min-width: 160px;
+    min-height: 160px;
     margin: 12px;
 }
 
 .boot-time-value {
-    font-size: 2em;
+    font-size: 1.9em;
     font-weight: 800;
     color: @theme_selected_bg_color;
 }
 
 .boot-time-label {
-    font-size: 0.78em;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.5);
+    font-size: 0.8em;
+    opacity: 0.6;
 }
 
+
 /* ═══════════════════════════════════════════════════════════
-   BLAME / ANALYSIS ROWS
+   ANALYSIS / BLAME ROWS
    ═══════════════════════════════════════════════════════════ */
 .blame-row {
     padding: 3px 0;
@@ -169,15 +177,14 @@ headerbar button {
 
 /* Badge on slow services */
 .badge-slow {
-    background-color: alpha(@theme_selected_bg_color, 0.15);
+    background-color: alpha(@theme_selected_bg_color, 0.12);
     color: @theme_selected_bg_color;
-    font-size: 0.78em;
+    font-size: 0.8em;
     font-weight: 700;
     padding: 2px 6px;
     border-radius: 4px;
 }
 
-/* Optimizable service row highlight */
 .optimizable-row {
     background-color: alpha(@pardus_accent, 0.08);
     border-left: 3px solid @pardus_accent;
@@ -186,12 +193,13 @@ headerbar button {
     margin-bottom: 4px;
 }
 
+
 /* ═══════════════════════════════════════════════════════════
-   AUTOSTART APPLICATION ROWS
+   AUTOSTART ROWS
    ═══════════════════════════════════════════════════════════ */
 .autostart-row {
     background-color: @theme_base_color;
-    border: 1px solid shade(@theme_bg_color, 0.88);
+    border: 1px solid @borders;
     border-radius: 6px;
     margin-bottom: 6px;
     padding: 10px 14px;
@@ -202,19 +210,20 @@ headerbar button {
     border-color: shade(@theme_bg_color, 0.78);
 }
 
+
 /* ═══════════════════════════════════════════════════════════
    PROFILE CARDS
    ═══════════════════════════════════════════════════════════ */
 .profile-card {
     background-color: @theme_base_color;
-    border: 1px solid shade(@theme_bg_color, 0.88);
+    border: 1px solid @borders;
     border-radius: 8px;
     padding: 16px;
     transition: border-color 120ms ease-in-out;
 }
 
 .profile-card:hover {
-    border-color: @theme_selected_bg_color;
+    border-color: shade(@borders, 0.85);
 }
 
 .profile-title {
@@ -224,53 +233,20 @@ headerbar button {
 }
 
 .profile-desc {
-    font-size: 0.84em;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.5);
+    font-size: 0.85em;
+    opacity: 0.65;
 }
+
 
 /* ═══════════════════════════════════════════════════════════
-   BUTTONS — GNOME HIG semantic classes
+   BUTTONS — semantic overrides to neutralize Adwaita coloring
+   We keep the semantic class names for a11y but visually reset
+   the aggressive blue/red that Adwaita applies.
    ═══════════════════════════════════════════════════════════ */
 
-/* suggested-action = positive / confirm */
-button.suggested-action {
-    background-color: @theme_selected_bg_color;
-    color: @theme_selected_fg_color;
-    border-radius: 6px;
-    font-weight: 600;
-    border: none;
-    padding: 6px 16px;
-}
-
-button.suggested-action:hover {
-    background-color: shade(@theme_selected_bg_color, 1.1);
-}
-
-button.suggested-action:disabled {
-    opacity: 0.5;
-}
-
-/* destructive-action = danger / delete */
-button.destructive-action {
-    background-color: @error_color;
-    color: white;
-    border-radius: 6px;
-    font-weight: 600;
-    border: none;
-    padding: 6px 16px;
-}
-
-button.destructive-action:hover {
-    background-color: shade(@error_color, 1.1);
-}
-
-button.destructive-action:disabled {
-    opacity: 0.5;
-}
-
-/* Flat / text buttons */
 button.flat {
     background: transparent;
+    background-image: none;
     border: none;
     box-shadow: none;
     padding: 4px 8px;
@@ -280,13 +256,15 @@ button.flat:hover {
     background-color: alpha(@theme_fg_color, 0.08);
 }
 
+
 /* ═══════════════════════════════════════════════════════════
-   SERVICES TREEVIEW
+   TREEVIEW (Services list)
+   Let the theme handle row height, colors, selection.
+   We only ensure header looks consistent.
    ═══════════════════════════════════════════════════════════ */
 treeview {
     background-color: @theme_base_color;
-    color: @theme_text_color;
-    font-size: 0.9em;
+    /* No font-size — inherit system default */
 }
 
 treeview:selected {
@@ -295,108 +273,122 @@ treeview:selected {
 }
 
 treeview header button {
-    font-size: 0.82em;
     font-weight: 600;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.4);
-    border-bottom: 1px solid shade(@theme_bg_color, 0.88);
-    padding: 6px 8px;
-    background: @theme_bg_color;
+    font-size: 0.88em;
+    color: mix(@theme_fg_color, @theme_bg_color, 0.35);
+    border-bottom: 1px solid @borders;
+    padding: 5px 8px;
+    background-color: @theme_bg_color;
+    background-image: none;
+    box-shadow: none;
 }
 
-/* Detail panel below tree */
+
+/* ═══════════════════════════════════════════════════════════
+   DETAIL / INFO PANELS
+   ═══════════════════════════════════════════════════════════ */
 .detail-panel {
     background-color: shade(@theme_bg_color, 0.97);
-    border-top: 1px solid shade(@theme_bg_color, 0.88);
-    padding: 12px 16px;
+    border-top: 1px solid @borders;
+    padding: 10px 16px;
 }
 
 .detail-name {
-    font-size: 0.95em;
+    font-size: 0.93em;
     font-weight: 700;
     color: @theme_fg_color;
 }
 
 .detail-desc {
-    font-size: 0.88em;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.4);
+    font-size: 0.87em;
+    opacity: 0.65;
 }
 
 .detail-tip {
     font-size: 0.84em;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.35);
+    opacity: 0.55;
     font-style: italic;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   STATUS BAR
-   ═══════════════════════════════════════════════════════════ */
-.status-bar {
-    background-color: shade(@theme_bg_color, 0.96);
-    border-top: 1px solid shade(@theme_bg_color, 0.88);
-    padding: 4px 16px;
-}
-
-.status-label {
-    font-size: 0.82em;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.45);
-}
 
 /* ═══════════════════════════════════════════════════════════
-   AUTH / PASSWORD DIALOG
+   AUTH DIALOG
    ═══════════════════════════════════════════════════════════ */
-.auth-dialog {
-    background-color: @theme_bg_color;
-}
-
 .auth-head {
     font-size: 1.1em;
     font-weight: 700;
-    color: @theme_fg_color;
 }
 
 .auth-sub {
     font-size: 0.88em;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.5);
+    opacity: 0.7;
 }
 
 .error-text {
-    font-size: 0.88em;
     color: @error_color;
+    font-size: 0.88em;
 }
+
 
 /* ═══════════════════════════════════════════════════════════
-   MISC UTILITIES
+   SEARCH ENTRY  (consistent look across themes)
    ═══════════════════════════════════════════════════════════ */
-.dim-label {
-    opacity: 0.55;
-}
-
-.separator {
-    background-color: shade(@theme_bg_color, 0.88);
-    min-height: 1px;
-}
-
-/* Search entry consistent look across themes */
 searchentry {
     border-radius: 6px;
-    padding: 6px 10px;
+    border: 1px solid @borders;
     background-color: @theme_base_color;
-    border: 1px solid shade(@theme_bg_color, 0.85);
     color: @theme_text_color;
+    padding: 5px 10px;
 }
 
 searchentry:focus {
     border-color: @theme_selected_bg_color;
-    box-shadow: 0 0 0 2px alpha(@theme_selected_bg_color, 0.25);
+    box-shadow: 0 0 0 2px alpha(@theme_selected_bg_color, 0.2);
 }
 
-/* Spinner inside buttons */
-button spinner {
-    color: currentColor;
+
+/* ═══════════════════════════════════════════════════════════
+   MISC UTILITIES  (keep these — used across pages)
+   ═══════════════════════════════════════════════════════════ */
+
+/* dim-label is a standard GTK class — just ensure it's available */
+.dim-label {
+    opacity: 0.55;
 }
 
-/* ComboBox consistent */
-combobox button {
-    border-radius: 6px;
-    padding: 5px 10px;
+.success-text {
+    color: @success_color;
+}
+
+.warning-text {
+    color: @warning_color;
+}
+
+.error-text {
+    color: @error_color;
+}
+
+/* status label at sidebar bottom — inherits dim-label */
+.status-label {
+    font-size: 0.82em;
+    opacity: 0.55;
+}
+
+/* content-title / content-subtitle used on older page headers */
+.content-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: @theme_fg_color;
+    margin-bottom: 4px;
+}
+
+.content-subtitle {
+    font-size: 0.88em;
+    opacity: 0.6;
+    margin-bottom: 16px;
+}
+
+/* sidebar-title / sidebar-subtitle kept for branding block */
+.sidebar-item-label {
+    font-size: 0.93em;
 }

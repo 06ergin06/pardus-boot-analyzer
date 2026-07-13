@@ -63,7 +63,7 @@ python3 main.py
 * **GUI Installation (Pardus):** You can double-click the `.deb` file to easily install it via the **Pardus Package Installer** GUI.
 * **Terminal Installation:**
   ```bash
-  sudo dpkg -i pardus-boot-analyzer_1.0.0_all.deb
+  sudo dpkg -i pardus-boot-analyzer_1.0.3_all.deb
   sudo apt install -f
   ```
 
@@ -73,6 +73,17 @@ To run the application as a standalone portable AppImage without installation:
 ```bash
 chmod +x Pardus_Boot_Analyzer-x86_64.AppImage
 ./Pardus_Boot_Analyzer-x86_64.AppImage
+```
+
+### Arch Linux (AUR) Installation
+
+You can install the application on Arch Linux or Arch-based distributions (Manjaro, EndeavourOS, etc.) directly via the AUR:
+```bash
+yay -S pardus-boot-analyzer-git
+```
+or
+```bash
+paru -S pardus-boot-analyzer-git
 ```
 
 ### Creating Debian and AppImage Packages

@@ -30,7 +30,6 @@ class AutostartPage:
         h_title.pack_start(lbl_title, True, True, 0)
         
         btn_add = Gtk.Button(label=tr("yeni_uygulama_ekle_btn"))
-        btn_add.get_style_context().add_class("suggested-action")
         btn_add.connect("clicked", self._on_add_autostart_clicked)
         h_title.pack_start(btn_add, False, False, 0)
         
@@ -58,7 +57,8 @@ class AutostartPage:
         if not entries:
             row = Gtk.ListBoxRow()
             lbl = Gtk.Label()
-            lbl.set_markup(f"<span foreground='#888888'>{tr('no_autostart_apps')}</span>")
+            lbl.set_text(tr('no_autostart_apps'))
+            lbl.get_style_context().add_class("dim-label")
             lbl.set_margin_top(24)
             lbl.set_margin_bottom(24)
             row.add(lbl)
@@ -81,7 +81,8 @@ class AutostartPage:
                 v_box.pack_start(lbl_name, False, False, 0)
                 
                 lbl_cmd = Gtk.Label(xalign=0)
-                lbl_cmd.set_markup(f"<span size='small' foreground='#666666'>{entry['exec']}</span>")
+                lbl_cmd.set_text(entry['exec'])
+                lbl_cmd.get_style_context().add_class("dim-label")
                 lbl_cmd.set_ellipsize(Pango.EllipsizeMode.END if hasattr(Pango, 'EllipsizeMode') else 3)
                 v_box.pack_start(lbl_cmd, False, False, 0)
                 
@@ -108,7 +109,6 @@ class AutostartPage:
                 btn_delete.set_valign(Gtk.Align.CENTER)
                 img_del = Gtk.Image.new_from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON)
                 btn_delete.set_image(img_del)
-                btn_delete.get_style_context().add_class("destructive-action")
                 btn_delete.connect("clicked", self._on_autostart_delete_clicked, entry["filepath"])
                 h_box.pack_start(btn_delete, False, False, 0)
                 
