@@ -240,50 +240,6 @@ headerbar button.flat {
    We keep the semantic class names for a11y but visually reset
    the aggressive blue/red that Adwaita applies.
    ═══════════════════════════════════════════════════════════ */
-button.suggested-action,
-button.suggested-action:hover,
-button.suggested-action:focus {
-    background-color: @theme_bg_color;
-    background-image: none;
-    color: @theme_fg_color;
-    border: 1px solid @borders;
-    box-shadow: none;
-    font-weight: 600;
-}
-
-button.suggested-action:hover {
-    background-color: shade(@theme_bg_color, 0.96);
-}
-
-button.suggested-action:active {
-    background-color: shade(@theme_bg_color, 0.92);
-}
-
-button.suggested-action:disabled {
-    opacity: 0.5;
-}
-
-button.destructive-action,
-button.destructive-action:hover,
-button.destructive-action:focus {
-    background-color: @theme_bg_color;
-    background-image: none;
-    color: @theme_fg_color;
-    border: 1px solid @borders;
-    box-shadow: none;
-}
-
-button.destructive-action:hover {
-    background-color: shade(@theme_bg_color, 0.96);
-}
-
-button.destructive-action:active {
-    background-color: shade(@theme_bg_color, 0.92);
-}
-
-button.destructive-action:disabled {
-    opacity: 0.5;
-}
 
 button.flat {
     background: transparent;

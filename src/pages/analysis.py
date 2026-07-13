@@ -100,7 +100,6 @@ class AnalysisPage:
         self.card_sysinfo.pack_start(self.sysinfo_grid, False, False, 4)
         
         self.btn_pdf = Gtk.Button(label=tr("pdf_olustur"))
-        self.btn_pdf.get_style_context().add_class("suggested-action")
         self.btn_pdf.connect("clicked", self._on_pdf_clicked)
         self.card_sysinfo.pack_start(self.btn_pdf, False, False, 4)
         
@@ -272,7 +271,6 @@ class AnalysisPage:
                     btn_disable_one = Gtk.Button()
                     img_dis = Gtk.Image.new_from_icon_name("media-playback-stop", Gtk.IconSize.BUTTON)
                     btn_disable_one.set_image(img_dis)
-                    btn_disable_one.get_style_context().add_class("destructive-action")
                     btn_disable_one.set_tooltip_text("Sadece bu hizmeti devre dışı bırak ve durdur")
                     btn_disable_one.connect("clicked", lambda b, n=name: self._disable_single_service(n))
                     row_box.pack_start(btn_disable_one, False, False, 0)
@@ -433,7 +431,7 @@ class AnalysisPage:
             action=Gtk.FileChooserAction.SAVE,
             buttons=(tr("iptal"), Gtk.ResponseType.CANCEL, tr("kaydet"), Gtk.ResponseType.ACCEPT)
         )
-        dialog.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("suggested-action")
+        dialog.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("primary")
         
         filter_pdf = Gtk.FileFilter()
         filter_pdf.set_name(tr("pdf_filter_name"))

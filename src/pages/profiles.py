@@ -97,7 +97,6 @@ class ProfilesPage:
             card.pack_start(lbl_saving, False, False, 0)
             
             btn_apply = Gtk.Button(label=tr("profili_uygula"))
-            btn_apply.get_style_context().add_class("suggested-action")
             btn_apply.connect("clicked", self._on_apply_profile_clicked, p_id)
             card.pack_start(btn_apply, False, False, 0)
             
@@ -119,7 +118,6 @@ class ProfilesPage:
         h_custom_bar.pack_start(btn_save_curr, False, False, 0)
         
         btn_create_custom = Gtk.Button(label=tr("yeni_ozel_profil_btn"))
-        btn_create_custom.get_style_context().add_class("suggested-action")
         btn_create_custom.connect("clicked", self._on_create_custom_profile_clicked)
         h_custom_bar.pack_start(btn_create_custom, False, False, 0)
         
@@ -202,7 +200,6 @@ class ProfilesPage:
                     
                     btn_apply = Gtk.Button(label=tr("uygula"))
                     btn_apply.set_valign(Gtk.Align.CENTER)
-                    btn_apply.get_style_context().add_class("suggested-action")
                     btn_apply.connect("clicked", self._on_apply_custom_profile_clicked, fpath)
                     h_box.pack_start(btn_apply, False, False, 6)
                     
@@ -210,7 +207,6 @@ class ProfilesPage:
                     btn_del.set_valign(Gtk.Align.CENTER)
                     img_del = Gtk.Image.new_from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON)
                     btn_del.set_image(img_del)
-                    btn_del.get_style_context().add_class("destructive-action")
                     btn_del.connect("clicked", self._on_delete_custom_profile_clicked, fpath)
                     h_box.pack_start(btn_del, False, False, 0)
                     
@@ -260,7 +256,6 @@ class ProfilesPage:
                 
                 btn_restore = Gtk.Button(label=tr("geri_yukle"))
                 btn_restore.set_valign(Gtk.Align.CENTER)
-                btn_restore.get_style_context().add_class("suggested-action")
                 btn_restore.connect("clicked", self._on_restore_backup_clicked, fpath)
                 h_box.pack_start(btn_restore, False, False, 6)
                 
@@ -268,7 +263,6 @@ class ProfilesPage:
                 btn_del.set_valign(Gtk.Align.CENTER)
                 img_del = Gtk.Image.new_from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON)
                 btn_del.set_image(img_del)
-                btn_del.get_style_context().add_class("destructive-action")
                 btn_del.connect("clicked", self._on_delete_backup_clicked, fpath)
                 h_box.pack_start(btn_del, False, False, 0)
                 
@@ -559,7 +553,7 @@ class ProfilesPage:
         dialog = Gtk.Dialog(title=tr("profili_kaydet_title"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
         dialog.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
         btn_save = dialog.add_button(tr("kaydet"), Gtk.ResponseType.OK)
-        btn_save.get_style_context().add_class("suggested-action")
+        btn_save.get_style_context().add_class("primary")
         
         content = dialog.get_content_area()
         content.set_margin_start(12)
