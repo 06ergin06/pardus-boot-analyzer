@@ -75,6 +75,17 @@ chmod +x Pardus_Boot_Analyzer-x86_64.AppImage
 ./Pardus_Boot_Analyzer-x86_64.AppImage
 ```
 
+### Arch Linux (AUR) Installation
+
+You can install the application on Arch Linux or Arch-based distributions (Manjaro, EndeavourOS, etc.) directly via the AUR:
+```bash
+yay -S pardus-boot-analyzer-git
+```
+or
+```bash
+paru -S pardus-boot-analyzer-git
+```
+
 ### Creating Debian and AppImage Packages
 
 To compile and package the project:

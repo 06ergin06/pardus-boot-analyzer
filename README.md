@@ -75,6 +75,17 @@ chmod +x Pardus_Boot_Analyzer-x86_64.AppImage
 ./Pardus_Boot_Analyzer-x86_64.AppImage
 ```
 
+### Arch Linux (AUR) Kurulumu
+
+Uygulamayı Arch Linux veya tabanlı dağıtımlarda (Manjaro, EndeavourOS vb.) doğrudan AUR üzerinden kurabilirsiniz:
+```bash
+yay -S pardus-boot-analyzer-git
+```
+veya
+```bash
+paru -S pardus-boot-analyzer-git
+```
+
 ### Debian ve AppImage Paketi Oluşturma
 
 Projeyi yeniden derlemek ve paketlemek için dizindeki paketleme betiklerini çalıştırabilirsiniz:
