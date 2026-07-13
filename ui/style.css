@@ -305,7 +305,7 @@ button.flat:hover {
 treeview {
     background-color: @theme_base_color;
     color: @theme_text_color;
-    font-size: 0.9em;
+    /* No font-size override — inherit system default */
 }
 
 treeview:selected {
@@ -314,7 +314,7 @@ treeview:selected {
 }
 
 treeview header button {
-    font-size: 0.82em;
+    font-size: 0.88em;
     font-weight: 600;
     color: mix(@theme_fg_color, @theme_bg_color, 0.4);
     border-bottom: 1px solid shade(@theme_bg_color, 0.88);
