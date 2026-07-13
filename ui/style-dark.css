@@ -1,184 +1,67 @@
-/* GNOME / Adwaita Native System Integration Stylesheet */
+/*
+ * Pardus Boot Analyzer — Dark Theme Overrides
+ * Extends style.css with dark-specific adjustments.
+ *
+ * This file is loaded IN ADDITION to style.css when a dark GTK theme is active.
+ * All base styles use @theme_* tokens so most things adapt automatically.
+ * This file only overrides values that need explicit dark-mode tuning.
+ */
 
-window {
-    background-color: @theme_bg_color;
-    color: @theme_fg_color;
-}
-
-/* Sidebar Styling matching GNOME Settings navigation sidebar */
-.sidebar {
-    background-color: shade(@theme_bg_color, 0.96);
-    border-right: 1px solid shade(@theme_bg_color, 0.90);
-    padding: 16px 6px;
-}
-
-.sidebar-title {
-    font-size: 14pt;
-    font-weight: 800;
-    color: #f1b82d;
-    margin-bottom: 2px;
-}
-
-.sidebar-subtitle {
-    font-size: 8.5pt;
-    font-weight: bold;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.5);
-    margin-bottom: 20px;
-}
-
-.sidebar-list {
-    background-color: transparent;
-    border: none;
-}
-
-.sidebar-row {
-    border-radius: 6px;
-    margin-bottom: 4px;
-    padding: 10px 14px;
-    background-color: transparent;
-    color: @theme_fg_color;
-    transition: all 120ms ease-in-out;
-}
-
-.sidebar-row:hover {
-    background-color: alpha(@theme_fg_color, 0.07);
-}
-
-.sidebar-row:selected {
-    background-color: @theme_selected_bg_color;
-    color: @theme_selected_fg_color;
-}
-
-.sidebar-row:selected label {
-    color: @theme_selected_fg_color;
-}
-
-.sidebar-item-label {
-    font-size: 10.5pt;
-    font-weight: 600;
-}
-
-/* Content Area */
-.content-title {
-    font-size: 16pt;
-    font-weight: bold;
-    color: @theme_fg_color;
-    margin-bottom: 4px;
-}
-
-.content-subtitle {
-    font-size: 9.5pt;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.6);
-    margin-bottom: 16px;
-}
-
-/* Card Widget (GNOME Card style) */
+/* ─── Dark-specific card borders (slightly more visible) ─── */
 .card {
-    background-color: @theme_base_color;
-    border: 1px solid shade(@theme_bg_color, 0.92);
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 12px;
+    border-color: shade(@theme_bg_color, 0.78);
 }
 
-.card-title {
-    font-size: 11pt;
-    font-weight: bold;
-    color: @theme_fg_color;
-    margin-bottom: 10px;
-}
-
-/* Boot circle */
-.boot-circle-container {
-    background-color: shade(@theme_bg_color, 0.97);
-    border: 2px solid shade(@theme_bg_color, 0.92);
-    border-radius: 80px;
-    min-width: 160px;
-    min-height: 160px;
-    margin: 12px;
-}
-
-.boot-time-value {
-    font-size: 24pt;
-    font-weight: 800;
-    color: @theme_selected_bg_color;
-}
-
-.boot-time-label {
-    font-size: 8.5pt;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.5);
-}
-
-/* Custom progress bars */
-.blame-row {
-    padding: 4px 0;
-}
-
-.badge-slow {
-    background-color: alpha(@theme_selected_bg_color, 0.15);
-    color: @theme_selected_bg_color;
-    font-size: 8.5pt;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-
-/* Autostart applications rows */
-.autostart-row {
-    background-color: @theme_base_color;
-    border: 1px solid shade(@theme_bg_color, 0.92);
-    border-radius: 6px;
-    margin-bottom: 6px;
-    padding: 10px 14px;
-}
-
-.autostart-row:hover {
-    background-color: shade(@theme_base_color, 0.98);
-}
-
-/* Profile Presets */
 .profile-card {
-    background-color: @theme_base_color;
-    border: 1px solid shade(@theme_bg_color, 0.92);
-    border-radius: 8px;
-    padding: 16px;
+    border-color: shade(@theme_bg_color, 0.78);
 }
 
-.profile-card:hover {
-    border-color: @theme_selected_bg_color;
+.autostart-row {
+    border-color: shade(@theme_bg_color, 0.78);
 }
 
-.profile-title {
-    font-size: 11pt;
-    font-weight: bold;
-    color: @theme_fg_color;
+/* ─── Sidebar darker separation in dark mode ─── */
+.sidebar {
+    background-color: shade(@theme_bg_color, 0.93);
+    border-right-color: shade(@theme_bg_color, 0.78);
 }
 
-.profile-desc {
-    font-size: 9pt;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.6);
+/* ─── Treeview header in dark ─── */
+treeview header button {
+    background-color: shade(@theme_bg_color, 0.95);
+    border-bottom-color: shade(@theme_bg_color, 0.78);
 }
 
-/* Auth Dialog Styling */
-.auth-dialog {
-    background-color: @theme_bg_color;
+/* ─── Detail panel in dark ─── */
+.detail-panel {
+    background-color: shade(@theme_bg_color, 0.93);
+    border-top-color: shade(@theme_bg_color, 0.78);
 }
 
-.auth-head {
-    font-size: 13pt;
-    font-weight: bold;
-    color: @theme_fg_color;
+/* ─── Status bar in dark ─── */
+.status-bar {
+    background-color: shade(@theme_bg_color, 0.93);
+    border-top-color: shade(@theme_bg_color, 0.78);
 }
 
-.auth-sub {
-    font-size: 9.5pt;
-    color: mix(@theme_fg_color, @theme_bg_color, 0.6);
+/* ─── Boot circle contrast in dark ─── */
+.boot-circle-container {
+    background-color: shade(@theme_bg_color, 0.90);
+    border-color: shade(@theme_bg_color, 0.78);
 }
 
-.error-text {
-    font-size: 9.5pt;
+/* ─── Search entry in dark ─── */
+searchentry {
+    background-color: shade(@theme_base_color, 1.05);
+    border-color: shade(@theme_bg_color, 0.78);
 }
 
-.dim-label {
-    opacity: 0.55;
+/* ─── Optimizable row accent in dark ─── */
+.optimizable-row {
+    background-color: alpha(@pardus_accent, 0.10);
+}
+
+/* ─── Badge in dark ─── */
+.badge-slow {
+    background-color: alpha(@theme_selected_bg_color, 0.20);
 }

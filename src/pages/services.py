@@ -563,7 +563,7 @@ class ServicesPage:
         else:
             self.btn_run.set_label(tr("simdi_baslat"))
             self.btn_run.get_style_context().remove_class("danger")
-            self.btn_run.get_style_context().add_class("primary")
+            self.btn_run.get_style_context().add_class("suggested-action")
             self.lbl_current_state_status.set_markup(f"<span size='small' color='#dc3545'>○ <b>{tr('su_an_durduruldu')}</b></span>")
 
         if active_state in ("activating", "deactivating"):
