@@ -482,6 +482,31 @@ class AnalysisPage:
                     
             threading.Thread(target=task, daemon=True).start()
 
+    def _draw_wrapped_text(self, cr, text, x, y, max_width, line_height):
+        words = text.split(" ")
+        lines = []
+        current_line = []
+        for word in words:
+            test_line = " ".join(current_line + [word])
+            extents = cr.text_extents(test_line)
+            if extents.x_advance > max_width:
+                if current_line:
+                    lines.append(" ".join(current_line))
+                    current_line = [word]
+                else:
+                    lines.append(word)
+                    current_line = []
+            else:
+                current_line.append(word)
+        if current_line:
+            lines.append(" ".join(current_line))
+            
+        for line in lines:
+            cr.move_to(x, y)
+            cr.show_text(line)
+            y += line_height
+        return y
+
     def _draw_pdf_page(self, operation, context, page_nr):
         cr = context.get_cairo_context()
         
@@ -491,15 +516,15 @@ class AnalysisPage:
         
         cr.set_source_rgb(1.0, 1.0, 1.0)
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-        cr.set_font_size(14)
+        cr.set_font_size(12)
         cr.move_to(70, 78)
-        cr.show_text("PARDUS BAŞLANGIÇ YÖNETİCİSİ — ANALİZ RAPORU")
+        cr.show_text(tr("pdf_baslik").upper())
         
         date_str = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
-        cr.set_font_size(9)
+        cr.set_font_size(8)
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-        cr.move_to(430, 75)
-        cr.show_text(date_str)
+        cr.move_to(390, 76)
+        cr.show_text(f"{tr('pdf_tarih')}: {date_str}")
         
         cr.set_source_rgb(0.2, 0.2, 0.2)
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
@@ -521,22 +546,22 @@ class AnalysisPage:
         cr.set_font_size(10)
         
         y = 150
-        cr.move_to(60, y); cr.show_text(f"İşletim Sistemi: {info['os']}")
-        cr.move_to(300, y); cr.show_text(f"Çekirdek (Kernel): {info['kernel']}")
+        cr.move_to(60, y); cr.show_text(f"{tr('sys_os')} {info['os']}")
+        cr.move_to(300, y); cr.show_text(f"{tr('sys_kernel')} {info['kernel']}")
         
         y = 170
-        cr.move_to(60, y); cr.show_text(f"Bellek (RAM): {info['ram']}")
-        cr.move_to(300, y); cr.show_text(f"Çalısma Süresi: {info['uptime']}")
+        cr.move_to(60, y); cr.show_text(f"{tr('sys_ram')} {info['ram']}")
+        cr.move_to(300, y); cr.show_text(f"{tr('sys_uptime')} {info['uptime']}")
         
         y = 190
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-        cr.move_to(60, y); cr.show_text(f"Toplam Açılış Süresi: {total_time}")
+        cr.move_to(60, y); cr.show_text(f"{tr('toplam_acilis')}: {self._format_time(total_time)}")
         
         cr.set_source_rgb(0.2, 0.2, 0.2)
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(12)
         cr.move_to(50, 230)
-        cr.show_text("2. Açılış Aşamaları Dağılımı")
+        cr.show_text(tr("pdf_acilis_asamalari"))
         
         cr.set_source_rgb(0.8, 0.8, 0.8)
         cr.move_to(50, 237)
@@ -544,11 +569,11 @@ class AnalysisPage:
         cr.stroke()
         
         components = {
-            "firmware": "Donanım (Firmware)",
-            "loader": "Önyükleyici (Loader)",
-            "kernel": "Çekirdek (Kernel)",
-            "initrd": "Başlangıç Arayüzü (Initrd)",
-            "userspace": "Kullanıcı Alanı (Userspace)"
+            "firmware": tr("comp_firmware"),
+            "loader": tr("comp_loader"),
+            "kernel": tr("comp_kernel"),
+            "initrd": tr("comp_initrd"),
+            "userspace": tr("comp_userspace")
         }
         
         y = 255
@@ -556,12 +581,14 @@ class AnalysisPage:
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
         cr.set_font_size(10)
         
+        time_pattern = r"(\d+(?:\.\d+)?\s*(?:s|ms|min|m|h)(?:\s+\d+(?:\.\d+)?\s*(?:s|ms|min|m|h))*)"
         for key, name in components.items():
-            match = re.search(r"([\d.]+(?:s|ms|min))\s*\((Donanım|Önyükleyici|Çekirdek|Başlangıç Arayüzü|Kullanıcı Alanı|" + key + r")\)", full_text) or re.search(r"([\d.]+(?:s|ms|min))\s*\(" + key + r"\)", full_text)
+            match = re.search(time_pattern + r"\s*\((?:Donanım|Önyükleyici|Çekirdek|Başlangıç Arayüzü|Kullanıcı Alanı|" + key + r")\)", full_text) or \
+                    re.search(time_pattern + r"\s*\(" + key + r"\)", full_text)
             if match:
                 val = match.group(1)
                 cr.move_to(70, y); cr.show_text(f"•  {name}:")
-                cr.move_to(250, y); cr.show_text(val)
+                cr.move_to(250, y); cr.show_text(self._format_time(val))
                 y += 18
                 
         cr.set_source_rgb(0.2, 0.2, 0.2)
@@ -585,7 +612,7 @@ class AnalysisPage:
         
         for item in blame_list[:5]:
             cr.move_to(70, y); cr.show_text(f"•  {item['name']}:")
-            cr.move_to(350, y); cr.show_text(item['time'])
+            cr.move_to(350, y); cr.show_text(self._format_time(item['time']))
             y += 16
             
         cr.set_source_rgb(0.2, 0.2, 0.2)
@@ -614,13 +641,24 @@ class AnalysisPage:
             cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
             
             y += 20
-            for item in optimizable_services[:4]:
+            remaining = len(optimizable_services)
+            for i, item in enumerate(optimizable_services):
+                if y > 710:
+                    cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+                    cr.move_to(70, y)
+                    more_count = remaining - i
+                    msg = tr("pdf_ve_diger_oneriler").format(more_count)
+                    cr.show_text(msg)
+                    break
+                
                 cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-                cr.move_to(70, y); cr.show_text(f"- {item['name']} ({item['time_str']})")
+                cr.move_to(70, y); cr.show_text(f"- {item['name']} ({self._format_time(item['time_str'])})")
                 cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-                y += 15
-                cr.move_to(85, y); cr.show_text(item['oneri'])
-                y += 20
+                y += 14
+                
+                # Draw wrapped suggestion text dynamically to prevent clipping and line overflow
+                y = self._draw_wrapped_text(cr, item['oneri'], 85, y, 440, 14)
+                y += 8
         else:
             cr.move_to(60, y)
             cr.show_text(tr("pdf_no_opt"))
