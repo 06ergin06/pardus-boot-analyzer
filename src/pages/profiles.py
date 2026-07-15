@@ -89,14 +89,14 @@ class ProfilesPage:
             lbl_saving = Gtk.Label()
             if savings > 0.05:
                 lbl_saving.get_style_context().add_class("success-text")
-                lbl_saving.set_markup(f"<b>{tr('tahmini_kazanc')}: ~{savings:.1f}s</b>")
+                lbl_saving.set_markup(f"<b>{tr('tahmini_saving')}: ~{savings:.1f}s</b>")
             else:
                 lbl_saving.get_style_context().add_class("dim-label")
-                lbl_saving.set_text(f"{tr('tahmini_kazanc')}: < 0.1s")
+                lbl_saving.set_text(f"{tr('tahmini_saving')}: < 0.1s")
             lbl_saving.set_margin_bottom(4)
             card.pack_start(lbl_saving, False, False, 0)
             
-            btn_apply = Gtk.Button(label=tr("profili_uygula"))
+            btn_apply = Gtk.Button(label=tr("profili_apply"))
             btn_apply.connect("clicked", self._on_apply_profile_clicked, p_id)
             card.pack_start(btn_apply, False, False, 0)
             
@@ -104,7 +104,7 @@ class ProfilesPage:
             col += 1
             
         lbl_custom_title = Gtk.Label(xalign=0)
-        lbl_custom_title.set_text(tr("kullanici_ozel_profilleri"))
+        lbl_custom_title.set_text(tr("user_custom_profilleri"))
         lbl_custom_title.get_style_context().add_class("card-title")
         lbl_custom_title.set_margin_top(16)
         box.pack_start(lbl_custom_title, False, False, 8)
@@ -112,12 +112,12 @@ class ProfilesPage:
         h_custom_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         box.pack_start(h_custom_bar, False, False, 0)
         
-        btn_save_curr = Gtk.Button(label=tr("mevcut_durumu_kaydet"))
+        btn_save_curr = Gtk.Button(label=tr("mevcut_durumu_save"))
         btn_save_curr.get_style_context().add_class("success")
         btn_save_curr.connect("clicked", self._on_save_custom_profile_clicked)
         h_custom_bar.pack_start(btn_save_curr, False, False, 0)
         
-        btn_create_custom = Gtk.Button(label=tr("yeni_ozel_profil_btn"))
+        btn_create_custom = Gtk.Button(label=tr("yeni_custom_profile_btn"))
         btn_create_custom.connect("clicked", self._on_create_custom_profile_clicked)
         h_custom_bar.pack_start(btn_create_custom, False, False, 0)
         
@@ -125,9 +125,9 @@ class ProfilesPage:
         self.custom_profiles_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
         box.pack_start(self.custom_profiles_listbox, False, False, 0)
         
-        # Geri Yükleme Noktaları (Yedekler)
+        # Restore Points (Backups)
         lbl_backup_title = Gtk.Label(xalign=0)
-        lbl_backup_title.set_text(tr("sistem_geri_yukleme_noktalari"))
+        lbl_backup_title.set_text(tr("system_restore_yukleme_noktalari"))
         lbl_backup_title.get_style_context().add_class("card-title")
         lbl_backup_title.set_margin_top(24)
         box.pack_start(lbl_backup_title, False, False, 8)
@@ -135,7 +135,7 @@ class ProfilesPage:
         h_backup_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         box.pack_start(h_backup_bar, False, False, 0)
         
-        btn_create_backup = Gtk.Button(label=tr("yeni_yedek_noktasi_btn"))
+        btn_create_backup = Gtk.Button(label=tr("yeni_backup_noktasi_btn"))
         btn_create_backup.get_style_context().add_class("warning")
         btn_create_backup.connect("clicked", self._on_create_backup_clicked)
         h_backup_bar.pack_start(btn_create_backup, False, False, 0)
@@ -211,13 +211,13 @@ class ProfilesPage:
                     
                     count = len(p_info["services"])
                     lbl_desc = Gtk.Label(xalign=0)
-                    lbl_desc.set_text(f"{count} {tr('hizmet_kurali')}")
+                    lbl_desc.set_text(f"{count} {tr('service_kurali')}")
                     lbl_desc.get_style_context().add_class("dim-label")
                     v_box.pack_start(lbl_desc, False, False, 0)
                     
                     h_box.pack_start(v_box, True, True, 0)
                     
-                    btn_apply = Gtk.Button(label=tr("uygula"))
+                    btn_apply = Gtk.Button(label=tr("apply"))
                     btn_apply.set_valign(Gtk.Align.CENTER)
                     btn_apply.connect("clicked", self._on_apply_custom_profile_clicked, fpath)
                     h_box.pack_start(btn_apply, False, False, 6)
@@ -273,7 +273,7 @@ class ProfilesPage:
                 
                 h_box.pack_start(v_box, True, True, 0)
                 
-                btn_restore = Gtk.Button(label=tr("geri_yukle"))
+                btn_restore = Gtk.Button(label=tr("restore_load"))
                 btn_restore.set_valign(Gtk.Align.CENTER)
                 btn_restore.connect("clicked", self._on_restore_backup_clicked, fpath)
                 h_box.pack_start(btn_restore, False, False, 6)
@@ -291,20 +291,20 @@ class ProfilesPage:
     def _on_create_backup_clicked(self, button):
         ok, msg = self.manager.create_backup()
         if ok:
-            self.set_status(tr("yedek_olusturuldu"))
+            self.set_status(tr("backup_olusturuldu"))
             self.load_profiles_page()
         else:
-            self.set_status(f"{tr('hata')}: {msg}")
+            self.set_status(f"{tr('error')}: {msg}")
 
     def _on_restore_backup_clicked(self, button, fpath):
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-            message_format=tr("yedek_don_soru")
+            message_format=tr("backup_don_soru")
         )
         dlg.add_button(tr("no"), Gtk.ResponseType.NO)
         dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
-        dlg.format_secondary_text(tr("yedek_don_aciklama"))
+        dlg.format_secondary_text(tr("backup_don_description"))
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
@@ -312,10 +312,10 @@ class ProfilesPage:
             return
             
         if not self._ensure_auth():
-            self.set_status(tr("yetki_iptal"))
+            self.set_status(tr("auth_cancel"))
             return
             
-        loader = Gtk.Dialog(title=tr("yedek_geri_yukleniyor"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        loader = Gtk.Dialog(title=tr("backup_restore_yukleniyor"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
         loader.set_default_size(320, 140)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         box.set_margin_start(18)
@@ -324,7 +324,7 @@ class ProfilesPage:
         box.set_margin_bottom(18)
         loader.get_content_area().add(box)
         
-        lbl = Gtk.Label(label=tr("yedek_yukleniyor_bekleyin"))
+        lbl = Gtk.Label(label=tr("backup_yukleniyor_bekleyin"))
         box.pack_start(lbl, False, False, 0)
         
         spinner = Gtk.Spinner()
@@ -350,7 +350,7 @@ class ProfilesPage:
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-            message_format=tr("yedek_sil_soru")
+            message_format=tr("backup_delete_soru")
         )
         dlg.add_button(tr("no"), Gtk.ResponseType.NO)
         dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
@@ -360,7 +360,7 @@ class ProfilesPage:
         if resp == Gtk.ResponseType.YES:
             try:
                 os.remove(fpath)
-                self.set_status(tr("yedek_noktasi_silindi"))
+                self.set_status(tr("backup_noktasi_deleted"))
                 self.load_profiles_page()
             except Exception as e:
                 self.set_status(f"Hata: {e}")
@@ -374,11 +374,11 @@ class ProfilesPage:
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION,
             buttons=Gtk.ButtonsType.NONE,
-            message_format=f"'{p_info['name']}' " + tr("profil_uygula_soru")
+            message_format=f"'{p_info['name']}' " + tr("profile_apply_soru")
         )
         dlg.add_button(tr("no"), Gtk.ResponseType.NO)
         dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
-        dlg.format_secondary_text(tr("profil_uygula_aciklama"))
+        dlg.format_secondary_text(tr("profile_apply_description"))
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
@@ -404,14 +404,14 @@ class ProfilesPage:
                 disable_list.append(svc)
                 
         if not enable_list and not disable_list:
-            self.set_status(tr("sistem_uygun_durumda"))
+            self.set_status(tr("system_matching_durumda"))
             info = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
                 type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
-                message_format=tr("profil_zaten_uygulanmis")
+                message_format=tr("profile_already_uygulanmis")
             )
             info.add_button(tr("ok"), Gtk.ResponseType.OK)
-            info.format_secondary_text(tr("hizmetler_uygun_detay"))
+            info.format_secondary_text(tr("hizmetler_matching_detay"))
             info.run()
             info.hide()
             GLib.idle_add(info.destroy)
@@ -425,16 +425,16 @@ class ProfilesPage:
                 all_deps[svc] = filtered_deps
 
         if all_deps:
-            dep_msg = tr("profil_uygula_bagimlilik_mesaji")
+            dep_msg = tr("profile_apply_dependency_mesaji")
             for parent, kids in list(all_deps.items())[:5]:
                 dep_msg += f"• {parent} ➔ {', '.join(kids[:3])}\n"
             if len(all_deps) > 5:
-                dep_msg += tr("ve_daha_fazla_hizmet").format(len(all_deps) - 5)
+                dep_msg += tr("ve_daha_fazla_service").format(len(all_deps) - 5)
                 
             dep_dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
                 type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.NONE,
-                message_format=tr("profil_bagimlilik_uyarisi")
+                message_format=tr("profile_dependency_uyarisi")
             )
             dep_dlg.add_button(tr("no"), Gtk.ResponseType.NO)
             dep_dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
@@ -446,7 +446,7 @@ class ProfilesPage:
                 return
             
         if not self._ensure_auth():
-            self.set_status(tr("yetki_iptal"))
+            self.set_status(tr("auth_cancel"))
             return
             
         self._run_profile_batch(enable_list, disable_list)
@@ -456,14 +456,14 @@ class ProfilesPage:
             with open(fpath, "r", encoding="utf-8") as f:
                 p_info = json.load(f)
         except Exception as e:
-            self.set_status(f"{tr('profil_okuma_hatasi')}{e}")
+            self.set_status(f"{tr('profile_okuma_hatasi')}{e}")
             return
             
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION,
             buttons=Gtk.ButtonsType.NONE,
-            message_format=f"'{p_info['name']}' " + tr("profil_uygula_soru")
+            message_format=f"'{p_info['name']}' " + tr("profile_apply_soru")
         )
         dlg.add_button(tr("no"), Gtk.ResponseType.NO)
         dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
@@ -492,7 +492,7 @@ class ProfilesPage:
                 disable_list.append(svc)
                 
         if not enable_list and not disable_list:
-            self.set_status(tr("sistem_uygun_durumda"))
+            self.set_status(tr("system_matching_durumda"))
             return
             
         all_deps = {}
@@ -503,16 +503,16 @@ class ProfilesPage:
                 all_deps[svc] = filtered_deps
 
         if all_deps:
-            dep_msg = tr("profil_uygula_bagimlilik_mesaji")
+            dep_msg = tr("profile_apply_dependency_mesaji")
             for parent, kids in list(all_deps.items())[:5]:
                 dep_msg += f"• {parent} ➔ {', '.join(kids[:3])}\n"
             if len(all_deps) > 5:
-                dep_msg += tr("ve_daha_fazla_hizmet").format(len(all_deps) - 5)
+                dep_msg += tr("ve_daha_fazla_service").format(len(all_deps) - 5)
                 
             dep_dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
                 type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.NONE,
-                message_format=tr("profil_bagimlilik_uyarisi")
+                message_format=tr("profile_dependency_uyarisi")
             )
             dep_dlg.add_button(tr("no"), Gtk.ResponseType.NO)
             dep_dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
@@ -524,13 +524,13 @@ class ProfilesPage:
                 return
             
         if not self._ensure_auth():
-            self.set_status(tr("yetki_iptal"))
+            self.set_status(tr("auth_cancel"))
             return
             
         self._run_profile_batch(enable_list, disable_list)
 
     def _run_profile_batch(self, enable_list, disable_list):
-        loader = Gtk.Dialog(title=tr("profil_uygulaniyor"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        loader = Gtk.Dialog(title=tr("profile_uygulaniyor"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
         loader.set_default_size(320, 140)
         
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -540,7 +540,7 @@ class ProfilesPage:
         box.set_margin_bottom(18)
         loader.get_content_area().add(box)
         
-        lbl = Gtk.Label(label=tr("profil_uygulaniyor_bekleyin"))
+        lbl = Gtk.Label(label=tr("profile_uygulaniyor_bekleyin"))
         box.pack_start(lbl, False, False, 0)
         
         spinner = Gtk.Spinner()
@@ -562,7 +562,7 @@ class ProfilesPage:
                 info = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
-                    message_format=tr("profil_basariyla_uygulandi")
+                    message_format=tr("profile_basariyla_uygulandi")
                 )
                 info.add_button(tr("ok"), Gtk.ResponseType.OK)
                 info.run()
@@ -573,7 +573,7 @@ class ProfilesPage:
                 err = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.NONE,
-                    message_format=tr("profil_uygulama_hatasi"),
+                    message_format=tr("profile_app_hatasi"),
                 )
                 err.add_button(tr("ok"), Gtk.ResponseType.OK)
                 err.format_secondary_text(msg)
@@ -584,9 +584,9 @@ class ProfilesPage:
         threading.Thread(target=task, daemon=True).start()
 
     def _on_save_custom_profile_clicked(self, button):
-        dialog = Gtk.Dialog(title=tr("profili_kaydet_title"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
-        dialog.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
-        btn_save = dialog.add_button(tr("kaydet"), Gtk.ResponseType.OK)
+        dialog = Gtk.Dialog(title=tr("profili_save_title"), parent=self.window, flags=Gtk.DialogFlags.MODAL)
+        dialog.add_button(tr("cancel"), Gtk.ResponseType.CANCEL)
+        btn_save = dialog.add_button(tr("save"), Gtk.ResponseType.OK)
         btn_save.get_style_context().add_class("primary")
         
         content = dialog.get_content_area()
@@ -598,11 +598,11 @@ class ProfilesPage:
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         content.pack_start(vbox, True, True, 0)
         
-        lbl = Gtk.Label(label=tr("yeni_profil_adi_girin"), xalign=0)
+        lbl = Gtk.Label(label=tr("yeni_profile_name_girin"), xalign=0)
         vbox.pack_start(lbl, False, False, 0)
         
         entry = Gtk.Entry()
-        entry.set_text(tr("ozel_profilim"))
+        entry.set_text(tr("custom_profilim"))
         vbox.pack_start(entry, False, False, 0)
         
         dialog.show_all()
@@ -656,7 +656,7 @@ class ProfilesPage:
         try:
             if os.path.exists(fpath):
                 os.remove(fpath)
-                self.set_status(tr("ozel_profil_silindi"))
+                self.set_status(tr("custom_profile_deleted"))
                 self.load_profiles_page()
         except Exception as e:
             self.set_status(f"{tr('silme_hatasi')}{e}")
@@ -671,7 +671,7 @@ class ProfilesPage:
             GLib.idle_add(dlg.destroy)
             
             if err:
-                self.set_status(f"{tr('hata')}: {err}")
+                self.set_status(f"{tr('error')}: {err}")
                 return
                 
             p_dir = self.get_custom_profiles_dir()
@@ -682,7 +682,7 @@ class ProfilesPage:
             try:
                 with open(fpath, "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=4, ensure_ascii=False)
-                self.set_status(f"{tr('ozel_profil_olusturuldu')}".format(data['name']))
+                self.set_status(f"{tr('custom_profile_olusturuldu')}".format(data['name']))
                 self.load_profiles_page()
             except Exception as e:
                 self.set_status(f"Hata: {e}")

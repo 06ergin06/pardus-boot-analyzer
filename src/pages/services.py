@@ -70,7 +70,7 @@ class ServicesPage:
         self.search_entry = Gtk.SearchEntry(placeholder_text=tr("search_placeholder"))
         f_box.pack_start(self.search_entry, True, True, 0)
         
-        self.service_count_label = Gtk.Label(label=f"0 {tr('hizmet_sayisi')}")
+        self.service_count_label = Gtk.Label(label=f"0 {tr('service_count')}")
         self.service_count_label.get_style_context().add_class("badge-slow")
         f_box.pack_start(self.service_count_label, False, False, 4)
         
@@ -115,7 +115,7 @@ class ServicesPage:
         self.treeview.set_rules_hint(True)
         scrolled.add(self.treeview)
         
-        col_name = Gtk.TreeViewColumn(tr("hizmet_adi"))
+        col_name = Gtk.TreeViewColumn(tr("service_name"))
         col_name.set_resizable(True)
         col_name.set_expand(True)
         col_name.set_min_width(220)
@@ -126,7 +126,7 @@ class ServicesPage:
         col_name.add_attribute(renderer_name, "text", 0)
         self.treeview.append_column(col_name)
         
-        col_status = Gtk.TreeViewColumn(tr("durum"))
+        col_status = Gtk.TreeViewColumn(tr("state"))
         col_status.set_resizable(True)
         col_status.set_min_width(110)
         col_status.set_expand(False)
@@ -136,7 +136,7 @@ class ServicesPage:
         col_status.add_attribute(renderer_status, "markup", 1)
         self.treeview.append_column(col_status)
         
-        col_sub = Gtk.TreeViewColumn(tr("alt_durum"))
+        col_sub = Gtk.TreeViewColumn(tr("sub_state"))
         col_sub.set_resizable(True)
         col_sub.set_min_width(110)
         col_sub.set_expand(False)
@@ -146,7 +146,7 @@ class ServicesPage:
         col_sub.add_attribute(renderer_sub, "text", 2)
         self.treeview.append_column(col_sub)
         
-        col_blame = Gtk.TreeViewColumn(tr("sure"))
+        col_blame = Gtk.TreeViewColumn(tr("time"))
         col_blame.set_resizable(True)
         col_blame.set_min_width(90)
         col_blame.set_expand(False)
@@ -170,12 +170,12 @@ class ServicesPage:
         h_detail.pack_start(v_detail_text, True, True, 0)
         
         self.detail_name = Gtk.Label(xalign=0)
-        self.detail_name.set_markup(f"<b>{tr('hizmet_secilmedi')}</b>")
+        self.detail_name.set_markup(f"<b>{tr('service_secilmedi')}</b>")
         self.detail_name.set_ellipsize(Pango.EllipsizeMode.END)
         v_detail_text.pack_start(self.detail_name, False, False, 0)
         
         self.detail_desc = Gtk.Label(xalign=0)
-        self.detail_desc.set_text(tr("hizmet_secilmedi_desc"))
+        self.detail_desc.set_text(tr("service_secilmedi_desc"))
         self.detail_desc.set_line_wrap(True)
         v_detail_text.pack_start(self.detail_desc, False, False, 0)
         
@@ -184,57 +184,57 @@ class ServicesPage:
         self.detail_suggestion.set_line_wrap(True)
         v_detail_text.pack_start(self.detail_suggestion, False, False, 0)
         
-        # Dikey ayırıcı çizgiler ve gruplandırılmış eylem kutuları
+        # Vertical separators and grouped action boxes
         sep1 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         h_detail.pack_start(sep1, False, False, 4)
         
-        # 1. Açılış Ayarı Grubu
+        # 1. Boot Configuration Group
         v_boot_group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         v_boot_group.set_size_request(160, -1)
         h_detail.pack_start(v_boot_group, False, False, 0)
         
         lbl_boot_title = Gtk.Label()
-        lbl_boot_title.set_markup(f"<span weight='bold' size='medium'>{tr('acilis_ayari')}</span>")
+        lbl_boot_title.set_markup(f"<span weight='bold' size='medium'>{tr('boot_ayari')}</span>")
         v_boot_group.pack_start(lbl_boot_title, False, False, 0)
         
-        self.btn_enable = Gtk.Button(label=tr("acilis_calistir"))
+        self.btn_enable = Gtk.Button(label=tr("boot_calistir"))
         v_boot_group.pack_start(self.btn_enable, False, False, 0)
         
         self.lbl_boot_state_status = Gtk.Label()
-        self.lbl_boot_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('durum_bilinmiyor')}</span>")
+        self.lbl_boot_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('state_bilinmiyor')}</span>")
         v_boot_group.pack_start(self.lbl_boot_state_status, False, False, 0)
         
-        # Ayırıcı
+        # Separator
         sep2 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         h_detail.pack_start(sep2, False, False, 4)
         
-        # 2. Şimdiki Durum Grubu
+        # 2. Current State Group
         v_current_group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         v_current_group.set_size_request(160, -1)
         h_detail.pack_start(v_current_group, False, False, 0)
         
         lbl_current_title = Gtk.Label()
-        lbl_current_title.set_markup(f"<span weight='bold' size='medium'>{tr('simdiki_durum')}</span>")
+        lbl_current_title.set_markup(f"<span weight='bold' size='medium'>{tr('simdiki_state')}</span>")
         v_current_group.pack_start(lbl_current_title, False, False, 0)
         
-        self.btn_run = Gtk.Button(label=tr("simdi_baslat"))
+        self.btn_run = Gtk.Button(label=tr("simdi_start"))
         v_current_group.pack_start(self.btn_run, False, False, 0)
         
         self.lbl_current_state_status = Gtk.Label()
-        self.lbl_current_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('durum_bilinmiyor')}</span>")
+        self.lbl_current_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('state_bilinmiyor')}</span>")
         v_current_group.pack_start(self.lbl_current_state_status, False, False, 0)
         
-        # Ayırıcı
+        # Separator
         sep3 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         h_detail.pack_start(sep3, False, False, 4)
         
-        # 3. Diğer İşlemler Grubu
+        # 3. Other Operations Group
         v_utility_group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         v_utility_group.set_size_request(170, -1)
         h_detail.pack_start(v_utility_group, False, False, 0)
         
         lbl_utility_title = Gtk.Label()
-        lbl_utility_title.set_markup(f"<span weight='bold' size='medium'>{tr('diger_islemler')}</span>")
+        lbl_utility_title.set_markup(f"<span weight='bold' size='medium'>{tr('other_islemler')}</span>")
         v_utility_group.pack_start(lbl_utility_title, False, False, 0)
         
         self.btn_mask = Gtk.Button(label=tr("maskele"))
@@ -249,10 +249,10 @@ class ServicesPage:
         self.btn_dep = Gtk.Button(label=tr("bagimliliklar"))
         h_bottom_actions1.pack_start(self.btn_dep, True, True, 0)
         
-        self.btn_refresh = Gtk.Button(label=tr("yenile"))
+        self.btn_refresh = Gtk.Button(label=tr("refresh"))
         v_utility_group.pack_start(self.btn_refresh, False, False, 0)
 
-        # En alta açıklayıcı İpucu/Bilgi Notu eklenmesi
+        # Add explanatory tip/info note to the bottom
         sep_help = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
         self.detail_area.pack_start(sep_help, False, False, 2)
         
@@ -266,7 +266,7 @@ class ServicesPage:
         
         lbl_help = Gtk.Label(xalign=0)
         lbl_help.set_markup(
-            f"<span size='small' style='italic' color='#555555'>{tr('bilgi_ipucu')}</span>"
+            f"<span size='small' style='italic' color='#555555'>{tr('info_tip')}</span>"
         )
         lbl_help.set_line_wrap(True)
         h_help_note.pack_start(lbl_help, True, True, 0)
@@ -292,18 +292,18 @@ class ServicesPage:
         self._updating_widgets = True
         self.liststore.clear()
         self._all_data_map = {}
-        self.detail_name.set_markup(f"<b>{tr('hizmet_secilmedi')}</b>")
-        self.detail_desc.set_text(tr("hizmet_secilmedi_desc"))
+        self.detail_name.set_markup(f"<b>{tr('service_secilmedi')}</b>")
+        self.detail_desc.set_text(tr("service_secilmedi_desc"))
         self.detail_suggestion.set_text("")
-        self.service_count_label.set_text("0 " + tr("hizmet_sayisi"))
+        self.service_count_label.set_text("0 " + tr("service_count"))
         self.set_status(tr("hizmetler_yukleniyor"))
         self.btn_enable.set_sensitive(False)
         self.btn_run.set_sensitive(False)
         self.btn_mask.set_sensitive(False)
         self.btn_log.set_sensitive(False)
         self.btn_dep.set_sensitive(False)
-        self.lbl_boot_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('durum_bilinmiyor')}</span>")
-        self.lbl_current_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('durum_bilinmiyor')}</span>")
+        self.lbl_boot_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('state_bilinmiyor')}</span>")
+        self.lbl_current_state_status.set_markup(f"<span size='small' color='#6c757d'>{tr('state_bilinmiyor')}</span>")
         self._updating_widgets = False
         
         GLib.timeout_add(10, self._do_load)
@@ -322,7 +322,7 @@ class ServicesPage:
                 }
         except Exception as e:
             self.set_status(f"{tr('yukleme_hatasi')}{str(e)}")
-            self.service_count_label.set_text(tr("hata"))
+            self.service_count_label.set_text(tr("error"))
             return False
 
         self._all_data = []
@@ -347,20 +347,20 @@ class ServicesPage:
                 "seconds": blame_info["seconds"],
                 "desc": desc,
                 "tip": tip or "",
-                "oneri": oneri or "",
+                "suggestion": oneri or "",
             })
 
         self._all_data.sort(key=lambda x: (-x["seconds"], x["name"]))
         self._all_data_map = {d["name"]: d for d in self._all_data}
         self._apply_filters()
-        self.set_status(tr("hizmet_listesi_guncellendi"))
+        self.set_status(tr("service_listesi_guncellendi"))
         return False
 
     def _update_count_label(self):
         view = VIEW_MAP.get(self.view_combo.get_active(), "services")
         n = len(self.liststore)
         t = len(self._all_data)
-        self.service_count_label.set_text(f"{n} {tr('hizmet_sayisi')}" if n == t else f"{n}/{t} {tr('hizmet_sayisi')}")
+        self.service_count_label.set_text(f"{n} {tr('service_count')}" if n == t else f"{n}/{t} {tr('service_count')}")
 
     def _apply_filters(self):
         old_selection = self._get_selected_name()
@@ -398,7 +398,7 @@ class ServicesPage:
                 d["time_str"],
                 d["desc"],
                 d["tip"],
-                d["oneri"],
+                d["suggestion"],
                 d["active"]
             ])
 
@@ -458,8 +458,8 @@ class ServicesPage:
             
         r = self._get_selected_row()
         if r is None:
-            self.detail_name.set_markup(f"<b>{tr('hizmet_secilmedi')}</b>")
-            self.detail_desc.set_text(tr("hizmet_secilmedi_desc"))
+            self.detail_name.set_markup(f"<b>{tr('service_secilmedi')}</b>")
+            self.detail_desc.set_text(tr("service_secilmedi_desc"))
             self.detail_suggestion.set_text("")
             self.btn_enable.set_sensitive(False)
             self.btn_run.set_sensitive(False)
@@ -476,23 +476,23 @@ class ServicesPage:
         self.detail_name.set_markup(
             f"<b>{name}</b>  \u2014  <span foreground='{color}'><b>{STATUS_TR.get(active, active)}</b></span>"
         )
-        self.detail_desc.set_text(r[4] or tr("aciklama_yok"))
+        self.detail_desc.set_text(r[4] or tr("description_none"))
         
         tip = r[5]
         oneri = r[6]
         if oneri:
             if tip == "kritik":
                 self.detail_suggestion.set_markup(
-                    f"<span foreground='#e01b24' weight='bold'>⚠ {tr('kritik_hizmet')}: </span>"
+                    f"<span foreground='#e01b24' weight='bold'>⚠ {tr('critical_service')}: </span>"
                     f"<span>{oneri}</span>"
                 )
-            elif tip == "oneri":
+            elif tip == "suggestion":
                 self.detail_suggestion.set_markup(
-                    f"<span foreground='#2ec27e' weight='bold'>💡 {tr('kullanici_onerisi')}: </span>"
+                    f"<span foreground='#2ec27e' weight='bold'>💡 {tr('user_onerisi')}: </span>"
                     f"<span>{oneri}</span>"
                 )
             else:
-                self.detail_suggestion.set_markup(f"<b>{tr('oneri')}:</b> {oneri}")
+                self.detail_suggestion.set_markup(f"<b>{tr('suggestion')}:</b> {oneri}")
         else:
             self.detail_suggestion.set_text("")
 
@@ -545,23 +545,23 @@ class ServicesPage:
             self.btn_enable.set_sensitive(False)
         else:
             if is_enabled:
-                self.btn_enable.set_label(tr("acilis_calistirma"))
+                self.btn_enable.set_label(tr("boot_calistirma"))
                 self.btn_enable.get_style_context().remove_class("success")
                 self.btn_enable.get_style_context().add_class("danger")
-                self.lbl_boot_state_status.set_markup(f"<span size='small' color='#198754'>● <b>{tr('acilis_calisacak')}</b></span>")
+                self.lbl_boot_state_status.set_markup(f"<span size='small' color='#198754'>● <b>{tr('boot_calisacak')}</b></span>")
             else:
-                self.btn_enable.set_label(tr("acilis_calistir"))
+                self.btn_enable.set_label(tr("boot_calistir"))
                 self.btn_enable.get_style_context().remove_class("danger")
                 self.btn_enable.get_style_context().add_class("success")
-                self.lbl_boot_state_status.set_markup(f"<span size='small' color='#dc3545'>○ <b>{tr('acilis_calismayacak')}</b></span>")
+                self.lbl_boot_state_status.set_markup(f"<span size='small' color='#dc3545'>○ <b>{tr('boot_calismayacak')}</b></span>")
 
         if is_running:
-            self.btn_run.set_label(tr("simdi_durdur"))
+            self.btn_run.set_label(tr("simdi_stop"))
             self.btn_run.get_style_context().remove_class("primary")
             self.btn_run.get_style_context().add_class("danger")
             self.lbl_current_state_status.set_markup(f"<span size='small' color='#198754'>● <b>{tr('su_an_calisiyor')}</b></span>")
         else:
-            self.btn_run.set_label(tr("simdi_baslat"))
+            self.btn_run.set_label(tr("simdi_start"))
             self.btn_run.get_style_context().remove_class("danger")
             self.btn_run.get_style_context().add_class("primary")
             self.lbl_current_state_status.set_markup(f"<span size='small' color='#dc3545'>○ <b>{tr('su_an_durduruldu')}</b></span>")
@@ -571,7 +571,7 @@ class ServicesPage:
             self.btn_run.set_sensitive(False)
 
         if is_masked:
-            self.btn_mask.set_label(tr("maskeyi_kaldir"))
+            self.btn_mask.set_label(tr("maskeyi_remove"))
             self.btn_mask.get_style_context().remove_class("danger")
             self.btn_mask.get_style_context().add_class("warning")
         else:
@@ -604,17 +604,17 @@ class ServicesPage:
                 dlg = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-                    message_format=tr("cift_yon_kapatma")
+                    message_format=tr("double_way_kapatma")
                 )
-                dlg.add_button(tr("ikisini_de_kapat"), 2)
-                dlg.add_button(tr("sadece_baslangic_degistir"), 1)
-                dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
+                dlg.add_button(tr("ikisini_de_disable"), 2)
+                dlg.add_button(tr("sadece_startup_degistir"), 1)
+                dlg.add_button(tr("cancel"), Gtk.ResponseType.CANCEL)
                 
-                sec_text = tr("disable_boot_running_sec").format(name)
+                sec_text = tr("disable_boot_running_select").format(name)
                 if deps:
                     dep_list_str = "\n".join(f"- {dep}" for dep in deps[:8])
                     if len(deps) > 8:
-                        dep_list_str += f"\n- {tr('ve_daha_fazla_hizmet').format(len(deps) - 8).strip()}"
+                        dep_list_str += f"\n- {tr('ve_daha_fazla_service').format(len(deps) - 8).strip()}"
                     sec_text += "\n\n" + tr("action_dep_uyari").format(dep_list_str)
                 
                 dlg.format_secondary_text(sec_text)
@@ -639,7 +639,7 @@ class ServicesPage:
                     dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
                     dep_list_str = "\n".join(f"- {dep}" for dep in deps[:8])
                     if len(deps) > 8:
-                        dep_list_str += f"\n- {tr('ve_daha_fazla_hizmet').format(len(deps) - 8).strip()}"
+                        dep_list_str += f"\n- {tr('ve_daha_fazla_service').format(len(deps) - 8).strip()}"
                     dlg.format_secondary_text(
                         tr("disable_boot_stopped_dep").format(name, dep_list_str)
                     )
@@ -654,14 +654,14 @@ class ServicesPage:
                 dlg = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-                    message_format=tr("cift_yon_etkinlestirme")
+                    message_format=tr("double_way_etkinlestirme")
                 )
-                dlg.add_button(tr("simdi_baslat_ve_etkinlestir"), 2)
-                dlg.add_button(tr("sadece_acilis_etkinlestir"), 1)
-                dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
+                dlg.add_button(tr("simdi_start_ve_etkinlestir"), 2)
+                dlg.add_button(tr("sadece_boot_etkinlestir"), 1)
+                dlg.add_button(tr("cancel"), Gtk.ResponseType.CANCEL)
                 
                 dlg.format_secondary_text(
-                    tr("enable_boot_stopped_sec").format(name)
+                    tr("enable_boot_stopped_select").format(name)
                 )
                 resp = dlg.run()
                 dlg.hide()
@@ -693,14 +693,14 @@ class ServicesPage:
                 dlg = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-                    message_format=tr("cift_yon_durdurma")
+                    message_format=tr("double_way_durdurma")
                 )
-                dlg.add_button(tr("ikisini_de_kapat"), 2)
-                dlg.add_button(tr("sadece_simdi_durdur"), 1)
-                dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
+                dlg.add_button(tr("ikisini_de_disable"), 2)
+                dlg.add_button(tr("sadece_simdi_stop"), 1)
+                dlg.add_button(tr("cancel"), Gtk.ResponseType.CANCEL)
                 
                 dlg.format_secondary_text(
-                    tr("stop_enabled_sec").format(name)
+                    tr("stop_enabled_select").format(name)
                 )
                 resp = dlg.run()
                 dlg.hide()
@@ -721,14 +721,14 @@ class ServicesPage:
                 dlg = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
                     type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
-                    message_format=tr("cift_yon_baslatma")
+                    message_format=tr("double_way_baslatma")
                 )
-                dlg.add_button(tr("simdi_baslat_ve_etkinlestir"), 2)
-                dlg.add_button(tr("sadece_simdi_baslat"), 1)
-                dlg.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
+                dlg.add_button(tr("simdi_start_ve_etkinlestir"), 2)
+                dlg.add_button(tr("sadece_simdi_start"), 1)
+                dlg.add_button(tr("cancel"), Gtk.ResponseType.CANCEL)
                 
                 dlg.format_secondary_text(
-                    tr("start_disabled_sec").format(name)
+                    tr("start_disabled_select").format(name)
                 )
                 resp = dlg.run()
                 dlg.hide()
@@ -755,7 +755,7 @@ class ServicesPage:
 
         if action == "mask":
             tip = d["tip"]
-            warn = tr("kritik_maske_uyarisi") if tip == "kritik" else ""
+            warn = tr("critical_maske_uyarisi") if tip == "kritik" else ""
             
             dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
@@ -777,17 +777,17 @@ class ServicesPage:
 
     def _run_systemctl(self, action, name, cb):
         action_map = {
-            "enable": tr("action_acilis_ac"),
-            "disable": tr("action_acilis_kapat"),
-            "start": tr("action_simdi_baslat"),
-            "stop": tr("action_simdi_durdur"),
+            "enable": tr("action_boot_ac"),
+            "disable": tr("action_boot_disable"),
+            "start": tr("action_simdi_start"),
+            "stop": tr("action_simdi_stop"),
             "mask": tr("action_maskele"),
-            "unmask": tr("action_maskeyi_kaldir")
+            "unmask": tr("action_maskeyi_remove")
         }
         action_tr = action_map.get(action, action)
                      
         if not self._ensure_auth():
-            self.set_status(tr("yetki_iptal"))
+            self.set_status(tr("auth_cancel"))
             return
             
         self.set_status(tr("action_baslatildi").format(name, action_tr))
@@ -815,16 +815,16 @@ class ServicesPage:
 
     def _run_systemctl_batch(self, actions, name, cb):
         action_map = {
-            "enable": tr("action_acilis_ac"),
-            "disable": tr("action_acilis_kapat"),
-            "start": tr("action_simdi_baslat"),
-            "stop": tr("action_simdi_durdur"),
+            "enable": tr("action_boot_ac"),
+            "disable": tr("action_boot_disable"),
+            "start": tr("action_simdi_start"),
+            "stop": tr("action_simdi_stop"),
             "mask": tr("action_maskele"),
-            "unmask": tr("action_maskeyi_kaldir")
+            "unmask": tr("action_maskeyi_remove")
         }
         
         if not self._ensure_auth():
-            self.set_status(tr("yetki_iptal"))
+            self.set_status(tr("auth_cancel"))
             return
             
         actions_str = " + ".join(action_map.get(a, a) for a in actions)
@@ -852,7 +852,7 @@ class ServicesPage:
                         ok, msg = False, tr("action_bilinmiyor").format(action)
                     if not ok:
                         success = False
-                        final_msg += tr("action_hata").format(aname, msg) + " "
+                        final_msg += tr("action_error").format(aname, msg) + " "
                     else:
                         final_msg += tr("action_basarili").format(aname) + " "
                 
@@ -909,13 +909,13 @@ class ServicesPage:
                         GLib.idle_add(prompt_auth)
                         return
                     else:
-                        log = tr("log_bulunamadi")
+                        log = tr("log_not_found")
                 GLib.idle_add(buf.set_text, log)
             except Exception as e:
                 GLib.idle_add(buf.set_text, tr("log_error").format(e))
                 
         def prompt_auth():
-            buf.set_text(tr("hata_log_yetki"))
+            buf.set_text(tr("error_log_auth"))
             if self._ensure_auth():
                 buf.set_text(tr("yetkilendirildi"))
                 threading.Thread(target=task, daemon=True).start()
