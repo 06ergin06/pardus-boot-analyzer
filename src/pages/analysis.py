@@ -30,12 +30,12 @@ class AnalysisPage:
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         
         lbl_title = Gtk.Label(xalign=0)
-        lbl_title.set_text(tr("sistem_baslangic_analizi"))
+        lbl_title.set_text(tr("system_startup_analizi"))
         lbl_title.get_style_context().add_class("content-title")
         box.pack_start(lbl_title, False, False, 0)
         
         lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_text(tr("analiz_alt_bilgi"))
+        lbl_sub.set_text(tr("analiz_sub_info"))
         lbl_sub.get_style_context().add_class("content-subtitle")
         box.pack_start(lbl_sub, False, False, 0)
         
@@ -52,7 +52,7 @@ class AnalysisPage:
         vbox_left.pack_start(self.card_boot, False, False, 0)
         
         lbl_boot_title = Gtk.Label(xalign=0)
-        lbl_boot_title.set_text(tr("acilis_suresi_ozeti"))
+        lbl_boot_title.set_text(tr("boot_suresi_ozeti"))
         lbl_boot_title.get_style_context().add_class("card-title")
         self.card_boot.pack_start(lbl_boot_title, False, False, 0)
         
@@ -75,7 +75,7 @@ class AnalysisPage:
         
         lbl_circle_sub = Gtk.Label()
         lbl_circle_sub.get_style_context().add_class("boot-time-label")
-        lbl_circle_sub.set_text(tr("toplam_acilis"))
+        lbl_circle_sub.set_text(tr("toplam_boot"))
         lbl_circle_sub.set_justify(Gtk.Justification.CENTER)
         vbox_inner.pack_start(lbl_circle_sub, False, False, 0)
         
@@ -91,7 +91,7 @@ class AnalysisPage:
         vbox_left.pack_start(self.card_sysinfo, False, False, 0)
         
         lbl_sys_title = Gtk.Label(xalign=0)
-        lbl_sys_title.set_text(tr("sistem_bilgileri"))
+        lbl_sys_title.set_text(tr("system_bilgileri"))
         lbl_sys_title.get_style_context().add_class("card-title")
         self.card_sysinfo.pack_start(lbl_sys_title, False, False, 0)
         
@@ -99,7 +99,7 @@ class AnalysisPage:
         self.sysinfo_grid.set_margin_start(6)
         self.card_sysinfo.pack_start(self.sysinfo_grid, False, False, 4)
         
-        self.btn_pdf = Gtk.Button(label=tr("pdf_olustur"))
+        self.btn_pdf = Gtk.Button(label=tr("pdf_create"))
         self.btn_pdf.connect("clicked", self._on_pdf_clicked)
         self.card_sysinfo.pack_start(self.btn_pdf, False, False, 4)
         
@@ -109,12 +109,12 @@ class AnalysisPage:
         h_split.pack_start(self.card_optimize, True, True, 0)
         
         lbl_opt_title = Gtk.Label(xalign=0)
-        lbl_opt_title.set_text(tr("baslangic_optimizasyonu"))
+        lbl_opt_title.set_text(tr("startup_optimizasyonu"))
         lbl_opt_title.get_style_context().add_class("card-title")
         self.card_optimize.pack_start(lbl_opt_title, False, False, 0)
         
         lbl_opt_desc = Gtk.Label(xalign=0)
-        lbl_opt_desc.set_text(tr('opt_alt_bilgi'))
+        lbl_opt_desc.set_text(tr('opt_sub_info'))
         lbl_opt_desc.get_style_context().add_class("dim-label")
         lbl_opt_desc.set_line_wrap(True)
         self.card_optimize.pack_start(lbl_opt_desc, False, False, 0)
@@ -125,10 +125,10 @@ class AnalysisPage:
         self.card_optimize.pack_start(self.opt_savings_box, False, False, 0)
         
         self.lbl_savings_val = Gtk.Label(xalign=0)
-        self.lbl_savings_val.set_markup(f"{tr('hizlandirma_potansiyeli')}: <b>-- {tr('sec_lbl')}</b>")
+        self.lbl_savings_val.set_markup(f"{tr('savings_potansiyeli')}: <b>-- {tr('select_lbl')}</b>")
         self.opt_savings_box.pack_start(self.lbl_savings_val, True, True, 0)
         
-        self.btn_quick_optimize = Gtk.Button(label=tr("tum_onerilenleri_kapat"))
+        self.btn_quick_optimize = Gtk.Button(label=tr("tum_onerilenleri_disable"))
         self.btn_quick_optimize.get_style_context().add_class("success")
         self.btn_quick_optimize.connect("clicked", self._on_quick_optimize_clicked)
         self.card_optimize.pack_start(self.btn_quick_optimize, False, False, 4)
@@ -164,7 +164,7 @@ class AnalysisPage:
                         "name": name,
                         "time_str": item["time"],
                         "seconds": sec,
-                        "oneri": oneri or desc or tr("default_disable_suggestion")
+                        "suggestion": oneri or desc or tr("default_disable_suggestion")
                     })
                     total_savings_sec += sec
                     
@@ -231,20 +231,20 @@ class AnalysisPage:
             
             if total_savings_sec > 0:
                 self.lbl_savings_val.set_markup(
-                    f"{tr('hizlandirma_potansiyeli')}: <span foreground='#198754' weight='bold'>~{total_savings_sec:.2f} {tr('sec_lbl')}</span>"
+                    f"{tr('savings_potansiyeli')}: <span foreground='#198754' weight='bold'>~{total_savings_sec:.2f} {tr('select_lbl')}</span>"
                 )
-                self.btn_quick_optimize.set_label(f"{tr('tum_onerilenleri_kapat')} (+{total_savings_sec:.1f} {tr('saniye_kazan')})")
+                self.btn_quick_optimize.set_label(f"{tr('tum_onerilenleri_disable')} (+{total_savings_sec:.1f} {tr('seconds_gain')})")
                 self.btn_quick_optimize.set_sensitive(True)
             else:
-                self.lbl_savings_val.set_markup(f"{tr('hizlandirma_potansiyeli')}: <span color='#6c757d'><b>0.00 {tr('sec_lbl')}</b></span>")
-                self.btn_quick_optimize.set_label(tr("sistem_optimize_edilmis"))
+                self.lbl_savings_val.set_markup(f"{tr('savings_potansiyeli')}: <span color='#6c757d'><b>0.00 {tr('select_lbl')}</b></span>")
+                self.btn_quick_optimize.set_label(tr("system_optimize_edilmis"))
                 self.btn_quick_optimize.set_sensitive(False)
                 
             if optimizable_services:
                 for item in optimizable_services:
                     name = item["name"]
                     time_str = item["time_str"]
-                    oneri_text = item["oneri"]
+                    oneri_text = item["suggestion"]
                     
                     row_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
                     row_box.get_style_context().add_class("blame-row")
@@ -289,7 +289,7 @@ class AnalysisPage:
                 self.opt_list_box.pack_start(lbl_empty, False, False, 0)
                 
         except Exception as e:
-            self.lbl_boot_val.set_text(tr("hata"))
+            self.lbl_boot_val.set_text(tr("error"))
             lbl = Gtk.Label(label=tr("analysis_load_error").format(e))
             self.opt_list_box.pack_start(lbl, False, False, 0)
             
@@ -322,14 +322,14 @@ class AnalysisPage:
         )
         dlg.add_button(tr("no"), Gtk.ResponseType.NO)
         dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
-        dlg.format_secondary_text(tr("disable_single_sec"))
+        dlg.format_secondary_text(tr("disable_single_select"))
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
         
         if resp == Gtk.ResponseType.YES:
             if not self._ensure_auth():
-                self.set_status(tr("yetki_iptal"))
+                self.set_status(tr("auth_cancel"))
                 return
             self.set_status(tr("disable_single_doing").format(name))
             def task():
@@ -350,7 +350,7 @@ class AnalysisPage:
         services_to_disable = [s["name"] for s in opt_svcs]
                     
         if not services_to_disable:
-            self.set_status(tr("kap_hizmet_yok"))
+            self.set_status(tr("kap_service_none"))
             return
             
         dlg = Gtk.MessageDialog(
@@ -362,7 +362,7 @@ class AnalysisPage:
         dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
         
         svc_list_str = "\n".join(f"- {s}" for s in services_to_disable)
-        dlg.format_secondary_text(tr("quick_optimize_sec").format(svc_list_str))
+        dlg.format_secondary_text(tr("quick_optimize_select").format(svc_list_str))
         
         resp = dlg.run()
         dlg.hide()
@@ -372,7 +372,7 @@ class AnalysisPage:
             return
             
         if not self._ensure_auth():
-            self.set_status(tr("yetki_iptal"))
+            self.set_status(tr("auth_cancel"))
             return
             
         self._run_quick_optimize_batch(services_to_disable)
@@ -414,7 +414,7 @@ class AnalysisPage:
                     message_format=tr("quick_optimize_done_title")
                 )
                 info.add_button(tr("ok"), Gtk.ResponseType.OK)
-                info.format_secondary_text(tr("quick_optimize_done_sec"))
+                info.format_secondary_text(tr("quick_optimize_done_select"))
                 info.run()
                 info.hide()
                 GLib.idle_add(info.destroy)
@@ -439,7 +439,7 @@ class AnalysisPage:
         dialog = Gtk.FileChooserDialog(
             title=tr("pdf_title"), parent=self.window,
             action=Gtk.FileChooserAction.SAVE,
-            buttons=(tr("iptal"), Gtk.ResponseType.CANCEL, tr("kaydet"), Gtk.ResponseType.ACCEPT)
+            buttons=(tr("cancel"), Gtk.ResponseType.CANCEL, tr("save"), Gtk.ResponseType.ACCEPT)
         )
         dialog.get_widget_for_response(Gtk.ResponseType.ACCEPT).get_style_context().add_class("primary")
         
@@ -482,7 +482,7 @@ class AnalysisPage:
                             message_format=tr("pdf_done_title")
                         )
                         info.add_button(tr("ok"), Gtk.ResponseType.OK)
-                        info.format_secondary_text(tr("pdf_done_sec").format(path))
+                        info.format_secondary_text(tr("pdf_done_select").format(path))
                         info.run()
                         info.hide()
                         GLib.idle_add(info.destroy)
@@ -535,13 +535,13 @@ class AnalysisPage:
         cr.set_font_size(8)
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
         cr.move_to(390, 76)
-        cr.show_text(f"{tr('pdf_tarih')}: {date_str}")
+        cr.show_text(f"{tr('pdf_date')}: {date_str}")
         
         cr.set_source_rgb(0.2, 0.2, 0.2)
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(12)
         cr.move_to(50, 125)
-        cr.show_text(tr("pdf_sistem_ozeti"))
+        cr.show_text(tr("pdf_system_ozeti"))
         
         cr.set_source_rgb(0.8, 0.8, 0.8)
         cr.set_line_width(1)
@@ -566,13 +566,13 @@ class AnalysisPage:
         
         y = 190
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-        cr.move_to(60, y); cr.show_text(f"{tr('toplam_acilis')}: {self._format_time(total_time)}")
+        cr.move_to(60, y); cr.show_text(f"{tr('toplam_boot')}: {self._format_time(total_time)}")
         
         cr.set_source_rgb(0.2, 0.2, 0.2)
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(12)
         cr.move_to(50, 230)
-        cr.show_text(tr("pdf_acilis_asamalari"))
+        cr.show_text(tr("pdf_boot_asamalari"))
         
         cr.set_source_rgb(0.8, 0.8, 0.8)
         cr.move_to(50, 237)
@@ -647,7 +647,7 @@ class AnalysisPage:
             cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
             cr.set_source_rgb(0.1, 0.5, 0.3)
             cr.move_to(60, y)
-            cr.show_text(f"{tr('hizlandirma_potansiyeli')}: ~{total_savings_sec:.2f} {tr('sec_gained_lbl')}")
+            cr.show_text(f"{tr('savings_potansiyeli')}: ~{total_savings_sec:.2f} {tr('select_gained_lbl')}")
             cr.set_source_rgb(0.3, 0.3, 0.3)
             cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
             
@@ -658,7 +658,7 @@ class AnalysisPage:
                     cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
                     cr.move_to(70, y)
                     more_count = remaining - i
-                    msg = tr("pdf_ve_diger_oneriler").format(more_count)
+                    msg = tr("pdf_ve_other_oneriler").format(more_count)
                     cr.show_text(msg)
                     break
                 
@@ -668,7 +668,7 @@ class AnalysisPage:
                 y += 14
                 
                 # Draw wrapped suggestion text dynamically to prevent clipping and line overflow
-                y = self._draw_wrapped_text(cr, item['oneri'], 85, y, 440, 14)
+                y = self._draw_wrapped_text(cr, item['suggestion'], 85, y, 440, 14)
                 y += 8
         else:
             cr.move_to(60, y)
