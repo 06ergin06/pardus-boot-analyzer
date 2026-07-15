@@ -13,6 +13,7 @@
 
 /* ── Pardus brand accent (only hardcoded value) ── */
 @define-color pardus_accent #f1b82d;
+@define-color borders alpha(@theme_fg_color, 0.12);
 
 
 /* ═══════════════════════════════════════════════════════════
@@ -74,7 +75,7 @@ window {
 
 .navigation-sidebar > row:selected image,
 .navigation-sidebar > row:focus:selected image {
-    color: @theme_selected_fg_color;
+    color: @theme_fg_color;
     opacity: 1;
 }
 
