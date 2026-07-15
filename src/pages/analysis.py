@@ -164,7 +164,7 @@ class AnalysisPage:
                         "name": name,
                         "time_str": item["time"],
                         "seconds": sec,
-                        "oneri": oneri or desc or "Kapatılması önerilen gereksiz hizmet."
+                        "oneri": oneri or desc or tr("default_disable_suggestion")
                     })
                     total_savings_sec += sec
                     
@@ -266,27 +266,31 @@ class AnalysisPage:
                     
                     lbl_time = Gtk.Label(label=time_str)
                     lbl_time.get_style_context().add_class("badge-slow")
+                    lbl_time.set_valign(Gtk.Align.CENTER)
                     row_box.pack_start(lbl_time, False, False, 0)
                     
                     btn_disable_one = Gtk.Button()
-                    img_dis = Gtk.Image.new_from_icon_name("media-playback-stop", Gtk.IconSize.BUTTON)
+                    btn_disable_one.get_style_context().add_class("flat")
+                    btn_disable_one.set_valign(Gtk.Align.CENTER)
+                    img_dis = Gtk.Image.new_from_icon_name("media-playback-stop-symbolic", Gtk.IconSize.BUTTON)
                     btn_disable_one.set_image(img_dis)
-                    btn_disable_one.set_tooltip_text("Sadece bu hizmeti devre dışı bırak ve durdur")
+                    btn_disable_one.set_tooltip_text(tr("disable_single_tooltip"))
                     btn_disable_one.connect("clicked", lambda b, n=name: self._disable_single_service(n))
                     row_box.pack_start(btn_disable_one, False, False, 0)
                     
                     self.opt_list_box.pack_start(row_box, False, False, 0)
+
             else:
                 lbl_empty = Gtk.Label()
-                lbl_empty.set_text("Kapatılması önerilen aktif bir hizmet bulunamadı. Sisteminiz en iyi durumda!")
+                lbl_empty.set_text(tr("no_optimizable_services"))
                 lbl_empty.get_style_context().add_class("dim-label")
                 lbl_empty.set_line_wrap(True)
                 lbl_empty.set_margin_top(16)
                 self.opt_list_box.pack_start(lbl_empty, False, False, 0)
                 
         except Exception as e:
-            self.lbl_boot_val.set_text("Hata")
-            lbl = Gtk.Label(label=f"Analiz yüklenirken hata oluştu:\n{e}")
+            self.lbl_boot_val.set_text(tr("hata"))
+            lbl = Gtk.Label(label=tr("analysis_load_error").format(e))
             self.opt_list_box.pack_start(lbl, False, False, 0)
             
         self.card_boot.show_all()
@@ -313,9 +317,11 @@ class AnalysisPage:
     def _disable_single_service(self, name):
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
-            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
+            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
             message_format=tr("disable_single_confirm").format(name)
         )
+        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
         dlg.format_secondary_text(tr("disable_single_sec"))
         resp = dlg.run()
         dlg.hide()
@@ -349,9 +355,11 @@ class AnalysisPage:
             
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
-            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
+            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
             message_format=tr("quick_optimize_title")
         )
+        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
         
         svc_list_str = "\n".join(f"- {s}" for s in services_to_disable)
         dlg.format_secondary_text(tr("quick_optimize_sec").format(svc_list_str))
