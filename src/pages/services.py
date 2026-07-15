@@ -635,8 +635,8 @@ class ServicesPage:
                         type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.NONE,
                         message_format=tr("disable_boot_stopped_title").format(name)
                     )
-                    dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-                    dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+                    dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+                    dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
                     dep_list_str = "\n".join(f"- {dep}" for dep in deps[:8])
                     if len(deps) > 8:
                         dep_list_str += f"\n- {tr('ve_daha_fazla_hizmet').format(len(deps) - 8).strip()}"
@@ -763,8 +763,8 @@ class ServicesPage:
                 buttons=Gtk.ButtonsType.NONE,
                 message_format=f"'{name}' " + tr("maske_sorusu")
             )
-            dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-            dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+            dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+            dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
             if warn:
                 dlg.format_secondary_text(warn)
             resp = dlg.run()

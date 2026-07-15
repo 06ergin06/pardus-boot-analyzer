@@ -132,8 +132,8 @@ class AutostartPage:
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
             message_format=tr("sil_onay_app")
         )
-        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+        dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
