@@ -72,8 +72,8 @@
   "profile_service_labels": {
     "cups.service": "cups_service_desc",
     "bluetooth.service": "bluetooth_desc",
-    "docker.service": "Docker Konteyner",
-    "postgresql.service": "PostgreSQL Servisi",
+    "docker.service": "docker_desc",
+    "postgresql.service": "postgresql_desc",
     "ssh.service": "ssh_desc"
   }
 }
