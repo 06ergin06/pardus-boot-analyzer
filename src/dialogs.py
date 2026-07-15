@@ -6,12 +6,12 @@ from src.locale_mgr import tr
 
 class AddAutostartDialog(Gtk.Dialog):
     def __init__(self, parent, manager):
-        super().__init__(title=tr("baslangic_uygulamasi_ekle"), parent=parent, flags=Gtk.DialogFlags.MODAL)
+        super().__init__(title=tr("startup_uygulamasi_add"), parent=parent, flags=Gtk.DialogFlags.MODAL)
         self.set_default_size(520, 420)
         self.manager = manager
         
-        self.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
-        self.btn_ok = self.add_button(tr("ekle"), Gtk.ResponseType.OK)
+        self.add_button(tr("cancel"), Gtk.ResponseType.CANCEL)
+        self.btn_ok = self.add_button(tr("add"), Gtk.ResponseType.OK)
         self.btn_ok.get_style_context().add_class("suggested-action")
         
         content = self.get_content_area()
@@ -26,7 +26,7 @@ class AddAutostartDialog(Gtk.Dialog):
         # Tab 1: Installed Apps
         tab1_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         
-        search_entry = Gtk.SearchEntry(placeholder_text=tr("uygulama_ara_placeholder"))
+        search_entry = Gtk.SearchEntry(placeholder_text=tr("app_search_placeholder"))
         tab1_box.pack_start(search_entry, False, False, 0)
         
         scrolled = Gtk.ScrolledWindow()
@@ -43,7 +43,7 @@ class AddAutostartDialog(Gtk.Dialog):
         col_icon.add_attribute(renderer_icon, "icon_name", 2)
         self.apps_treeview.append_column(col_icon)
         
-        col_name = Gtk.TreeViewColumn(tr("uygulama_adi"))
+        col_name = Gtk.TreeViewColumn(tr("app_name"))
         renderer_name = Gtk.CellRendererText()
         col_name.pack_start(renderer_name, True)
         col_name.add_attribute(renderer_name, "text", 0)
@@ -69,7 +69,7 @@ class AddAutostartDialog(Gtk.Dialog):
         grid = Gtk.Grid(column_spacing=12, row_spacing=12)
         tab2_box.pack_start(grid, False, False, 0)
         
-        lbl_name = Gtk.Label(label=tr("uygulama_adi") + ":", xalign=1)
+        lbl_name = Gtk.Label(label=tr("app_name") + ":", xalign=1)
         self.entry_name = Gtk.Entry()
         grid.attach(lbl_name, 0, 0, 1, 1)
         grid.attach(self.entry_name, 1, 0, 1, 1)
@@ -79,12 +79,12 @@ class AddAutostartDialog(Gtk.Dialog):
         grid.attach(lbl_exec, 0, 1, 1, 1)
         grid.attach(self.entry_exec, 1, 1, 1, 1)
         
-        lbl_comment = Gtk.Label(label=tr("aciklama") + ":", xalign=1)
+        lbl_comment = Gtk.Label(label=tr("description") + ":", xalign=1)
         self.entry_comment = Gtk.Entry()
         grid.attach(lbl_comment, 0, 2, 1, 1)
         grid.attach(self.entry_comment, 1, 2, 1, 1)
         
-        lbl_delay = Gtk.Label(label=tr("gecikme") + f" ({tr('sec_lbl')}):", xalign=1)
+        lbl_delay = Gtk.Label(label=tr("delay") + f" ({tr('select_lbl')}):", xalign=1)
         self.spin_delay = Gtk.SpinButton.new_with_range(0, 120, 1)
         grid.attach(lbl_delay, 0, 3, 1, 1)
         grid.attach(self.spin_delay, 1, 3, 1, 1)
@@ -144,8 +144,8 @@ class PasswordDialog(Gtk.Dialog):
         
         self.get_style_context().add_class("auth-dialog")
         
-        # Vazgeç button closes dialog with CANCEL response
-        self.btn_cancel = self.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
+        # Cancel button closes dialog with CANCEL response
+        self.btn_cancel = self.add_button(tr("cancel"), Gtk.ResponseType.CANCEL)
         
         # Yetkilendir button triggers click handler directly (doesn't auto-close)
         self.btn_auth = Gtk.Button(label=tr("yetkilendir"))
@@ -163,12 +163,12 @@ class PasswordDialog(Gtk.Dialog):
         content.pack_start(vbox, True, True, 0)
         
         lbl_head = Gtk.Label(xalign=0)
-        lbl_head.set_text(tr("yetki_gerekiyor"))
+        lbl_head.set_text(tr("auth_gerekiyor"))
         lbl_head.get_style_context().add_class("auth-head")
         vbox.pack_start(lbl_head, False, False, 0)
         
         lbl_sub = Gtk.Label(xalign=0)
-        lbl_sub.set_text(tr("yetki_alt_bilgi"))
+        lbl_sub.set_text(tr("auth_sub_info"))
         lbl_sub.get_style_context().add_class("auth-sub")
         lbl_sub.set_line_wrap(True)
         vbox.pack_start(lbl_sub, False, False, 0)
@@ -178,11 +178,11 @@ class PasswordDialog(Gtk.Dialog):
         
         self.entry_pwd = Gtk.Entry()
         self.entry_pwd.set_visibility(False)
-        self.entry_pwd.set_placeholder_text(tr("sifre_placeholder"))
+        self.entry_pwd.set_placeholder_text(tr("password_placeholder"))
         self.entry_pwd.connect("activate", lambda e: self._on_auth_clicked(None))
         h_row.pack_start(self.entry_pwd, True, True, 0)
         
-        self.chk_show = Gtk.CheckButton(label=tr("sifreyi_goster"))
+        self.chk_show = Gtk.CheckButton(label=tr("sifreyi_show"))
         self.chk_show.connect("toggled", self._on_show_toggled)
         vbox.pack_start(self.chk_show, False, False, 0)
         
@@ -220,7 +220,7 @@ class PasswordDialog(Gtk.Dialog):
             self.response(Gtk.ResponseType.OK)
         else:
             self.lbl_error.set_markup(
-                f"<span foreground='#dc3545'>{tr('hatali_sifre')}</span>"
+                f"<span foreground='#dc3545'>{tr('hatali_password')}</span>"
             )
         return False
 
@@ -229,12 +229,12 @@ class PasswordDialog(Gtk.Dialog):
 
 class ProfileCreatorDialog(Gtk.Dialog):
     def __init__(self, parent):
-        super().__init__(title=tr("yeni_ozel_profil_btn"), parent=parent, flags=Gtk.DialogFlags.MODAL)
+        super().__init__(title=tr("yeni_custom_profile_btn"), parent=parent, flags=Gtk.DialogFlags.MODAL)
         self.set_default_size(420, 480)
         
         # Add buttons
-        self.add_button(tr("iptal"), Gtk.ResponseType.CANCEL)
-        btn_save = self.add_button(tr("kaydet"), Gtk.ResponseType.OK)
+        self.add_button(tr("cancel"), Gtk.ResponseType.CANCEL)
+        btn_save = self.add_button(tr("save"), Gtk.ResponseType.OK)
         btn_save.get_style_context().add_class("suggested-action")
         
         # Main layout
@@ -247,16 +247,16 @@ class ProfileCreatorDialog(Gtk.Dialog):
         
         # Name Entry
         lbl_name = Gtk.Label(xalign=0)
-        lbl_name.set_markup(f"<b>{tr('profil_adi_lbl')}</b>")
+        lbl_name.set_markup(f"<b>{tr('profile_name_lbl')}</b>")
         box.pack_start(lbl_name, False, False, 0)
         
         self.entry_name = Gtk.Entry()
-        self.entry_name.set_placeholder_text(tr("profil_adi_placeholder"))
+        self.entry_name.set_placeholder_text(tr("profile_name_placeholder"))
         box.pack_start(self.entry_name, False, False, 0)
         
         # Services label
         lbl_services = Gtk.Label(xalign=0)
-        lbl_services.set_markup(f"<b>{tr('hizmet_kurallari_lbl')}</b>\n<span size='small' foreground='#666666'>{tr('hizmet_kurallari_sub')}</span>")
+        lbl_services.set_markup(f"<b>{tr('service_kurallari_lbl')}</b>\n<span size='small' foreground='#666666'>{tr('service_kurallari_sub')}</span>")
         lbl_services.set_margin_top(8)
         box.pack_start(lbl_services, False, False, 0)
         
@@ -310,7 +310,7 @@ class ProfileCreatorDialog(Gtk.Dialog):
     def get_profile_data(self):
         name = self.entry_name.get_text().strip()
         if not name:
-            return None, tr("profil_adi_girin_hata")
+            return None, tr("profile_name_girin_error")
             
         services = {}
         for svc, switch in self.switches.items():

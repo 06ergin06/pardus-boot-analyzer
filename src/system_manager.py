@@ -6,6 +6,7 @@ import json
 
 from src.autostart_manager import AutostartManager
 from src.profile_manager import ProfileManager
+from src.locale_mgr import tr
 
 class SystemManager:
     def __init__(self):
@@ -143,7 +144,7 @@ class SystemManager:
                 )
                 return result.returncode == 0, result.stderr or result.stdout
             except subprocess.TimeoutExpired:
-                return False, "İşlem zaman aşımına uğradı (servis yanıt vermiyor)."
+                return False, tr("err_timeout_service")
             except Exception as e:
                 return False, str(e)
             
@@ -155,14 +156,14 @@ class SystemManager:
                 timeout=15
             )
             if result.returncode == 0:
-                return True, "İşlem başarılı."
+                return True, tr("success_operation")
             else:
                 err = result.stderr or result.stdout
                 if "incorrect password" in err.lower() or "şifre" in err.lower():
                     self.password = None
                 return False, err
         except subprocess.TimeoutExpired:
-            return False, "İşlem zaman aşımına uğradı (şifre yanlış veya servis yanıt vermiyor)."
+            return False, tr("err_timeout_auth")
         except Exception as e:
             return False, str(e)
 
@@ -316,7 +317,7 @@ class SystemManager:
                 except Exception:
                     pass
             
-            uptime = "Unknown"
+            uptime = tr("unknown")
             if os.path.exists("/proc/uptime"):
                 try:
                     with open("/proc/uptime", "r") as f:
@@ -324,9 +325,9 @@ class SystemManager:
                         hours = int(uptime_seconds // 3600)
                         minutes = int((uptime_seconds % 3600) // 60)
                         if hours > 0:
-                            uptime = f"{hours} saat {minutes} dk"
+                            uptime = f"{hours} {tr('unit_hours')} {minutes} {tr('unit_mins')}"
                         else:
-                            uptime = f"{minutes} dk"
+                            uptime = f"{minutes} {tr('unit_mins')}"
                 except Exception:
                     pass
                     

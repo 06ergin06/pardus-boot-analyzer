@@ -19,7 +19,7 @@ STATUS_COLORS = {
 STATUS_TR = {
     "active": tr("su_an_calisiyor"),
     "inactive": tr("su_an_durduruldu"),
-    "disabled": tr("acilis_calismayacak"),
+    "disabled": tr("boot_calismayacak"),
     "masked": tr("maskelenmis_kapali"),
     "static": tr("statik_sabit"),
     "activating": tr("gecis_yapiyor") + "...",
@@ -37,7 +37,7 @@ FILTER_MAP = {
 TIP_MAP = {
     0: "all",
     1: "kritik",
-    2: "oneri",
+    2: "suggestion",
     3: "gerekli",
 }
 

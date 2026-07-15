@@ -29,7 +29,7 @@ class AutostartPage:
         lbl_title.get_style_context().add_class("content-title")
         h_title.pack_start(lbl_title, True, True, 0)
         
-        btn_add = Gtk.Button(label=tr("yeni_uygulama_ekle_btn"))
+        btn_add = Gtk.Button(label=tr("yeni_app_add_btn"))
         btn_add.connect("clicked", self._on_add_autostart_clicked)
         h_title.pack_start(btn_add, False, False, 0)
         
@@ -88,7 +88,7 @@ class AutostartPage:
                 
                 h_box.pack_start(v_box, True, True, 0)
                 
-                lbl_delay = Gtk.Label(label=tr("gecikme") + ":")
+                lbl_delay = Gtk.Label(label=tr("delay") + ":")
                 lbl_delay.set_valign(Gtk.Align.CENTER)
                 h_box.pack_start(lbl_delay, False, False, 6)
                 
@@ -119,17 +119,29 @@ class AutostartPage:
     def _on_autostart_delay_changed(self, spin, filepath):
         delay = int(spin.get_value())
         self.manager.update_autostart_delay(filepath, delay)
-        self.set_status(tr("gecikme_guncellendi"))
+        self.set_status(tr("delay_guncellendi"))
 
     def _on_autostart_toggle(self, switch, state, filepath):
         self.manager.toggle_autostart_entry(filepath, state)
-        self.set_status(tr("uygulama_aktiflik_guncellendi"))
+        self.set_status(tr("app_aktiflik_guncellendi"))
         return False
 
     def _on_autostart_delete_clicked(self, button, filepath):
-        self.manager.remove_autostart_entry(filepath)
-        self.load_autostart_page()
-        self.set_status(tr("uygulama_kaldirildi"))
+        dlg = Gtk.MessageDialog(
+            parent=self.window, flags=Gtk.DialogFlags.MODAL,
+            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
+            message_format=tr("delete_onay_app")
+        )
+        dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
+        resp = dlg.run()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
+        
+        if resp == Gtk.ResponseType.YES:
+            self.manager.remove_autostart_entry(filepath)
+            self.load_autostart_page()
+            self.set_status(tr("app_kaldirildi"))
 
     def _on_add_autostart_clicked(self, button):
         dlg = AddAutostartDialog(self.window, self.manager)
