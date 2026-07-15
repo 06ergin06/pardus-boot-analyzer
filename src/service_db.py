@@ -29,7 +29,7 @@ def get_description(name):
     entry = DESCRIPTIONS.get(name)
     if entry:
         desc = entry.get("desc_" + LANG, entry.get("desc"))
-        oneri = entry.get("oneri_" + LANG, entry.get("oneri"))
+        oneri = entry.get("oneri_" + LANG, entry.get("suggestion"))
         return desc, entry.get("tip"), oneri
     if "@" in name:
         base = name.split("@")[0] + "@"
@@ -38,6 +38,6 @@ def get_description(name):
             entry = DESCRIPTIONS.get(template_name)
             if entry:
                 desc = entry.get("desc_" + LANG, entry.get("desc"))
-                oneri = entry.get("oneri_" + LANG, entry.get("oneri"))
+                oneri = entry.get("oneri_" + LANG, entry.get("suggestion"))
                 return desc, entry.get("tip"), oneri
     return None, None, None

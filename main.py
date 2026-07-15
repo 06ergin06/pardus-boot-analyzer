@@ -1,5 +1,25 @@
 import os
 import sys
+import json
+
+# Set language environment variables for GTK to match saved application language or system language
+try:
+    lang = "tr"
+    sys_lang = os.environ.get("LANG", "tr").split(".")[0].split("_")[0].lower()
+    if sys_lang in ("en", "tr"):
+        lang = sys_lang
+    config_dir = os.path.expanduser("~/.config/pardus-boot-analyzer")
+    config_path = os.path.join(config_dir, "config.json")
+    if os.path.exists(config_path):
+        with open(config_path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+            if cfg.get("lang") in ("en", "tr"):
+                lang = cfg["lang"]
+    os.environ["LANGUAGE"] = lang
+    os.environ["LANG"] = "en_US.UTF-8" if lang == "en" else "tr_TR.UTF-8"
+    os.environ["LC_ALL"] = "en_US.UTF-8" if lang == "en" else "tr_TR.UTF-8"
+except Exception:
+    pass
 
 def _detect_dark_preference():
     """Returns True if user prefers dark mode — checks portal, env, settings.ini."""
@@ -78,7 +98,7 @@ class PardusAboutDialog(Gtk.AboutDialog):
     def __init__(self, parent):
         super().__init__(parent=parent, flags=Gtk.DialogFlags.MODAL)
         self.set_program_name(tr("title"))
-        self.set_version("1.0.3")
+        self.set_version("1.0.4")
         self.set_comments(tr("about_comments"))
         self.set_copyright("© 2026 İbrahim Hakkı Ergin")
         self.set_website("https://github.com/06ergin06/pardus-boot-analyzer")
@@ -87,11 +107,22 @@ class PardusAboutDialog(Gtk.AboutDialog):
         self.set_license(tr("lisans"))
         self.set_wrap_license(True)
         
-        icon_theme = Gtk.IconTheme.get_default()
-        if icon_theme.has_icon("pardus"):
-            self.set_logo_icon_name("pardus")
-        else:
-            self.set_logo_icon_name("utilities-system-monitor")
+        # Load logo for AboutDialog
+        import os
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(current_dir, "pardus-boot-analyzer.svg")
+        
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(icon_path, 64, 64, True)
+            self.set_logo(pixbuf)
+        except Exception:
+            icon_theme = Gtk.IconTheme.get_default()
+            if icon_theme.has_icon("pardus-boot-analyzer"):
+                self.set_logo_icon_name("pardus-boot-analyzer")
+            elif icon_theme.has_icon("pardus"):
+                self.set_logo_icon_name("pardus")
+            else:
+                self.set_logo_icon_name("utilities-system-monitor")
             
         self.set_authors(["İbrahim Hakkı Ergin (Oluşturan, Tasarım, Grafikler)"])
         self.set_artists(["İbrahim Hakkı Ergin"])

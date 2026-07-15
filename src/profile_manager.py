@@ -19,11 +19,11 @@ class ProfileManager:
             commands.append(f"systemctl stop {svc_str}")
             
         if not commands:
-            return True, "Herhangi bir değişiklik yapılması gerekmiyor."
+            return True, tr("profile_no_changes")
             
         shell_cmd = " && ".join(commands)
         if not self.system_manager.password:
-            return False, "Yönetici şifresi girilmedi."
+            return False, tr("err_no_password")
             
         try:
             result = subprocess.run(
@@ -32,7 +32,7 @@ class ProfileManager:
                 capture_output=True, text=True
             )
             if result.returncode == 0:
-                return True, "Profil başarıyla uygulandı."
+                return True, tr("profile_applied")
             else:
                 err = result.stderr or result.stdout
                 if "incorrect password" in err.lower() or "şifre" in err.lower():
@@ -104,7 +104,7 @@ class ProfileManager:
                     disable_list.append(svc)
                     
             if not enable_list and not disable_list:
-                return True, "Sistem zaten bu yedek durumuna uygun."
+                return True, tr("profile_already_matching_backup")
                 
             return self.apply_profile_batch(enable_list, disable_list)
         except Exception as e:
