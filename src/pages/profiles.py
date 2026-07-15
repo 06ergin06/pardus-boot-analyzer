@@ -302,8 +302,8 @@ class ProfilesPage:
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
             message_format=tr("yedek_don_soru")
         )
-        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+        dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
         dlg.format_secondary_text(tr("yedek_don_aciklama"))
         resp = dlg.run()
         dlg.hide()
@@ -352,8 +352,8 @@ class ProfilesPage:
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
             message_format=tr("yedek_sil_soru")
         )
-        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+        dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
@@ -376,8 +376,8 @@ class ProfilesPage:
             buttons=Gtk.ButtonsType.NONE,
             message_format=f"'{p_info['name']}' " + tr("profil_uygula_soru")
         )
-        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+        dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
         dlg.format_secondary_text(tr("profil_uygula_aciklama"))
         resp = dlg.run()
         dlg.hide()
@@ -410,7 +410,7 @@ class ProfilesPage:
                 type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
                 message_format=tr("profil_zaten_uygulanmis")
             )
-            info.add_button(tr("tamam"), Gtk.ResponseType.OK)
+            info.add_button(tr("ok"), Gtk.ResponseType.OK)
             info.format_secondary_text(tr("hizmetler_uygun_detay"))
             info.run()
             info.hide()
@@ -436,8 +436,8 @@ class ProfilesPage:
                 type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.NONE,
                 message_format=tr("profil_bagimlilik_uyarisi")
             )
-            dep_dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-            dep_dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+            dep_dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+            dep_dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
             dep_dlg.format_secondary_text(dep_msg + "\nDevam etmek istiyor musunuz?")
             dep_resp = dep_dlg.run()
             dep_dlg.hide()
@@ -465,8 +465,8 @@ class ProfilesPage:
             buttons=Gtk.ButtonsType.NONE,
             message_format=f"'{p_info['name']}' " + tr("profil_uygula_soru")
         )
-        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+        dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
@@ -514,8 +514,8 @@ class ProfilesPage:
                 type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.NONE,
                 message_format=tr("profil_bagimlilik_uyarisi")
             )
-            dep_dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-            dep_dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+            dep_dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+            dep_dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
             dep_dlg.format_secondary_text(dep_msg + "\nDevam etmek istiyor musunuz?")
             dep_resp = dep_dlg.run()
             dep_dlg.hide()
@@ -564,7 +564,7 @@ class ProfilesPage:
                     type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
                     message_format=tr("profil_basariyla_uygulandi")
                 )
-                info.add_button(tr("tamam"), Gtk.ResponseType.OK)
+                info.add_button(tr("ok"), Gtk.ResponseType.OK)
                 info.run()
                 info.hide()
                 GLib.idle_add(info.destroy)
@@ -575,7 +575,7 @@ class ProfilesPage:
                     type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.NONE,
                     message_format=tr("profil_uygulama_hatasi"),
                 )
-                err.add_button(tr("tamam"), Gtk.ResponseType.OK)
+                err.add_button(tr("ok"), Gtk.ResponseType.OK)
                 err.format_secondary_text(msg)
                 err.run()
                 err.hide()

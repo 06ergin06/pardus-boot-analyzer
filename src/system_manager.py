@@ -317,7 +317,7 @@ class SystemManager:
                 except Exception:
                     pass
             
-            uptime = tr("bilinmiyor")
+            uptime = tr("unknown")
             if os.path.exists("/proc/uptime"):
                 try:
                     with open("/proc/uptime", "r") as f:
@@ -325,9 +325,9 @@ class SystemManager:
                         hours = int(uptime_seconds // 3600)
                         minutes = int((uptime_seconds % 3600) // 60)
                         if hours > 0:
-                            uptime = f"{hours} {tr('saat_birim')} {minutes} {tr('dakika_birim')}"
+                            uptime = f"{hours} {tr('unit_hours')} {minutes} {tr('unit_mins')}"
                         else:
-                            uptime = f"{minutes} {tr('dakika_birim')}"
+                            uptime = f"{minutes} {tr('unit_mins')}"
                 except Exception:
                     pass
                     

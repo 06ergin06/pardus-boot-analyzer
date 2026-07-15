@@ -320,8 +320,8 @@ class AnalysisPage:
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
             message_format=tr("disable_single_confirm").format(name)
         )
-        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+        dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
         dlg.format_secondary_text(tr("disable_single_sec"))
         resp = dlg.run()
         dlg.hide()
@@ -358,8 +358,8 @@ class AnalysisPage:
             type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
             message_format=tr("quick_optimize_title")
         )
-        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
-        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+        dlg.add_button(tr("no"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
         
         svc_list_str = "\n".join(f"- {s}" for s in services_to_disable)
         dlg.format_secondary_text(tr("quick_optimize_sec").format(svc_list_str))
@@ -413,7 +413,7 @@ class AnalysisPage:
                     type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
                     message_format=tr("quick_optimize_done_title")
                 )
-                info.add_button(tr("tamam"), Gtk.ResponseType.OK)
+                info.add_button(tr("ok"), Gtk.ResponseType.OK)
                 info.format_secondary_text(tr("quick_optimize_done_sec"))
                 info.run()
                 info.hide()
@@ -426,7 +426,7 @@ class AnalysisPage:
                     type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.NONE,
                     message_format=tr("quick_optimize_err_title"),
                 )
-                err.add_button(tr("tamam"), Gtk.ResponseType.OK)
+                err.add_button(tr("ok"), Gtk.ResponseType.OK)
                 err.format_secondary_text(msg)
                 err.run()
                 err.hide()
@@ -481,7 +481,7 @@ class AnalysisPage:
                             type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
                             message_format=tr("pdf_done_title")
                         )
-                        info.add_button(tr("tamam"), Gtk.ResponseType.OK)
+                        info.add_button(tr("ok"), Gtk.ResponseType.OK)
                         info.format_secondary_text(tr("pdf_done_sec").format(path))
                         info.run()
                         info.hide()
