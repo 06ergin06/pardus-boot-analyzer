@@ -410,9 +410,10 @@ class AnalysisPage:
             if ok:
                 info = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                    type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
+                    type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
                     message_format=tr("quick_optimize_done_title")
                 )
+                info.add_button(tr("tamam"), Gtk.ResponseType.OK)
                 info.format_secondary_text(tr("quick_optimize_done_sec"))
                 info.run()
                 info.hide()
@@ -422,9 +423,10 @@ class AnalysisPage:
             else:
                 err = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                    type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                    type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.NONE,
                     message_format=tr("quick_optimize_err_title"),
                 )
+                err.add_button(tr("tamam"), Gtk.ResponseType.OK)
                 err.format_secondary_text(msg)
                 err.run()
                 err.hide()
@@ -476,9 +478,10 @@ class AnalysisPage:
                         self.set_status(tr("pdf_saved").format(path))
                         info = Gtk.MessageDialog(
                             parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                            type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
+                            type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
                             message_format=tr("pdf_done_title")
                         )
+                        info.add_button(tr("tamam"), Gtk.ResponseType.OK)
                         info.format_secondary_text(tr("pdf_done_sec").format(path))
                         info.run()
                         info.hide()

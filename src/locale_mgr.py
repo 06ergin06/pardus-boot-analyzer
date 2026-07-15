@@ -381,8 +381,18 @@ FALLBACK_DICT = {   'en': {   'about': 'About',
               'yetki_yok': 'You do not have permission to read logs.\n'
                            '\n'
                            'You must enter your administrator password to view logs.',
-              'yetkilendir': 'Authorize',
-              'yetkilendirildi': 'Authorized, loading logs...'},
+              'yetkilendirildi': 'Authorized, loading logs...',
+              'err_timeout_service': 'Operation timed out (service not responding).',
+              'success_operation': 'Operation successful.',
+              'err_timeout_auth': 'Operation timed out (incorrect password or service not responding).',
+              'saat_birim': 'hours',
+              'dakika_birim': 'min',
+              'bilinmiyor': 'Unknown',
+              'profile_no_changes': 'No changes needed.',
+              'err_no_password': 'Administrator password not provided.',
+              'profile_applied': 'Profile successfully applied.',
+              'profile_already_matching_backup': 'System already matches this backup state.',
+              'tamam': 'OK'},
     'tr': {   'about': 'Hakkında',
               'about_comments': 'Pardus Başlangıç Analiz ve Optimizasyon Aracı',
               'aciklama': 'Açıklama',
@@ -736,7 +746,18 @@ FALLBACK_DICT = {   'en': {   'about': 'About',
                            '\n'
                            'Logları görüntülemek için yönetici şifrenizi girmeniz gerekmektedir.',
               'yetkilendir': 'Yetkilendir',
-              'yetkilendirildi': 'Yetkilendirildi, loglar yükleniyor...'}}
+              'yetkilendirildi': 'Yetkilendirildi, loglar yükleniyor...',
+              'err_timeout_service': 'İşlem zaman aşımına uğradı (servis yanıt vermiyor).',
+              'success_operation': 'İşlem başarılı.',
+              'err_timeout_auth': 'İşlem zaman aşımına uğradı (şifre yanlış veya servis yanıt vermiyor).',
+              'saat_birim': 'saat',
+              'dakika_birim': 'dk',
+              'bilinmiyor': 'Bilinmiyor',
+              'profile_no_changes': 'Herhangi bir değişiklik yapılması gerekmiyor.',
+              'err_no_password': 'Yönetici şifresi girilmedi.',
+              'profile_applied': 'Profil başarıyla uygulandı.',
+              'profile_already_matching_backup': 'Sistem zaten bu yedek durumuna uygun.',
+              'tamam': 'Tamam'}}
 # Initialize gettext
 import gettext
 current_dir = os.path.dirname(os.path.abspath(__file__))
