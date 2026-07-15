@@ -127,9 +127,21 @@ class AutostartPage:
         return False
 
     def _on_autostart_delete_clicked(self, button, filepath):
-        self.manager.remove_autostart_entry(filepath)
-        self.load_autostart_page()
-        self.set_status(tr("uygulama_kaldirildi"))
+        dlg = Gtk.MessageDialog(
+            parent=self.window, flags=Gtk.DialogFlags.MODAL,
+            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
+            message_format=tr("sil_onay_app")
+        )
+        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
+        resp = dlg.run()
+        dlg.hide()
+        GLib.idle_add(dlg.destroy)
+        
+        if resp == Gtk.ResponseType.YES:
+            self.manager.remove_autostart_entry(filepath)
+            self.load_autostart_page()
+            self.set_status(tr("uygulama_kaldirildi"))
 
     def _on_add_autostart_clicked(self, button):
         dlg = AddAutostartDialog(self.window, self.manager)

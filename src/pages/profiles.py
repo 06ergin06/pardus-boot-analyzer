@@ -148,10 +148,29 @@ class ProfilesPage:
         return main_scrolled
 
     def get_custom_profiles_dir(self):
-        path = os.path.expanduser("~/.config/boot-manager-profiles")
-        if not os.path.exists(path):
-            os.makedirs(path, exist_ok=True)
-        return path
+        old_path = os.path.expanduser("~/.config/boot-manager-profiles")
+        new_path = os.path.expanduser("~/.config/pardus-boot-analyzer/profiles")
+        
+        # Migrate old profiles if they exist
+        if os.path.exists(old_path) and os.path.isdir(old_path):
+            os.makedirs(new_path, exist_ok=True)
+            for item in os.listdir(old_path):
+                old_file = os.path.join(old_path, item)
+                new_file = os.path.join(new_path, item)
+                if os.path.isfile(old_file) and not os.path.exists(new_file):
+                    try:
+                        import shutil
+                        shutil.move(old_file, new_file)
+                    except Exception:
+                        pass
+            try:
+                os.rmdir(old_path)
+            except Exception:
+                pass
+                
+        if not os.path.exists(new_path):
+            os.makedirs(new_path, exist_ok=True)
+        return new_path
 
     def load_profiles_page(self):
         for child in self.custom_profiles_listbox.get_children():
@@ -280,9 +299,11 @@ class ProfilesPage:
     def _on_restore_backup_clicked(self, button, fpath):
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
-            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
+            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
             message_format=tr("yedek_don_soru")
         )
+        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
         dlg.format_secondary_text(tr("yedek_don_aciklama"))
         resp = dlg.run()
         dlg.hide()
@@ -328,9 +349,11 @@ class ProfilesPage:
     def _on_delete_backup_clicked(self, button, fpath):
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
-            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO,
+            type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
             message_format=tr("yedek_sil_soru")
         )
+        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
@@ -350,9 +373,11 @@ class ProfilesPage:
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION,
-            buttons=Gtk.ButtonsType.YES_NO,
+            buttons=Gtk.ButtonsType.NONE,
             message_format=f"'{p_info['name']}' " + tr("profil_uygula_soru")
         )
+        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
         dlg.format_secondary_text(tr("profil_uygula_aciklama"))
         resp = dlg.run()
         dlg.hide()
@@ -382,9 +407,10 @@ class ProfilesPage:
             self.set_status(tr("sistem_uygun_durumda"))
             info = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
+                type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
                 message_format=tr("profil_zaten_uygulanmis")
             )
+            info.add_button(tr("tamam"), Gtk.ResponseType.OK)
             info.format_secondary_text(tr("hizmetler_uygun_detay"))
             info.run()
             info.hide()
@@ -407,9 +433,11 @@ class ProfilesPage:
                 
             dep_dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.YES_NO,
+                type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.NONE,
                 message_format=tr("profil_bagimlilik_uyarisi")
             )
+            dep_dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
+            dep_dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
             dep_dlg.format_secondary_text(dep_msg + "\nDevam etmek istiyor musunuz?")
             dep_resp = dep_dlg.run()
             dep_dlg.hide()
@@ -434,9 +462,11 @@ class ProfilesPage:
         dlg = Gtk.MessageDialog(
             parent=self.window, flags=Gtk.DialogFlags.MODAL,
             type=Gtk.MessageType.QUESTION,
-            buttons=Gtk.ButtonsType.YES_NO,
+            buttons=Gtk.ButtonsType.NONE,
             message_format=f"'{p_info['name']}' " + tr("profil_uygula_soru")
         )
+        dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
+        dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
@@ -481,9 +511,11 @@ class ProfilesPage:
                 
             dep_dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.YES_NO,
+                type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.NONE,
                 message_format=tr("profil_bagimlilik_uyarisi")
             )
+            dep_dlg.add_button(tr("hayir"), Gtk.ResponseType.NO)
+            dep_dlg.add_button(tr("evet"), Gtk.ResponseType.YES)
             dep_dlg.format_secondary_text(dep_msg + "\nDevam etmek istiyor musunuz?")
             dep_resp = dep_dlg.run()
             dep_dlg.hide()
@@ -529,9 +561,10 @@ class ProfilesPage:
             if ok:
                 info = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                    type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
+                    type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE,
                     message_format=tr("profil_basariyla_uygulandi")
                 )
+                info.add_button(tr("tamam"), Gtk.ResponseType.OK)
                 info.run()
                 info.hide()
                 GLib.idle_add(info.destroy)
@@ -539,9 +572,10 @@ class ProfilesPage:
             else:
                 err = Gtk.MessageDialog(
                     parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                    type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                    type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.NONE,
                     message_format=tr("profil_uygulama_hatasi"),
                 )
+                err.add_button(tr("tamam"), Gtk.ResponseType.OK)
                 err.format_secondary_text(msg)
                 err.run()
                 err.hide()
