@@ -659,7 +659,9 @@ class ServicesPage:
                     GLib.idle_add(dlg.destroy)
                     if resp != Gtk.ResponseType.YES:
                         return
-                self._run_systemctl("disable", name, self.load_all)
+                    self._run_systemctl("disable", name, self.load_all, confirm=False)
+                else:
+                    self._run_systemctl("disable", name, self.load_all, confirm=True)
         else:
             if not is_running:
                 dlg = Gtk.MessageDialog(
@@ -806,10 +808,11 @@ class ServicesPage:
             GLib.idle_add(dlg.destroy)
             if resp != Gtk.ResponseType.YES:
                 return
+            self._run_systemctl(action, name, self.load_all, confirm=False)
+        else:
+            self._run_systemctl(action, name, self.load_all, confirm=True)
 
-        self._run_systemctl(action, name, self.load_all)
-
-    def _run_systemctl(self, action, name, cb):
+    def _run_systemctl(self, action, name, cb, confirm=True):
         action_map = {
             "enable": tr("action_boot_ac"),
             "disable": tr("action_boot_disable"),
@@ -819,6 +822,25 @@ class ServicesPage:
             "unmask": tr("action_maskeyi_remove")
         }
         action_tr = action_map.get(action, action)
+                     
+        if confirm:
+            dlg = Gtk.MessageDialog(
+                parent=self.window, flags=Gtk.DialogFlags.MODAL,
+                type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE,
+                message_format=f"'{name}' - {action_tr}?"
+            )
+            dlg.add_button(tr("cancel"), Gtk.ResponseType.CANCEL)
+            dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
+            
+            self._add_command_expander(dlg, [
+                (action_tr, [f"{action} {name}"])
+            ])
+            
+            resp = dlg.run()
+            dlg.hide()
+            GLib.idle_add(dlg.destroy)
+            if resp != Gtk.ResponseType.YES:
+                return
                      
         if not self._ensure_auth():
             self.set_status(tr("auth_cancel"))
