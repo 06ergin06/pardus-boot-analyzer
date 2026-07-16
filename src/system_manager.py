@@ -61,7 +61,7 @@ class SystemManager:
                         # Add as inactive/dead service
                         services.append({
                             "name": name,
-                            "load": "not-found",
+                            "load": "loaded",
                             "active": "inactive",
                             "sub": "dead",
                             "description": ""
