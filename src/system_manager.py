@@ -11,6 +11,7 @@ from src.locale_mgr import tr
 class SystemManager:
     def __init__(self):
         self.password = None
+        self.root_process = None
         self._blame_data_cache = None
         self._total_boot_time_cache = None
         self._unit_file_states_cache = None
@@ -120,52 +121,111 @@ class SystemManager:
     def unmask_service(self, name):
         return self._run_auth(["unmask", name])
 
+    def __del__(self):
+        if hasattr(self, "root_process") and self.root_process:
+            try:
+                self.root_process.stdin.write("exit\n")
+                self.root_process.stdin.flush()
+                self.root_process.wait(timeout=1)
+            except Exception:
+                try:
+                    self.root_process.kill()
+                except Exception:
+                    pass
+
     def verify_sudo_password(self, password):
         try:
-            result = subprocess.run(
-                ["sudo", "-S", "-v"],
-                input=password + "\n",
-                capture_output=True, text=True,
-                timeout=10
+            if hasattr(self, "root_process") and self.root_process:
+                try:
+                    self.root_process.kill()
+                except Exception:
+                    pass
+                self.root_process = None
+                
+            proc = subprocess.Popen(
+                ["sudo", "-S", "bash"],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
             )
-            return result.returncode == 0
+            proc.stdin.write(password + "\n")
+            proc.stdin.flush()
+            
+            proc.stdin.write("echo 'SUDO_OK'\n")
+            proc.stdin.flush()
+            
+            authenticated = False
+            for line in proc.stdout:
+                if "SUDO_OK" in line:
+                    authenticated = True
+                    break
+            
+            if authenticated:
+                self.root_process = proc
+                self.password = password
+                return True
+            else:
+                proc.kill()
+                return False
         except Exception:
             return False
 
-    def _run_auth(self, args):
-        cmd_args = ["--no-pager", "--no-ask-password"] + args
-        if not self.password:
-            # Fallback: direct systemctl
+    def run_root_command(self, cmd_str):
+        if hasattr(self, "root_process") and self.root_process and self.root_process.poll() is None:
+            try:
+                marker = "CMD_FINISHED_MARKER"
+                self.root_process.stdin.write(f"{cmd_str} 2>&1\n")
+                self.root_process.stdin.write(f"echo 'CMD_EXIT:'$? '{marker}'\n")
+                self.root_process.stdin.flush()
+                
+                output_lines = []
+                exit_code = 0
+                for line in self.root_process.stdout:
+                    if marker in line:
+                        parts = line.strip().split()
+                        if len(parts) >= 1 and parts[0].startswith("CMD_EXIT:"):
+                            try:
+                                exit_code = int(parts[0].split(":")[1])
+                            except Exception:
+                                exit_code = 1
+                        break
+                    output_lines.append(line)
+                
+                output_text = "".join(output_lines).strip()
+                return exit_code == 0, output_text
+            except Exception as e:
+                return False, str(e)
+        else:
+            if not self.password:
+                return False, tr("err_no_password")
             try:
                 result = subprocess.run(
-                    ["systemctl"] + cmd_args,
+                    ["sudo", "-S", "sh", "-c", cmd_str],
+                    input=self.password + "\n",
                     capture_output=True, text=True,
                     timeout=15
                 )
-                return result.returncode == 0, result.stderr or result.stdout
+                if result.returncode == 0:
+                    return True, result.stdout.strip()
+                else:
+                    err = result.stderr or result.stdout
+                    if "incorrect password" in err.lower() or "şifre" in err.lower():
+                        self.password = None
+                    return False, err.strip()
             except subprocess.TimeoutExpired:
-                return False, tr("err_timeout_service")
+                return False, tr("err_timeout_auth")
             except Exception as e:
                 return False, str(e)
-            
-        try:
-            result = subprocess.run(
-                ["sudo", "-S", "systemctl"] + cmd_args,
-                input=self.password + "\n",
-                capture_output=True, text=True,
-                timeout=15
-            )
-            if result.returncode == 0:
-                return True, tr("success_operation")
-            else:
-                err = result.stderr or result.stdout
-                if "incorrect password" in err.lower() or "şifre" in err.lower():
-                    self.password = None
-                return False, err
-        except subprocess.TimeoutExpired:
-            return False, tr("err_timeout_auth")
-        except Exception as e:
-            return False, str(e)
+
+    def _run_auth(self, args):
+        cmd_args = ["--no-pager", "--no-ask-password"] + args
+        cmd_str = "systemctl " + " ".join(cmd_args)
+        ok, msg = self.run_root_command(cmd_str)
+        if ok:
+            return True, tr("success_operation")
+        else:
+            return False, msg
 
     def get_service_status(self, name):
         result = subprocess.run(

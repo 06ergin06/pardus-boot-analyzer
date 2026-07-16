@@ -22,24 +22,11 @@ class ProfileManager:
             return True, tr("profile_no_changes")
             
         shell_cmd = " && ".join(commands)
-        if not self.system_manager.password:
-            return False, tr("err_no_password")
-            
-        try:
-            result = subprocess.run(
-                ["sudo", "-S", "sh", "-c", shell_cmd],
-                input=self.system_manager.password + "\n",
-                capture_output=True, text=True
-            )
-            if result.returncode == 0:
-                return True, tr("profile_applied")
-            else:
-                err = result.stderr or result.stdout
-                if "incorrect password" in err.lower() or "şifre" in err.lower():
-                    self.system_manager.password = None
-                return False, err
-        except Exception as e:
-            return False, str(e)
+        ok, msg = self.system_manager.run_root_command(shell_cmd)
+        if ok:
+            return True, tr("profile_applied")
+        else:
+            return False, msg
 
     def create_backup(self):
         try:
