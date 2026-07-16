@@ -98,7 +98,7 @@ class PardusAboutDialog(Gtk.AboutDialog):
     def __init__(self, parent):
         super().__init__(parent=parent, flags=Gtk.DialogFlags.MODAL)
         self.set_program_name(tr("title"))
-        self.set_version("1.0.4")
+        self.set_version("1.0.5")
         self.set_comments(tr("about_comments"))
         self.set_copyright("© 2026 İbrahim Hakkı Ergin")
         self.set_website("https://github.com/06ergin06/pardus-boot-analyzer")

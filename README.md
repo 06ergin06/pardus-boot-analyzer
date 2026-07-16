@@ -63,7 +63,7 @@ python3 main.py
 * **Arayüz ile Kurulum (Pardus):** `.deb` paketine çift tıklayarak **Pardus Paket Kurucu** ile kolayca yükleyebilirsiniz.
 * **Terminal ile Kurulum:**
   ```bash
-  sudo dpkg -i pardus-boot-analyzer_1.0.4_all.deb
+  sudo dpkg -i pardus-boot-analyzer_1.0.5_all.deb
   sudo apt install -f
   ```
 

@@ -63,7 +63,7 @@ python3 main.py
 * **GUI Installation (Pardus):** You can double-click the `.deb` file to easily install it via the **Pardus Package Installer** GUI.
 * **Terminal Installation:**
   ```bash
-  sudo dpkg -i pardus-boot-analyzer_1.0.4_all.deb
+  sudo dpkg -i pardus-boot-analyzer_1.0.5_all.deb
   sudo apt install -f
   ```
 
