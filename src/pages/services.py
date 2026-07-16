@@ -965,7 +965,10 @@ class ServicesPage:
         def task():
             try:
                 deps = self.manager.get_dependencies(n)
-                GLib.idle_add(buf.set_text, deps or tr("dep_not_found"))
+                deps_str = "" 
+                for i in deps:
+                    deps_str += i + '\n'
+                GLib.idle_add(buf.set_text, deps_str or tr("dep_not_found"))
             except Exception as e:
                 GLib.idle_add(buf.set_text, tr("dep_error").format(e))
                 
