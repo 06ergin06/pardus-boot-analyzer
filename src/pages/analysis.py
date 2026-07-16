@@ -323,6 +323,12 @@ class AnalysisPage:
         dlg.add_button(tr("no"), Gtk.ResponseType.NO)
         dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
         dlg.format_secondary_text(tr("disable_single_select"))
+        
+        self._add_command_expander(dlg, [
+            (tr("action_boot_disable"), [f"disable {name}"]),
+            (tr("action_simdi_stop"), [f"stop {name}"])
+        ])
+        
         resp = dlg.run()
         dlg.hide()
         GLib.idle_add(dlg.destroy)
@@ -363,6 +369,14 @@ class AnalysisPage:
         
         svc_list_str = "\n".join(f"- {s}" for s in services_to_disable)
         dlg.format_secondary_text(tr("quick_optimize_select").format(svc_list_str))
+        
+        cmds = []
+        for svc in services_to_disable:
+            cmds.append(f"disable {svc}")
+            cmds.append(f"stop {svc}")
+        self._add_command_expander(dlg, [
+            (tr("quick_optimize_title"), cmds)
+        ])
         
         resp = dlg.run()
         dlg.hide()
@@ -686,3 +700,42 @@ class AnalysisPage:
         cr.show_text(tr("pdf_sayfa_1_1"))
 
     # --- Page 2: Autostart ---
+
+    def _add_command_expander(self, dialog, options):
+        expander = Gtk.Expander(label=tr("calistirilacak_komutlar"))
+        expander.set_margin_start(12)
+        expander.set_margin_end(12)
+        expander.set_margin_bottom(12)
+        
+        cmd_lines = []
+        for group_title, cmds in options:
+            if len(options) > 1:
+                cmd_lines.append(f"<b>• {group_title}:</b>")
+                prefix = "  "
+            else:
+                prefix = ""
+            for cmd in cmds:
+                cmd_lines.append(f"{prefix}sudo systemctl {cmd}")
+            if len(options) > 1:
+                cmd_lines.append("")
+        
+        cmd_text = "\n".join(cmd_lines).strip()
+        
+        lbl_cmd = Gtk.Label()
+        lbl_cmd.set_markup(f"<span font_family='monospace' size='small'>{cmd_text}</span>")
+        lbl_cmd.set_selectable(True)
+        lbl_cmd.set_xalign(0)
+        lbl_cmd.set_margin_top(8)
+        lbl_cmd.set_margin_bottom(8)
+        lbl_cmd.set_margin_start(8)
+        lbl_cmd.set_margin_end(8)
+        
+        frame = Gtk.Frame()
+        frame.get_style_context().add_class("monospaced-log")
+        frame.add(lbl_cmd)
+        
+        expander.add(frame)
+        
+        content_area = dialog.get_content_area()
+        content_area.pack_end(expander, False, False, 0)
+        expander.show_all()
