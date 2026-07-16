@@ -618,6 +618,12 @@ class ServicesPage:
                     sec_text += "\n\n" + tr("action_dep_uyari").format(dep_list_str)
                 
                 dlg.format_secondary_text(sec_text)
+                
+                self._add_command_expander(dlg, [
+                    (tr("ikisini_de_disable"), [f"disable {name}", f"stop {name}"]),
+                    (tr("sadece_startup_degistir"), [f"disable {name}"])
+                ])
+                
                 resp = dlg.run()
                 dlg.hide()
                 GLib.idle_add(dlg.destroy)
@@ -643,6 +649,11 @@ class ServicesPage:
                     dlg.format_secondary_text(
                         tr("disable_boot_stopped_dep").format(name, dep_list_str)
                     )
+                    
+                    self._add_command_expander(dlg, [
+                        (tr("yes"), [f"disable {name}"])
+                    ])
+                    
                     resp = dlg.run()
                     dlg.hide()
                     GLib.idle_add(dlg.destroy)
@@ -663,6 +674,12 @@ class ServicesPage:
                 dlg.format_secondary_text(
                     tr("enable_boot_stopped_select").format(name)
                 )
+                
+                self._add_command_expander(dlg, [
+                    (tr("simdi_start_ve_etkinlestir"), [f"enable {name}", f"start {name}"]),
+                    (tr("sadece_boot_etkinlestir"), [f"enable {name}"])
+                ])
+                
                 resp = dlg.run()
                 dlg.hide()
                 GLib.idle_add(dlg.destroy)
@@ -702,6 +719,12 @@ class ServicesPage:
                 dlg.format_secondary_text(
                     tr("stop_enabled_select").format(name)
                 )
+                
+                self._add_command_expander(dlg, [
+                    (tr("ikisini_de_disable"), [f"disable {name}", f"stop {name}"]),
+                    (tr("sadece_simdi_stop"), [f"stop {name}"])
+                ])
+                
                 resp = dlg.run()
                 dlg.hide()
                 GLib.idle_add(dlg.destroy)
@@ -730,6 +753,12 @@ class ServicesPage:
                 dlg.format_secondary_text(
                     tr("start_disabled_select").format(name)
                 )
+                
+                self._add_command_expander(dlg, [
+                    (tr("simdi_start_ve_etkinlestir"), [f"enable {name}", f"start {name}"]),
+                    (tr("sadece_simdi_start"), [f"start {name}"])
+                ])
+                
                 resp = dlg.run()
                 dlg.hide()
                 GLib.idle_add(dlg.destroy)
@@ -767,6 +796,11 @@ class ServicesPage:
             dlg.add_button(tr("yes"), Gtk.ResponseType.YES)
             if warn:
                 dlg.format_secondary_text(warn)
+                
+            self._add_command_expander(dlg, [
+                (tr("action_maskele"), [f"mask {name}"])
+            ])
+            
             resp = dlg.run()
             dlg.hide()
             GLib.idle_add(dlg.destroy)
@@ -869,6 +903,46 @@ class ServicesPage:
                 cb()
         except Exception:
             pass
+
+    def _add_command_expander(self, dialog, options):
+        expander = Gtk.Expander(label=tr("calistirilacak_komutlar"))
+        expander.set_margin_start(12)
+        expander.set_margin_end(12)
+        expander.set_margin_bottom(12)
+        
+        cmd_lines = []
+        for group_title, cmds in options:
+            if len(options) > 1:
+                cmd_lines.append(f"<b>• {group_title}:</b>")
+                prefix = "  "
+            else:
+                prefix = ""
+            for cmd in cmds:
+                cmd_lines.append(f"{prefix}sudo systemctl {cmd}")
+            if len(options) > 1:
+                cmd_lines.append("")
+        
+        cmd_text = "\n".join(cmd_lines).strip()
+        
+        lbl_cmd = Gtk.Label()
+        lbl_cmd.set_markup(f"<span font_family='monospace' size='small'>{cmd_text}</span>")
+        lbl_cmd.set_selectable(True)
+        lbl_cmd.set_xalign(0)
+        lbl_cmd.set_margin_top(8)
+        lbl_cmd.set_margin_bottom(8)
+        lbl_cmd.set_margin_start(8)
+        lbl_cmd.set_margin_end(8)
+        
+        frame = Gtk.Frame()
+        frame.get_style_context().add_class("monospaced-log")
+        frame.add(lbl_cmd)
+        
+        expander.add(frame)
+        
+        content_area = dialog.get_content_area()
+        content_area.pack_end(expander, False, False, 0)
+        expander.show_all()
+
 
     def _on_show_log(self, *args):
         n = self._get_selected_name()
