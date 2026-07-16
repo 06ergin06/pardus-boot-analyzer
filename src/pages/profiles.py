@@ -3,6 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib
 import os
 import json
+import threading
 
 from src.locale_mgr import tr
 from src.dialogs import ProfileCreatorDialog
