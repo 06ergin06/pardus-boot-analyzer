@@ -557,7 +557,7 @@ class ServicesPage:
 
         if is_running:
             self.btn_run.set_label(tr("simdi_stop"))
-            self.btn_run.get_style_context().remove_class("primary")
+            self.btn_run.get_style_context().remove_class("suggested-action")
             self.btn_run.get_style_context().add_class("danger")
             self.lbl_current_state_status.set_markup(f"<span size='small' color='#198754'>● <b>{tr('su_an_calisiyor')}</b></span>")
         else:
