@@ -442,7 +442,14 @@ class ServicesPage:
         self._search_text = self.search_entry.get_text()
         if self._debounce_id:
             GLib.source_remove(self._debounce_id)
-        self._debounce_id = GLib.timeout_add(250, self._apply_filters)
+            self._debounce_id = 0
+            
+        def _debounce_callback():
+            self._apply_filters()
+            self._debounce_id = 0
+            return False
+            
+        self._debounce_id = GLib.timeout_add(250, _debounce_callback)
 
     def _get_selected_row(self):
         m, i = self.selection.get_selected()
