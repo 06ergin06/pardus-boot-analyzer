@@ -8,18 +8,44 @@ class ProfileManager:
         self.system_manager = system_manager
 
     def apply_profile_batch(self, enable_list, disable_list):
+        self.system_manager.clear_cache()
+        current_unit_states = self.system_manager.get_unit_file_states()
+        current_active_states = {}
+        for s in self.system_manager.get_services():
+            current_active_states[s["name"]] = s["active"]
+            
+        to_enable = []
+        to_start = []
+        for svc in enable_list:
+            unit_state = current_unit_states.get(svc, "unknown")
+            active_state = current_active_states.get(svc, "unknown")
+            if unit_state not in ("enabled", "enabled-runtime"):
+                to_enable.append(svc)
+            if active_state != "active":
+                to_start.append(svc)
+                
+        to_disable = []
+        to_stop = []
+        for svc in disable_list:
+            unit_state = current_unit_states.get(svc, "unknown")
+            active_state = current_active_states.get(svc, "unknown")
+            if unit_state in ("enabled", "enabled-runtime"):
+                to_disable.append(svc)
+            if active_state == "active":
+                to_stop.append(svc)
+                
         commands = []
-        if enable_list:
-            svc_str = " ".join(enable_list)
-            commands.append(f"systemctl enable {svc_str}")
-            commands.append(f"systemctl start {svc_str}")
-        if disable_list:
-            svc_str = " ".join(disable_list)
-            commands.append(f"systemctl disable {svc_str}")
-            commands.append(f"systemctl stop {svc_str}")
+        if to_enable:
+            commands.append(f"systemctl enable {' '.join(to_enable)}")
+        if to_start:
+            commands.append(f"systemctl start {' '.join(to_start)}")
+        if to_disable:
+            commands.append(f"systemctl disable {' '.join(to_disable)}")
+        if to_stop:
+            commands.append(f"systemctl stop {' '.join(to_stop)}")
             
         if not commands:
-            return True, tr("profile_no_changes")
+            return True, tr("profile_applied")
             
         shell_cmd = " && ".join(commands)
         ok, msg = self.system_manager.run_root_command(shell_cmd)
@@ -76,6 +102,7 @@ class ProfileManager:
             with open(filepath, "r", encoding="utf-8") as f:
                 data = json.load(f)
             backup_states = data["services"]
+            self.system_manager.clear_cache()
             current_states = self.system_manager.get_unit_file_states()
             
             enable_list = []

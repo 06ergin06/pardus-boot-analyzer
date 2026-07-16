@@ -45,6 +45,30 @@ class SystemManager:
                     "sub": parts[3],
                     "description": " ".join(parts[4:]) if len(parts) > 4 else ""
                 })
+                
+        # Merge inactive/unloaded unit files from list-unit-files so they don't disappear when stopped and disabled
+        try:
+            file_output = subprocess.check_output(
+                ["systemctl", "list-unit-files", "--no-pager", "--no-legend"],
+                text=True
+            )
+            existing_names = {s["name"] for s in services}
+            for line in file_output.strip().splitlines():
+                parts = line.split()
+                if len(parts) >= 2:
+                    name = parts[0]
+                    if name not in existing_names and not name.endswith("@.service") and "@" not in name:
+                        # Add as inactive/dead service
+                        services.append({
+                            "name": name,
+                            "load": "not-found",
+                            "active": "inactive",
+                            "sub": "dead",
+                            "description": ""
+                        })
+        except Exception:
+            pass
+            
         return services
 
     def get_unit_file_states(self):
