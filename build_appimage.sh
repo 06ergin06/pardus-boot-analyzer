@@ -150,17 +150,70 @@ if [ -d "/usr/share/glib-2.0/schemas" ]; then
     cp -r /usr/share/glib-2.0/schemas/* "$APP_DIR/usr/share/glib-2.0/schemas/" 2>/dev/null || true
 fi
 
-echo "Bundling Python PyGObject bindings..."
-for pdir in /usr/lib/python3*/site-packages /usr/lib/python3*/dist-packages; do
+echo "Bundling Python runtime, standard library, and bindings..."
+mkdir -p "$APP_DIR/usr/bin"
+PYTHON_BIN="$(command -v python3)"
+cp -L "$PYTHON_BIN" "$APP_DIR/usr/bin/python3"
+chmod +x "$APP_DIR/usr/bin/python3"
+
+PYTHON_VER=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+PYTHON_STDLIB=$(python3 -c "import sysconfig; print(sysconfig.get_path('stdlib'))")
+
+# Bundle libpython shared library
+for ldir in "${LIB_DIRS[@]}"; do
+    if [ -d "$ldir" ]; then
+        for match in "$ldir"/libpython"${PYTHON_VER}"*.so*; do
+            if [ -e "$match" ]; then
+                if [ -L "$match" ]; then
+                    real_target=$(readlink -f "$match" 2>/dev/null || true)
+                    if [ -f "$real_target" ]; then
+                        cp -d "$real_target" "$APP_DIR/usr/lib/" 2>/dev/null || true
+                    fi
+                fi
+                cp -d "$match" "$APP_DIR/usr/lib/" 2>/dev/null || true
+            fi
+        done
+    fi
+done
+
+# Bundle Python standard library modules (strictly excluding site-packages, test suites, and caches)
+mkdir -p "$APP_DIR/usr/lib/python${PYTHON_VER}"
+if [ -d "$PYTHON_STDLIB" ]; then
+    echo "Copying standard library from $PYTHON_STDLIB..."
+    if command -v rsync >/dev/null 2>&1; then
+        rsync -a \
+            --exclude="site-packages" \
+            --exclude="dist-packages" \
+            --exclude="test" \
+            --exclude="tests" \
+            --exclude="idlelib" \
+            --exclude="tkinter" \
+            --exclude="turtle*" \
+            --exclude="__pycache__" \
+            "$PYTHON_STDLIB/" "$APP_DIR/usr/lib/python${PYTHON_VER}/" 2>/dev/null || true
+    else
+        cp -r "$PYTHON_STDLIB"/* "$APP_DIR/usr/lib/python${PYTHON_VER}/" 2>/dev/null || true
+        rm -rf "$APP_DIR/usr/lib/python${PYTHON_VER}"/site-packages "$APP_DIR/usr/lib/python${PYTHON_VER}"/dist-packages "$APP_DIR/usr/lib/python${PYTHON_VER}"/test "$APP_DIR/usr/lib/python${PYTHON_VER}"/tests 2>/dev/null || true
+    fi
+fi
+
+# Bundle Python PyGObject and cairo packages
+mkdir -p "$APP_DIR/usr/lib/python${PYTHON_VER}/site-packages"
+for pdir in /usr/lib/python3*/site-packages /usr/lib/python3*/dist-packages /usr/local/lib/python3*/site-packages /usr/local/lib/python3*/dist-packages; do
     if [ -d "$pdir/gi" ]; then
         echo "Found Python gi package at $pdir"
-        cp -r "$pdir/gi" "$APP_DIR/usr/lib/python3/site-packages/" 2>/dev/null || true
+        cp -r "$pdir/gi" "$APP_DIR/usr/lib/python${PYTHON_VER}/site-packages/" 2>/dev/null || true
         if [ -d "$pdir/cairo" ]; then
-            cp -r "$pdir/cairo" "$APP_DIR/usr/lib/python3/site-packages/" 2>/dev/null || true
+            cp -r "$pdir/cairo" "$APP_DIR/usr/lib/python${PYTHON_VER}/site-packages/" 2>/dev/null || true
         fi
         break
     fi
 done
+
+# Create compatibility symlinks for python3/site-packages and python3/dist-packages
+mkdir -p "$APP_DIR/usr/lib/python3"
+ln -sf "../python${PYTHON_VER}/site-packages" "$APP_DIR/usr/lib/python3/site-packages" 2>/dev/null || true
+ln -sf "../python${PYTHON_VER}/site-packages" "$APP_DIR/usr/lib/python3/dist-packages" 2>/dev/null || true
 
 echo "Resolving dynamic dependencies with ldd..."
 EXCLUDE_REGEX="^(linux-vdso|libc\.so|libm\.so|libpthread\.so|libdl\.so|librt\.so|libresolv\.so|libnsl\.so|libutil\.so|ld-linux|libgcc_s\.so|libstdc\+\+\.so|libGL\.so|libGLX\.so|libEGL\.so|libGLES|libglapi\.so|libdrm\.so|libasound\.so)"
@@ -168,7 +221,7 @@ EXCLUDE_REGEX="^(linux-vdso|libc\.so|libm\.so|libpthread\.so|libdl\.so|librt\.so
 MAX_PASSES=5
 for pass in $(seq 1 $MAX_PASSES); do
     NEW_LIBS_COPIED=0
-    SO_FILES=$(find "$APP_DIR/usr/lib" -type f \( -name "*.so" -o -name "*.so.*" \) 2>/dev/null)
+    SO_FILES=$(find "$APP_DIR/usr/lib" "$APP_DIR/usr/bin" -type f \( -name "*.so" -o -name "*.so.*" -o -name "python3" \) 2>/dev/null)
     for so in $SO_FILES; do
         if [ ! -f "$so" ]; then
             continue
@@ -210,13 +263,20 @@ HERE=$(dirname "$SELF")
 export APPDIR="$HERE"
 
 # Shared library search path (prioritize bundled libraries)
-export LD_LIBRARY_PATH="$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu:$APPDIR/usr/lib64:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="$HERE/usr/lib:$HERE/usr/lib/x86_64-linux-gnu:$HERE/usr/lib64:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 # GObject Introspection typelib path
-export GI_TYPELIB_PATH="$APPDIR/usr/lib/girepository-1.0:$APPDIR/usr/lib/x86_64-linux-gnu/girepository-1.0:$APPDIR/usr/lib64/girepository-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
+export GI_TYPELIB_PATH="$HERE/usr/lib/girepository-1.0:$HERE/usr/lib/x86_64-linux-gnu/girepository-1.0:$HERE/usr/lib64/girepository-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
 
-# Python module search path
-export PYTHONPATH="$APPDIR/usr/share/pardus-boot-analyzer:$APPDIR/usr/lib/python3/site-packages:$APPDIR/usr/lib/python3/dist-packages:${PYTHONPATH:+:$PYTHONPATH}"
+# Complete Python runtime isolation
+export PYTHONHOME="$HERE/usr"
+export PYTHONPATH="$HERE/usr/share/pardus-boot-analyzer:$HERE/usr/lib/python3/dist-packages:$HERE/usr/lib/python3/site-packages"
+for sdir in "$HERE"/usr/lib/python*/site-packages "$HERE"/usr/lib/python*/dist-packages; do
+    if [ -d "$sdir" ]; then
+        PYTHONPATH="$PYTHONPATH:$sdir"
+    fi
+done
+export PYTHONPATH
 
 # GSettings schemas path
 if [ -d "$HERE/usr/share/glib-2.0/schemas" ]; then
@@ -231,8 +291,8 @@ fi
 # XDG data directories for icons and themes
 export XDG_DATA_DIRS="$HERE/usr/share:${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
 
-# Execute application using host python3
-exec python3 "$HERE/usr/share/pardus-boot-analyzer/main.py" "$@"
+# Execute application using isolated AppDir python3
+exec "$HERE/usr/bin/python3" "$HERE/usr/share/pardus-boot-analyzer/main.py" "$@"
 EOF
 chmod +x "$APP_DIR/AppRun"
 
@@ -255,6 +315,7 @@ else
 fi
 
 echo "Building AppImage..."
+rm -f "$OUTPUT_IMAGE"
 ARCH=x86_64 "$TOOL_PATH" "$APP_DIR" "$OUTPUT_IMAGE"
 
 echo "Cleaning up AppDir..."
