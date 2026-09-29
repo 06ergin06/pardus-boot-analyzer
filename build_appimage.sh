@@ -255,6 +255,14 @@ if [ ! -f "$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders/libpixbufloader-svg.so" ]; th
     fi
 fi
 
+# Also copy loaders directly into AppDir/usr/lib for direct dlopen resolution
+echo "Copying loaders directly to AppDir/usr/lib for direct dlopen resolution..."
+for loader in "$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders"/*.so; do
+    if [ -f "$loader" ]; then
+        cp -d "$loader" "$APP_DIR/usr/lib/" 2>/dev/null || true
+    fi
+done
+
 # Generate loaders.cache
 QUERY_LOADERS=""
 for qtool in "gdk-pixbuf-query-loaders" \
@@ -300,7 +308,7 @@ EXCLUDE_REGEX="^(linux-vdso|libc\.so|libm\.so|libpthread\.so|libdl\.so|librt\.so
 MAX_PASSES=5
 for pass in $(seq 1 $MAX_PASSES); do
     NEW_LIBS_COPIED=0
-    SO_FILES=$(find "$APP_DIR/usr/lib" "$APP_DIR/usr/bin" -type f \( -name "*.so" -o -name "*.so.*" -o -name "python3" \) 2>/dev/null)
+    SO_FILES=$(find "$APP_DIR/usr/lib" "$APP_DIR/usr/bin" "$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders" -type f \( -name "*.so" -o -name "*.so.*" -o -name "python3" \) 2>/dev/null | sort -u)
     for so in $SO_FILES; do
         if [ ! -f "$so" ]; then
             continue
@@ -341,8 +349,8 @@ HERE=$(dirname "$SELF")
 # Base AppDir path
 export APPDIR="$HERE"
 
-# Shared library search path (prioritize bundled libraries)
-export LD_LIBRARY_PATH="$HERE/usr/lib:$HERE/usr/lib/x86_64-linux-gnu:$HERE/usr/lib64:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+# Shared library search path (prioritize bundled libraries and gdk-pixbuf loaders)
+export LD_LIBRARY_PATH="$HERE/usr/lib/gdk-pixbuf-2.0/loaders:$HERE/usr/lib:$HERE/usr/lib/x86_64-linux-gnu:$HERE/usr/lib64:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 # GObject Introspection typelib path
 export GI_TYPELIB_PATH="$HERE/usr/lib/girepository-1.0:$HERE/usr/lib/x86_64-linux-gnu/girepository-1.0:$HERE/usr/lib64/girepository-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
