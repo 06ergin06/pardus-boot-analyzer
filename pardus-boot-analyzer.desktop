@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Pardus Boot Analyzer
+Name[tr]=Pardus Başlangıç Yöneticisi
+Comment=Analyze system boot time and manage startup applications
+Comment[tr]=Sistem açılış süresini analiz et ve başlangıç programlarını yönet
+Exec=pardus-boot-analyzer
+Icon=pardus-boot-analyzer
+Terminal=false
+Type=Application
+Categories=System;Settings;GTK;
+StartupNotify=true

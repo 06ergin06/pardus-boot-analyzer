@@ -44,19 +44,7 @@ EOF
   chmod +x "$pkgdir/usr/bin/$_pkgname"
 
   # Desktop entry
-  cat << EOF > "$pkgdir/usr/share/applications/$_pkgname.desktop"
-[Desktop Entry]
-Name=Pardus Başlangıç Yöneticisi
-Name[en]=Pardus Boot Manager
-Comment=Sistem açılış süresini analiz et ve başlangıç programlarını yönet
-Comment[en]=Analyze system boot time and manage startup applications
-Exec=$_pkgname
-Icon=$_pkgname
-Terminal=false
-Type=Application
-Categories=System;Settings;GTK;
-StartupNotify=true
-EOF
+  install -Dm644 pardus-boot-analyzer.desktop "$pkgdir/usr/share/applications/$_pkgname.desktop"
 
   # Icon
   install -Dm644 pardus-boot-analyzer.svg "$pkgdir/usr/share/pixmaps/$_pkgname.svg"

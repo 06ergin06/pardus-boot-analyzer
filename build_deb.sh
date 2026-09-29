@@ -39,18 +39,8 @@ exec python3 main.py "$@"
 EOF
 chmod +x "$BUILD_DIR/usr/bin/$PKG_NAME"
 
-echo "Creating desktop entry..."
-cat << EOF > "$BUILD_DIR/usr/share/applications/$PKG_NAME.desktop"
-[Desktop Entry]
-Name=Pardus Başlangıç Yöneticisi
-Comment=Sistem açılış süresini analiz et ve başlangıç programlarını yönet
-Exec=$PKG_NAME
-Icon=pardus-boot-analyzer
-Terminal=false
-Type=Application
-Categories=System;Settings;GTK;
-StartupNotify=true
-EOF
+echo "Installing desktop entry..."
+cp pardus-boot-analyzer.desktop "$BUILD_DIR/usr/share/applications/$PKG_NAME.desktop"
 
 echo "Creating debian control file..."
 cat << EOF > "$BUILD_DIR/DEBIAN/control"
