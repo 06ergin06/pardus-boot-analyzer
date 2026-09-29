@@ -7,7 +7,7 @@ set -e
 
 # Package variables
 PKG_NAME="pardus-boot-analyzer"
-PKG_VERSION="1.0.5"
+PKG_VERSION="1.0.6"
 BUILD_DIR="build_pkg"
 
 echo "Creating clean build directories..."
