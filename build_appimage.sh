@@ -121,6 +121,7 @@ SHARED_LIBS=(
     "libthai*.so*"
     "libdatrie*.so*"
     "libgraphite2*.so*"
+    "librsvg-2.so*"
 )
 
 for ldir in "${LIB_DIRS[@]}"; do
@@ -215,6 +216,84 @@ mkdir -p "$APP_DIR/usr/lib/python3"
 ln -sf "../python${PYTHON_VER}/site-packages" "$APP_DIR/usr/lib/python3/site-packages" 2>/dev/null || true
 ln -sf "../python${PYTHON_VER}/site-packages" "$APP_DIR/usr/lib/python3/dist-packages" 2>/dev/null || true
 
+echo "Bundling icon themes..."
+mkdir -p "$APP_DIR/usr/share/icons"
+if [ -d "/usr/share/icons/hicolor" ]; then
+    echo "Copying hicolor icon theme..."
+    cp -r /usr/share/icons/hicolor "$APP_DIR/usr/share/icons/" 2>/dev/null || true
+fi
+if [ -d "/usr/share/icons/Adwaita" ]; then
+    echo "Copying Adwaita icon theme..."
+    cp -r /usr/share/icons/Adwaita "$APP_DIR/usr/share/icons/" 2>/dev/null || true
+fi
+
+echo "Bundling GdkPixbuf loaders and generating loaders.cache..."
+mkdir -p "$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders"
+
+LOADER_DIRS=(
+    /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/*/loaders
+    /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/loaders
+    /usr/lib/gdk-pixbuf-2.0/*/loaders
+    /usr/lib/gdk-pixbuf-2.0/loaders
+    /usr/lib64/gdk-pixbuf-2.0/*/loaders
+    /usr/lib64/gdk-pixbuf-2.0/loaders
+)
+
+for ldir in "${LOADER_DIRS[@]}"; do
+    if [ -d "$ldir" ]; then
+        echo "Found GdkPixbuf loader directory at $ldir"
+        cp -d "$ldir"/*.so "$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders/" 2>/dev/null || true
+    fi
+done
+
+# Explicit search for SVG loader if not already copied
+if [ ! -f "$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders/libpixbufloader-svg.so" ]; then
+    SVG_LOADER=$(find /usr/lib /usr/lib64 /lib /usr/lib/x86_64-linux-gnu -name "libpixbufloader-svg.so" 2>/dev/null | head -n 1)
+    if [ -n "$SVG_LOADER" ] && [ -f "$SVG_LOADER" ]; then
+        echo "Found SVG loader at $SVG_LOADER"
+        cp -d "$SVG_LOADER" "$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders/" 2>/dev/null || true
+    fi
+fi
+
+# Generate loaders.cache
+QUERY_LOADERS=""
+for qtool in "gdk-pixbuf-query-loaders" \
+             "/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders" \
+             "/usr/lib/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders" \
+             "/usr/lib64/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders"; do
+    if command -v "$qtool" >/dev/null 2>&1 || [ -x "$qtool" ]; then
+        QUERY_LOADERS="$qtool"
+        break
+    fi
+done
+
+CACHE_FILE="$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders.cache"
+if [ -n "$QUERY_LOADERS" ]; then
+    echo "Generating loaders.cache using $QUERY_LOADERS..."
+    if ls "$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders"/*.so >/dev/null 2>&1; then
+        "$QUERY_LOADERS" "$APP_DIR/usr/lib/gdk-pixbuf-2.0/loaders"/*.so > "$CACHE_FILE" 2>/dev/null || true
+    else
+        "$QUERY_LOADERS" > "$CACHE_FILE" 2>/dev/null || true
+    fi
+    # Make loader paths relative to GDK_PIXBUF_MODULEDIR for runtime portability
+    sed -i -E 's#"/.*/loaders/#"#' "$CACHE_FILE" 2>/dev/null || true
+fi
+
+# Fallback: copy system loaders.cache if generated cache is empty
+if [ ! -s "$CACHE_FILE" ]; then
+    for sys_cache in /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/*/loaders.cache \
+                     /usr/lib/gdk-pixbuf-2.0/*/loaders.cache \
+                     /usr/lib64/gdk-pixbuf-2.0/*/loaders.cache \
+                     /usr/lib/gdk-pixbuf-2.0/loaders.cache; do
+        if [ -f "$sys_cache" ]; then
+            echo "Copying fallback system loaders.cache from $sys_cache..."
+            cp "$sys_cache" "$CACHE_FILE"
+            sed -i -E 's#"/.*/loaders/#"#' "$CACHE_FILE" 2>/dev/null || true
+            break
+        fi
+    done
+fi
+
 echo "Resolving dynamic dependencies with ldd..."
 EXCLUDE_REGEX="^(linux-vdso|libc\.so|libm\.so|libpthread\.so|libdl\.so|librt\.so|libresolv\.so|libnsl\.so|libutil\.so|ld-linux|libgcc_s\.so|libstdc\+\+\.so|libGL\.so|libGLX\.so|libEGL\.so|libGLES|libglapi\.so|libdrm\.so|libasound\.so)"
 
@@ -278,6 +357,10 @@ for sdir in "$HERE"/usr/lib/python*/site-packages "$HERE"/usr/lib/python*/dist-p
 done
 export PYTHONPATH
 
+# GdkPixbuf loaders and cache
+export GDK_PIXBUF_MODULEDIR="$HERE/usr/lib/gdk-pixbuf-2.0/loaders"
+export GDK_PIXBUF_MODULE_FILE="$HERE/usr/lib/gdk-pixbuf-2.0/loaders.cache"
+
 # GSettings schemas path
 if [ -d "$HERE/usr/share/glib-2.0/schemas" ]; then
     export GSETTINGS_SCHEMA_DIR="$HERE/usr/share/glib-2.0/schemas:${GSETTINGS_SCHEMA_DIR:+:$GSETTINGS_SCHEMA_DIR}"
@@ -289,7 +372,7 @@ if [ -d "$HERE/usr/lib/gtk-3.0" ]; then
 fi
 
 # XDG data directories for icons and themes
-export XDG_DATA_DIRS="$HERE/usr/share:${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
+export XDG_DATA_DIRS="$HERE/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 
 # Execute application using isolated AppDir python3
 exec "$HERE/usr/bin/python3" "$HERE/usr/share/pardus-boot-analyzer/main.py" "$@"
