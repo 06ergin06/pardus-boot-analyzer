@@ -38,10 +38,13 @@ cp pardus-boot-analyzer.svg "$APP_DIR/$PKG_NAME.svg"
 cp pardus-boot-analyzer.svg "$APP_DIR/.DirIcon"
 
 echo "Bundling GObject Introspection typelibs..."
+mkdir -p "$APP_DIR/usr/lib/girepository-1.0"
+mkdir -p "$APP_DIR/usr/lib/x86_64-linux-gnu/girepository-1.0"
+
 TYPELIB_DIRS=(
+    "/usr/lib/x86_64-linux-gnu/girepository-1.0"
     "/usr/lib/girepository-1.0"
     "/usr/lib64/girepository-1.0"
-    "/usr/lib/x86_64-linux-gnu/girepository-1.0"
 )
 
 TYPELIBS=(
@@ -65,12 +68,24 @@ TYPELIBS=(
 for tdir in "${TYPELIB_DIRS[@]}"; do
     if [ -d "$tdir" ]; then
         echo "Found system typelib path at $tdir"
+        cp -L "$tdir"/*.typelib "$APP_DIR/usr/lib/girepository-1.0/" 2>/dev/null || true
+    fi
+done
+
+for tdir in "${TYPELIB_DIRS[@]}"; do
+    if [ -d "$tdir" ]; then
         for tfile in "${TYPELIBS[@]}"; do
-            if [ -f "$tdir/$tfile" ]; then
-                cp -L "$tdir/$tfile" "$APP_DIR/usr/lib/girepository-1.0/"
+            if [ -f "$tdir/$tfile" ] && [ ! -f "$APP_DIR/usr/lib/girepository-1.0/$tfile" ]; then
+                cp -L "$tdir/$tfile" "$APP_DIR/usr/lib/girepository-1.0/" 2>/dev/null || true
             fi
         done
-        break
+    fi
+done
+
+for tfile in "$APP_DIR/usr/lib/girepository-1.0"/*.typelib; do
+    if [ -f "$tfile" ]; then
+        bname=$(basename "$tfile")
+        ln -sf "../../girepository-1.0/$bname" "$APP_DIR/usr/lib/x86_64-linux-gnu/girepository-1.0/$bname" 2>/dev/null || true
     fi
 done
 
@@ -353,7 +368,7 @@ export APPDIR="$HERE"
 export LD_LIBRARY_PATH="$HERE/usr/lib/gdk-pixbuf-2.0/loaders:$HERE/usr/lib:$HERE/usr/lib/x86_64-linux-gnu:$HERE/usr/lib64:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 # GObject Introspection typelib path
-export GI_TYPELIB_PATH="$HERE/usr/lib/girepository-1.0:$HERE/usr/lib/x86_64-linux-gnu/girepository-1.0:$HERE/usr/lib64/girepository-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
+export GI_TYPELIB_PATH="$HERE/usr/lib/girepository-1.0:$HERE/usr/lib/x86_64-linux-gnu/girepository-1.0:${GI_TYPELIB_PATH:-}"
 
 # Complete Python runtime isolation
 export PYTHONHOME="$HERE/usr"
