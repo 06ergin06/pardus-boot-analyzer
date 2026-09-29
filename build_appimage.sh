@@ -79,6 +79,9 @@ LIB_DIRS=(
     "/usr/lib"
     "/usr/lib64"
     "/usr/lib/x86_64-linux-gnu"
+    "/lib/x86_64-linux-gnu"
+    "/lib64"
+    "/lib"
 )
 
 SHARED_LIBS=(
@@ -91,6 +94,7 @@ SHARED_LIBS=(
     "libgmodule-2.0.so*"
     "libpango-1.0.so*"
     "libpangocairo-1.0.so*"
+    "libpangoft2-1.0.so*"
     "libgdk_pixbuf-2.0.so*"
     "libcairo.so*"
     "libcairo-gobject.so*"
@@ -105,22 +109,39 @@ SHARED_LIBS=(
     "libpixman-1.so*"
     "libtinysparql-*.so*"
     "libcloudproviders.so*"
+    "libpcre*.so*"
+    "libffi*.so*"
+    "libselinux*.so*"
+    "libmount*.so*"
+    "libblkid*.so*"
+    "libz*.so*"
+    "libbz2*.so*"
+    "libpng*.so*"
+    "libexpat*.so*"
+    "libthai*.so*"
+    "libdatrie*.so*"
+    "libgraphite2*.so*"
 )
 
 for ldir in "${LIB_DIRS[@]}"; do
-    if [ -d "$ldir" ] && [ -e "$ldir/libgtk-3.so.0" ]; then
-        echo "Found system libraries path at $ldir"
+    if [ -d "$ldir" ]; then
+        echo "Searching libraries in $ldir..."
         for pattern in "${SHARED_LIBS[@]}"; do
             for match in $ldir/$pattern; do
                 if [ -e "$match" ]; then
+                    if [ -L "$match" ]; then
+                        real_target=$(readlink -f "$match" 2>/dev/null || true)
+                        if [ -f "$real_target" ]; then
+                            cp -d "$real_target" "$APP_DIR/usr/lib/" 2>/dev/null || true
+                        fi
+                    fi
                     cp -d "$match" "$APP_DIR/usr/lib/" 2>/dev/null || true
                 fi
             done
         done
-        if [ -d "$ldir/gtk-3.0" ]; then
+        if [ -d "$ldir/gtk-3.0" ] && [ ! -d "$APP_DIR/usr/lib/gtk-3.0" ]; then
             cp -r "$ldir/gtk-3.0" "$APP_DIR/usr/lib/" 2>/dev/null || true
         fi
-        break
     fi
 done
 
@@ -141,6 +162,44 @@ for pdir in /usr/lib/python3*/site-packages /usr/lib/python3*/dist-packages; do
     fi
 done
 
+echo "Resolving dynamic dependencies with ldd..."
+EXCLUDE_REGEX="^(linux-vdso|libc\.so|libm\.so|libpthread\.so|libdl\.so|librt\.so|libresolv\.so|libnsl\.so|libutil\.so|ld-linux|libgcc_s\.so|libstdc\+\+\.so|libGL\.so|libGLX\.so|libEGL\.so|libGLES|libglapi\.so|libdrm\.so|libasound\.so)"
+
+MAX_PASSES=5
+for pass in $(seq 1 $MAX_PASSES); do
+    NEW_LIBS_COPIED=0
+    SO_FILES=$(find "$APP_DIR/usr/lib" -type f \( -name "*.so" -o -name "*.so.*" \) 2>/dev/null)
+    for so in $SO_FILES; do
+        if [ ! -f "$so" ]; then
+            continue
+        fi
+        DEPS=$(ldd "$so" 2>/dev/null | awk '/=> \// {print $3}' || true)
+        for dep in $DEPS; do
+            if [ ! -f "$dep" ]; then
+                continue
+            fi
+            dep_name=$(basename "$dep")
+            if echo "$dep_name" | grep -Eq "$EXCLUDE_REGEX"; then
+                continue
+            fi
+            if [ ! -e "$APP_DIR/usr/lib/$dep_name" ]; then
+                if [ -L "$dep" ]; then
+                    real_target=$(readlink -f "$dep" 2>/dev/null || true)
+                    if [ -f "$real_target" ]; then
+                        cp -d "$real_target" "$APP_DIR/usr/lib/" 2>/dev/null || true
+                    fi
+                fi
+                cp -d "$dep" "$APP_DIR/usr/lib/" 2>/dev/null || true
+                NEW_LIBS_COPIED=1
+            fi
+        done
+    done
+    if [ "$NEW_LIBS_COPIED" -eq 0 ]; then
+        echo "All dynamic dependencies resolved in pass $pass."
+        break
+    fi
+done
+
 echo "Creating AppRun entrypoint..."
 cat << 'EOF' > "$APP_DIR/AppRun"
 #!/bin/sh
@@ -151,13 +210,13 @@ HERE=$(dirname "$SELF")
 export APPDIR="$HERE"
 
 # Shared library search path (prioritize bundled libraries)
-export LD_LIBRARY_PATH="$HERE/usr/lib:$HERE/usr/lib64:$HERE/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu:$APPDIR/usr/lib64:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 # GObject Introspection typelib path
-export GI_TYPELIB_PATH="$HERE/usr/lib/girepository-1.0:$HERE/usr/lib64/girepository-1.0:$HERE/usr/lib/x86_64-linux-gnu/girepository-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
+export GI_TYPELIB_PATH="$APPDIR/usr/lib/girepository-1.0:$APPDIR/usr/lib/x86_64-linux-gnu/girepository-1.0:$APPDIR/usr/lib64/girepository-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
 
 # Python module search path
-export PYTHONPATH="$HERE/usr/share/pardus-boot-analyzer:$HERE/usr/lib/python3/site-packages:$HERE/usr/lib/python3/dist-packages:${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH="$APPDIR/usr/share/pardus-boot-analyzer:$APPDIR/usr/lib/python3/site-packages:$APPDIR/usr/lib/python3/dist-packages:${PYTHONPATH:+:$PYTHONPATH}"
 
 # GSettings schemas path
 if [ -d "$HERE/usr/share/glib-2.0/schemas" ]; then
