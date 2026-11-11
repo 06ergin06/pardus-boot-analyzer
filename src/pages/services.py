@@ -488,7 +488,7 @@ class ServicesPage:
         tip = r[5]
         oneri = r[6]
         if oneri:
-            if tip == "kritik":
+            if tip == "critical":
                 self.detail_suggestion.set_markup(
                     f"<span foreground='#e01b24' weight='bold'>⚠ {tr('critical_service')}: </span>"
                     f"<span>{oneri}</span>"
@@ -793,11 +793,11 @@ class ServicesPage:
 
         if action == "mask":
             tip = d["tip"]
-            warn = tr("critical_maske_uyarisi") if tip == "kritik" else ""
+            warn = tr("critical_maske_uyarisi") if tip == "critical" else ""
             
             dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                type=Gtk.MessageType.WARNING if tip == "kritik" else Gtk.MessageType.QUESTION,
+                type=Gtk.MessageType.WARNING if tip == "critical" else Gtk.MessageType.QUESTION,
                 buttons=Gtk.ButtonsType.NONE,
                 message_format=f"'{name}' " + tr("maske_sorusu")
             )

@@ -36,9 +36,9 @@ FILTER_MAP = {
 
 TIP_MAP = {
     0: "all",
-    1: "kritik",
+    1: "critical",
     2: "suggestion",
-    3: "gerekli",
+    3: "required",
 }
 
 VIEW_MAP = {
