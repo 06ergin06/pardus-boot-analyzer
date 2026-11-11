@@ -4,6 +4,7 @@ from gi.repository import Gtk
 import os
 import json
 import re
+from src import locale_mgr
 from src.locale_mgr import tr
 
 STATUS_COLORS = {
@@ -16,7 +17,7 @@ STATUS_COLORS = {
     "deactivating": "#fd7e14",
 }
 
-STATUS_TR = {
+STATUS_LABELS = {
     "active": tr("su_an_calisiyor"),
     "inactive": tr("su_an_durduruldu"),
     "disabled": tr("boot_calismayacak"),
@@ -34,11 +35,11 @@ FILTER_MAP = {
     4: "masked",
 }
 
-TIP_MAP = {
+SERVICE_TYPE_MAP = {
     0: "all",
-    1: "kritik",
+    1: "critical",
     2: "suggestion",
-    3: "gerekli",
+    3: "required",
 }
 
 VIEW_MAP = {
@@ -56,14 +57,18 @@ except Exception:
     _config_data = {
         "profiles": {},
         "safe_to_disable_services": [],
-        "profile_service_labels": {}
+        "labels": {}
     }
 
-SAFE_TO_DISABLE_ONERI_SERVICES = set(_config_data.get("safe_to_disable_services", []))
+SAFE_TO_DISABLE_SERVICES = set(_config_data.get("safe_to_disable_services", []))
 
-PROFILE_SERVICE_LABELS = {}
-for k, v in _config_data.get("profile_service_labels", {}).items():
-    PROFILE_SERVICE_LABELS[k] = tr(v)
+
+def profile_service_labels():
+    lang = locale_mgr.LANG
+    return {
+        name: values.get(lang, values.get("tr", name))
+        for name, values in _config_data.get("labels", {}).items()
+    }
 
 def parse_blame_time(time_str):
     if not time_str:
@@ -97,7 +102,7 @@ def parse_blame_time(time_str):
     return 0
 
 def make_status_markup(status):
-    translation = STATUS_TR.get(status, status)
+    translation = STATUS_LABELS.get(status, status)
     color = STATUS_COLORS.get(status, "#6c757d")
     return f'<span foreground="{color}">\u25cf</span> <b>{translation}</b>'
 

@@ -5,9 +5,10 @@ import os
 import json
 import threading
 
+from src import locale_mgr
 from src.locale_mgr import tr
 from src.dialogs import ProfileCreatorDialog
-from src.utils import parse_blame_time, PROFILE_SERVICE_LABELS, _config_data
+from src.utils import parse_blame_time, profile_service_labels, _config_data
 
 class ProfilesPage:
     def __init__(self, controller):
@@ -42,12 +43,14 @@ class ProfilesPage:
         grid = Gtk.Grid(column_spacing=16, row_spacing=16)
         box.pack_start(grid, False, False, 0)
         
+        lang = locale_mgr.LANG
+        labels = profile_service_labels()
         self.profiles_data = {}
         for p_id, p_info in _config_data.get("profiles", {}).items():
             self.profiles_data[p_id] = {
-                "name": tr(p_info["name_tr_key"]),
+                "name": p_info.get(f"name_{lang}", p_info.get("name_tr", p_id)),
                 "icon": p_info["icon"],
-                "desc": tr(p_info["desc_tr_key"]),
+                "desc": p_info.get(f"description_{lang}", p_info.get("description_tr", "")),
                 "services": p_info["services"]
             }
         
@@ -72,7 +75,7 @@ class ProfilesPage:
             vbox_checklist.set_margin_top(6)
             vbox_checklist.set_margin_bottom(6)
             
-            for svc_name, friendly_name in PROFILE_SERVICE_LABELS.items():
+            for svc_name, friendly_name in labels.items():
                 action = p_info["services"].get(svc_name)
                 if action is not None:
                     lbl_item = Gtk.Label(xalign=0)
@@ -364,7 +367,7 @@ class ProfilesPage:
                 self.set_status(tr("backup_noktasi_deleted"))
                 self.load_profiles_page()
             except Exception as e:
-                self.set_status(f"Hata: {e}")
+                self.set_status(f"{tr('error')}: {e}")
 
     def _on_apply_profile_clicked(self, button, p_id):
         p_info = self.profiles_data.get(p_id)
@@ -389,7 +392,7 @@ class ProfilesPage:
         try:
             enabled_map = self.manager.get_unit_file_states()
         except Exception as e:
-            self.set_status(f"Hata: {e}")
+            self.set_status(f"{tr('error')}: {e}")
             return
             
         enable_list = []
@@ -477,7 +480,7 @@ class ProfilesPage:
         try:
             enabled_map = self.manager.get_unit_file_states()
         except Exception as e:
-            self.set_status(f"Hata: {e}")
+            self.set_status(f"{tr('error')}: {e}")
             return
             
         enable_list = []
@@ -617,7 +620,7 @@ class ProfilesPage:
         try:
             enabled_map = self.manager.get_unit_file_states()
         except Exception as e:
-            self.set_status(f"Hata: {e}")
+            self.set_status(f"{tr('error')}: {e}")
             return
             
         from src.service_db import DESCRIPTIONS
@@ -686,7 +689,7 @@ class ProfilesPage:
                 self.set_status(f"{tr('custom_profile_olusturuldu')}".format(data['name']))
                 self.load_profiles_page()
             except Exception as e:
-                self.set_status(f"Hata: {e}")
+                self.set_status(f"{tr('error')}: {e}")
         else:
             dlg.hide()
             GLib.idle_add(dlg.destroy)

@@ -136,7 +136,7 @@ class AddAutostartDialog(Gtk.Dialog):
 
 class PasswordDialog(Gtk.Dialog):
     def __init__(self, parent, manager):
-        super().__init__(title="Yönetici Yetkilendirmesi", parent=parent, flags=Gtk.DialogFlags.MODAL)
+        super().__init__(title=tr("auth_gerekiyor"), parent=parent, flags=Gtk.DialogFlags.MODAL)
         self.set_default_size(360, 200)
         self.manager = manager
         self.success = False
@@ -275,7 +275,7 @@ class ProfileCreatorDialog(Gtk.Dialog):
             "cups.service": tr("cups_service_desc"),
             "cups-browsed.service": tr("cups_browsed_desc"),
             "bluetooth.service": tr("bluetooth_desc"),
-            "docker.service": "Docker Konteyner",
+            "docker.service": tr("docker_desc"),
             "postgresql.service": tr("postgresql_desc"),
             "mysql.service": tr("mysql_desc"),
             "ssh.service": tr("ssh_desc"),
