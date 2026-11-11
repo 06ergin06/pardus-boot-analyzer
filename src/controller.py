@@ -21,8 +21,8 @@ from src.pages.profiles import ProfilesPage
 
 
 from src.utils import (
-    STATUS_COLORS, STATUS_TR, FILTER_MAP, TIP_MAP, VIEW_MAP,
-    SAFE_TO_DISABLE_ONERI_SERVICES, PROFILE_SERVICE_LABELS,
+    STATUS_COLORS, STATUS_LABELS, FILTER_MAP, SERVICE_TYPE_MAP, VIEW_MAP,
+    SAFE_TO_DISABLE_SERVICES,
     parse_blame_time, make_status_markup, _is_dark_theme, _config_data
 )
 
@@ -35,7 +35,7 @@ class Controller:
         self._all_data = []
         self._all_data_map = {}
         self._status_filter = "all"
-        self._tip_filter = "all"
+        self._service_type_filter = "all"
         self._search_text = ""
         self._debounce_id = 0
         self._updating_widgets = False
@@ -150,10 +150,10 @@ class Controller:
         sidebar_box.pack_start(self.sidebar_listbox, False, False, 0)
 
         items = [
-            ("dialog-information-symbolic",   tr("side_analiz"),    "analiz"),
+            ("dialog-information-symbolic",   tr("side_analiz"),    "analysis"),
             ("system-run-symbolic",            tr("side_autostart"), "autostart"),
-            ("preferences-system-symbolic",    tr("side_hizmetler"),"hizmetler"),
-            ("avatar-default-symbolic",        tr("side_profiller"),"profiller"),
+            ("preferences-system-symbolic",    tr("side_hizmetler"),"services"),
+            ("avatar-default-symbolic",        tr("side_profiller"),"profiles"),
         ]
 
         for icon_name, text, name in items:
@@ -203,13 +203,13 @@ class Controller:
         self.content_box.pack_start(self.stack, True, True, 0)
 
         self.analysis_page  = AnalysisPage(self)
-        self.stack.add_named(self.analysis_page.build_page_analysis(),    "analiz")
+        self.stack.add_named(self.analysis_page.build_page_analysis(),    "analysis")
         self.autostart_page = AutostartPage(self)
         self.stack.add_named(self.autostart_page.build_page_autostart(),  "autostart")
         self.services_page  = ServicesPage(self)
-        self.stack.add_named(self.services_page.build_page_services(),    "hizmetler")
+        self.stack.add_named(self.services_page.build_page_services(),    "services")
         self.profiles_page  = ProfilesPage(self)
-        self.stack.add_named(self.profiles_page.build_page_profiles(),    "profiller")
+        self.stack.add_named(self.profiles_page.build_page_profiles(),    "profiles")
 
         self.sidebar_listbox.select_row(self.sidebar_listbox.get_row_at_index(0))
 
@@ -228,10 +228,10 @@ class Controller:
             child.destroy()
 
         items = [
-            ("dialog-information-symbolic",   tr("side_analiz"),    "analiz"),
+            ("dialog-information-symbolic",   tr("side_analiz"),    "analysis"),
             ("system-run-symbolic",            tr("side_autostart"), "autostart"),
-            ("preferences-system-symbolic",    tr("side_hizmetler"), "hizmetler"),
-            ("avatar-default-symbolic",        tr("side_profiller"), "profiller"),
+            ("preferences-system-symbolic",    tr("side_hizmetler"), "services"),
+            ("avatar-default-symbolic",        tr("side_profiller"), "profiles"),
         ]
 
         for icon_name, text, name in items:
@@ -259,13 +259,13 @@ class Controller:
         self.sidebar_listbox.show_all()
 
         self.analysis_page  = AnalysisPage(self)
-        self.stack.add_named(self.analysis_page.build_page_analysis(),    "analiz")
+        self.stack.add_named(self.analysis_page.build_page_analysis(),    "analysis")
         self.autostart_page = AutostartPage(self)
         self.stack.add_named(self.autostart_page.build_page_autostart(),  "autostart")
         self.services_page  = ServicesPage(self)
-        self.stack.add_named(self.services_page.build_page_services(),    "hizmetler")
+        self.stack.add_named(self.services_page.build_page_services(),    "services")
         self.profiles_page  = ProfilesPage(self)
-        self.stack.add_named(self.profiles_page.build_page_profiles(),    "profiller")
+        self.stack.add_named(self.profiles_page.build_page_profiles(),    "profiles")
 
         self.load_all()
         self.sidebar_listbox.select_row(self.sidebar_listbox.get_row_at_index(selected_index))
@@ -274,15 +274,15 @@ class Controller:
             return
         idx = row.get_index()
         if idx == 0:
-            self.stack.set_visible_child_name("analiz")
+            self.stack.set_visible_child_name("analysis")
             self.analysis_page.load_analysis_page()
         elif idx == 1:
             self.stack.set_visible_child_name("autostart")
             self.autostart_page.load_autostart_page()
         elif idx == 2:
-            self.stack.set_visible_child_name("hizmetler")
+            self.stack.set_visible_child_name("services")
         elif idx == 3:
-            self.stack.set_visible_child_name("profiller")
+            self.stack.set_visible_child_name("profiles")
             self.profiles_page.load_profiles_page()
 
     def _calculate_profile_savings(self, p_info):
@@ -329,8 +329,8 @@ class Controller:
         return self.services_page.filter_combo
 
     @property
-    def tip_combo(self):
-        return self.services_page.tip_combo
+    def service_type_combo(self):
+        return self.services_page.service_type_combo
 
     @property
     def search_entry(self):

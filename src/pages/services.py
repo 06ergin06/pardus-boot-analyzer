@@ -6,7 +6,7 @@ import threading
 from src.locale_mgr import tr
 from src.service_db import get_description
 from src.utils import (
-    STATUS_COLORS, STATUS_TR, FILTER_MAP, TIP_MAP, VIEW_MAP,
+    STATUS_COLORS, STATUS_LABELS, FILTER_MAP, SERVICE_TYPE_MAP, VIEW_MAP,
     parse_blame_time, make_status_markup
 )
 
@@ -20,7 +20,7 @@ class ServicesPage:
         
         # Initialize state variables
         self._status_filter = "all"
-        self._tip_filter = "all"
+        self._service_type_filter = "all"
         self._search_text = ""
         self._updating_widgets = False
         self._all_data = []
@@ -59,13 +59,13 @@ class ServicesPage:
         self.filter_combo.set_active(0)
         f_box.pack_start(self.filter_combo, False, False, 0)
         
-        self.tip_combo = Gtk.ComboBoxText()
-        self.tip_combo.append_text(tr("tip_all"))
-        self.tip_combo.append_text(tr("tip_critical"))
-        self.tip_combo.append_text(tr("tip_suggestion"))
-        self.tip_combo.append_text(tr("tip_required"))
-        self.tip_combo.set_active(0)
-        f_box.pack_start(self.tip_combo, False, False, 0)
+        self.service_type_combo = Gtk.ComboBoxText()
+        self.service_type_combo.append_text(tr("service_type_all"))
+        self.service_type_combo.append_text(tr("service_type_critical"))
+        self.service_type_combo.append_text(tr("service_type_suggestion"))
+        self.service_type_combo.append_text(tr("service_type_required"))
+        self.service_type_combo.set_active(0)
+        f_box.pack_start(self.service_type_combo, False, False, 0)
         
         self.search_entry = Gtk.SearchEntry(placeholder_text=tr("search_placeholder"))
         f_box.pack_start(self.search_entry, True, True, 0)
@@ -273,7 +273,7 @@ class ServicesPage:
         
         self.view_combo.connect("changed", self._on_view_changed)
         self.filter_combo.connect("changed", self._on_filter_changed)
-        self.tip_combo.connect("changed", self._on_tip_changed)
+        self.service_type_combo.connect("changed", self._on_service_type_changed)
         self.search_entry.connect("changed", self._on_search_changed)
         self.selection.connect("changed", self._on_selection_changed)
         
@@ -334,7 +334,7 @@ class ServicesPage:
                 continue
                 
             blame_info = blame_data.get(name, {"time_str": "", "seconds": 0})
-            desc, tip, oneri = get_description(name)
+            desc, service_type, suggestion = get_description(name)
             if not desc:
                 desc = svc.get("description", "")
 
@@ -346,8 +346,8 @@ class ServicesPage:
                 "time_str": blame_info["time_str"],
                 "seconds": blame_info["seconds"],
                 "desc": desc,
-                "tip": tip or "",
-                "suggestion": oneri or "",
+                "service_type": service_type or "",
+                "suggestion": suggestion or "",
             })
 
         self._all_data.sort(key=lambda x: (-x["seconds"], x["name"]))
@@ -388,7 +388,7 @@ class ServicesPage:
                 continue
             if not self._matches_status(d["active"], d["sub"], d.get("enabled", "")):
                 continue
-            if self._tip_filter != "all" and d["tip"] != self._tip_filter:
+            if self._service_type_filter != "all" and d["service_type"] != self._service_type_filter:
                 continue
                 
             self.liststore.append([
@@ -397,7 +397,7 @@ class ServicesPage:
                 d["sub"],
                 d["time_str"],
                 d["desc"],
-                d["tip"],
+                d["service_type"],
                 d["suggestion"],
                 d["active"]
             ])
@@ -434,8 +434,10 @@ class ServicesPage:
         self._status_filter = FILTER_MAP.get(self.filter_combo.get_active(), "all")
         self._apply_filters()
 
-    def _on_tip_changed(self, *args):
-        self._tip_filter = TIP_MAP.get(self.tip_combo.get_active(), "all")
+    def _on_service_type_changed(self, *args):
+        self._service_type_filter = SERVICE_TYPE_MAP.get(
+            self.service_type_combo.get_active(), "all"
+        )
         self._apply_filters()
 
     def _on_search_changed(self, *args):
@@ -481,25 +483,27 @@ class ServicesPage:
         color = STATUS_COLORS.get(active, "#6c757d")
         
         self.detail_name.set_markup(
-            f"<b>{name}</b>  \u2014  <span foreground='{color}'><b>{STATUS_TR.get(active, active)}</b></span>"
+            f"<b>{name}</b>  \u2014  <span foreground='{color}'><b>{STATUS_LABELS.get(active, active)}</b></span>"
         )
         self.detail_desc.set_text(r[4] or tr("description_none"))
         
-        tip = r[5]
-        oneri = r[6]
-        if oneri:
-            if tip == "critical":
+        service_type = r[5]
+        suggestion = r[6]
+        if suggestion:
+            if service_type == "critical":
                 self.detail_suggestion.set_markup(
                     f"<span foreground='#e01b24' weight='bold'>⚠ {tr('critical_service')}: </span>"
-                    f"<span>{oneri}</span>"
+                    f"<span>{suggestion}</span>"
                 )
-            elif tip == "suggestion":
+            elif service_type == "suggestion":
                 self.detail_suggestion.set_markup(
                     f"<span foreground='#2ec27e' weight='bold'>💡 {tr('user_onerisi')}: </span>"
-                    f"<span>{oneri}</span>"
+                    f"<span>{suggestion}</span>"
                 )
             else:
-                self.detail_suggestion.set_markup(f"<b>{tr('suggestion')}:</b> {oneri}")
+                self.detail_suggestion.set_markup(
+                    f"<b>{tr('suggestion')}:</b> {suggestion}"
+                )
         else:
             self.detail_suggestion.set_text("")
 
@@ -792,12 +796,18 @@ class ServicesPage:
         action = "unmask" if is_masked else "mask"
 
         if action == "mask":
-            tip = d["tip"]
-            warn = tr("critical_maske_uyarisi") if tip == "critical" else ""
+            service_type = d["service_type"]
+            warn = (
+                tr("critical_maske_uyarisi") if service_type == "critical" else ""
+            )
             
             dlg = Gtk.MessageDialog(
                 parent=self.window, flags=Gtk.DialogFlags.MODAL,
-                type=Gtk.MessageType.WARNING if tip == "critical" else Gtk.MessageType.QUESTION,
+                type=(
+                    Gtk.MessageType.WARNING
+                    if service_type == "critical"
+                    else Gtk.MessageType.QUESTION
+                ),
                 buttons=Gtk.ButtonsType.NONE,
                 message_format=f"'{name}' " + tr("maske_sorusu")
             )

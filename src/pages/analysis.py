@@ -7,7 +7,7 @@ import datetime
 import re
 
 from src.locale_mgr import tr
-from src.utils import parse_blame_time, SAFE_TO_DISABLE_ONERI_SERVICES
+from src.utils import parse_blame_time, SAFE_TO_DISABLE_SERVICES
 from src.service_db import get_description
 try:
     from gi.repository import Pango
@@ -155,16 +155,18 @@ class AnalysisPage:
         
         for item in blame_list:
             name = item["name"]
-            if name in SAFE_TO_DISABLE_ONERI_SERVICES:
+            if name in SAFE_TO_DISABLE_SERVICES:
                 enabled_state = enabled_map.get(name, "unknown")
                 if enabled_state in ("enabled", "enabled-runtime"):
                     sec = parse_blame_time(item["time"])
-                    desc, tip, oneri = get_description(name)
+                    desc, _service_type, suggestion = get_description(name)
                     optimizable_services.append({
                         "name": name,
                         "time_str": item["time"],
                         "seconds": sec,
-                        "suggestion": oneri or desc or tr("default_disable_suggestion")
+                        "suggestion": (
+                            suggestion or desc or tr("default_disable_suggestion")
+                        )
                     })
                     total_savings_sec += sec
                     
@@ -244,7 +246,7 @@ class AnalysisPage:
                 for item in optimizable_services:
                     name = item["name"]
                     time_str = item["time_str"]
-                    oneri_text = item["suggestion"]
+                    suggestion_text = item["suggestion"]
                     
                     row_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
                     row_box.get_style_context().add_class("blame-row")
@@ -258,11 +260,11 @@ class AnalysisPage:
                     btn_go.connect("clicked", lambda b, n=name: self._go_to_service(n))
                     vbox_info.pack_start(btn_go, False, False, 0)
                     
-                    lbl_oneri = Gtk.Label(xalign=0)
-                    lbl_oneri.set_text(oneri_text)
-                    lbl_oneri.get_style_context().add_class("dim-label")
-                    lbl_oneri.set_line_wrap(True)
-                    vbox_info.pack_start(lbl_oneri, False, False, 0)
+                    lbl_suggestion = Gtk.Label(xalign=0)
+                    lbl_suggestion.set_text(suggestion_text)
+                    lbl_suggestion.get_style_context().add_class("dim-label")
+                    lbl_suggestion.set_line_wrap(True)
+                    vbox_info.pack_start(lbl_suggestion, False, False, 0)
                     
                     lbl_time = Gtk.Label(label=time_str)
                     lbl_time.get_style_context().add_class("badge-slow")
@@ -301,7 +303,7 @@ class AnalysisPage:
         self.controller.sidebar_listbox.select_row(self.controller.sidebar_listbox.get_row_at_index(2))
         self.controller.view_combo.set_active(0)
         self.controller.filter_combo.set_active(0)
-        self.controller.tip_combo.set_active(0)
+        self.controller.service_type_combo.set_active(0)
         self.controller.search_entry.set_text("")
         
         def select_row():

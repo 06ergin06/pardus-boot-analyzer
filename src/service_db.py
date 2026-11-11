@@ -17,7 +17,7 @@ for key in list(DESCRIPTIONS.keys()):
         _BASE_NAMES[base] = key
 
 
-def get_description(name):
+def _lang():
     try:
         from locale_mgr import LANG
     except ImportError:
@@ -25,19 +25,44 @@ def get_description(name):
             from src.locale_mgr import LANG
         except ImportError:
             LANG = "tr"
+    return LANG
 
+
+def _service_type(entry):
+    if entry.get("critical"):
+        return "critical"
+    if entry.get("required"):
+        return "required"
+    return "suggestion"
+
+
+def _localized(entry, field, lang):
+    return (
+        entry.get(f"{field}_{lang}")
+        or entry.get(f"{field}_tr")
+        or entry.get(f"{field}_en")
+        or ""
+    )
+
+
+def _parse_entry(entry, lang):
+    return (
+        _localized(entry, "description", lang),
+        _service_type(entry),
+        _localized(entry, "suggestion", lang),
+    )
+
+
+def get_description(name):
+    lang = _lang()
     entry = DESCRIPTIONS.get(name)
     if entry:
-        desc = entry.get("desc_" + LANG, entry.get("desc"))
-        oneri = entry.get("oneri_" + LANG, entry.get("suggestion"))
-        return desc, entry.get("tip"), oneri
+        return _parse_entry(entry, lang)
     if "@" in name:
         base = name.split("@")[0] + "@"
         template_name = _BASE_NAMES.get(base)
         if template_name:
             entry = DESCRIPTIONS.get(template_name)
             if entry:
-                desc = entry.get("desc_" + LANG, entry.get("desc"))
-                oneri = entry.get("oneri_" + LANG, entry.get("suggestion"))
-                return desc, entry.get("tip"), oneri
+                return _parse_entry(entry, lang)
     return None, None, None
